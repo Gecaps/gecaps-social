@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
 import { BottomNav } from "@/components/layout/mobile-nav";
+import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
@@ -30,18 +31,21 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="flex h-full">
-        <TooltipProvider>
-          <Sidebar />
-          <div className="flex flex-1 flex-col overflow-hidden">
-            <Topbar />
-            <main className="flex-1 overflow-y-auto pb-20 lg:pb-0">
-              {children}
-            </main>
-          </div>
-          <BottomNav />
-        </TooltipProvider>
+        <ThemeProvider>
+          <TooltipProvider>
+            <Sidebar />
+            <div className="flex flex-1 flex-col overflow-hidden">
+              <Topbar />
+              <main className="flex-1 overflow-y-auto pb-20 lg:pb-0">
+                {children}
+              </main>
+            </div>
+            <BottomNav />
+          </TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -30,11 +30,20 @@ export function Sidebar() {
     <aside className="hidden lg:flex lg:w-60 lg:flex-col lg:border-r lg:border-border bg-sidebar">
       <div className="flex h-14 items-center gap-2.5 border-b border-border px-5">
         <Image
+          src="/assets/logo-gecaps.png"
+          alt="GECAPS"
+          width={100}
+          height={26}
+          priority
+          className="dark:hidden"
+        />
+        <Image
           src="/assets/logo-gecaps-white.png"
           alt="GECAPS"
           width={100}
           height={26}
           priority
+          className="hidden dark:block"
         />
         <span className="rounded-md bg-neon-pink/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-neon-pink">
           Social
@@ -53,7 +62,7 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-neon-cyan/10 text-neon-cyan"
+                  ? "bg-primary/10 text-primary"
                   : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
               )}
             >

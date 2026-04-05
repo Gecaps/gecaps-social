@@ -57,7 +57,53 @@
   --color-status-published: var(--status-published);
 }
 
+/* ── Light mode: rosa/pink social ── */
 :root {
+  --background: oklch(0.98 0.005 340);
+  --foreground: oklch(0.15 0.01 340);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.01 340);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.01 340);
+  --primary: oklch(0.6 0.22 340);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.95 0.015 340);
+  --secondary-foreground: oklch(0.3 0.05 340);
+  --muted: oklch(0.95 0.01 340);
+  --muted-foreground: oklch(0.45 0.02 340);
+  --accent: oklch(0.93 0.025 340);
+  --accent-foreground: oklch(0.3 0.08 340);
+  --destructive: oklch(0.55 0.22 25);
+  --border: oklch(0.91 0.015 340);
+  --input: oklch(0.91 0.015 340);
+  --ring: oklch(0.6 0.22 340);
+  --chart-1: oklch(0.6 0.22 340);
+  --chart-2: oklch(0.7 0.18 195);
+  --chart-3: oklch(0.55 0.2 290);
+  --chart-4: oklch(0.7 0.15 85);
+  --chart-5: oklch(0.6 0.15 230);
+  --radius: 0.75rem;
+  --sidebar: oklch(0.97 0.01 340);
+  --sidebar-foreground: oklch(0.15 0.01 340);
+  --sidebar-primary: oklch(0.6 0.22 340);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.94 0.02 340);
+  --sidebar-accent-foreground: oklch(0.3 0.08 340);
+  --sidebar-border: oklch(0.91 0.015 340);
+  --sidebar-ring: oklch(0.6 0.22 340);
+
+  /* Light neon palette — vivid but not neon */
+  --neon-cyan: #0891B2;
+  --neon-pink: #E11D63;
+  --neon-purple: #9333EA;
+  --status-approved: #0891B2;
+  --status-pending: #D97706;
+  --status-rejected: #E11D63;
+  --status-published: #9333EA;
+}
+
+/* ── Dark mode: neon TikTok ── */
+.dark {
   --background: oklch(0.13 0.005 270);
   --foreground: oklch(0.95 0 0);
   --card: oklch(0.17 0.005 270);
@@ -81,7 +127,6 @@
   --chart-3: oklch(0.6 0.2 290);
   --chart-4: oklch(0.7 0.15 85);
   --chart-5: oklch(0.6 0.15 230);
-  --radius: 0.75rem;
   --sidebar: oklch(0.11 0.005 270);
   --sidebar-foreground: oklch(0.9 0 0);
   --sidebar-primary: oklch(0.75 0.18 195);
@@ -91,7 +136,7 @@
   --sidebar-border: oklch(0.22 0.01 270);
   --sidebar-ring: oklch(0.75 0.18 195);
 
-  /* Neon palette */
+  /* Dark neon palette — full neon */
   --neon-cyan: #25F4EE;
   --neon-pink: #FE2C55;
   --neon-purple: #B829DD;

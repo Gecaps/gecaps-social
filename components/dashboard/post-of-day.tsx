@@ -36,35 +36,35 @@ export function PostOfDay({ post }: PostOfDayProps) {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-5 lg:flex-row">
-          {/* Preview placeholder — dark neon style */}
-          <div className="relative aspect-[4/5] w-full max-w-[270px] shrink-0 overflow-hidden rounded-lg bg-gradient-to-b from-[#0a0a0a] via-[#121218] to-[#0a0a0a] border border-border">
-            <div className="absolute inset-0 bg-gradient-to-br from-neon-cyan/5 via-transparent to-neon-pink/5" />
+          {/* Preview — adapts to theme */}
+          <div className="relative aspect-[4/5] w-full max-w-[270px] shrink-0 overflow-hidden rounded-lg border border-border bg-gradient-to-b from-rose-50 via-white to-rose-50 dark:from-[#0a0a0a] dark:via-[#121218] dark:to-[#0a0a0a]">
+            <div className="absolute inset-0 bg-gradient-to-br from-neon-pink/5 via-transparent to-neon-cyan/5" />
             <div className="relative flex h-full flex-col justify-between p-5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold tracking-wider text-white/50">
+                <span className="text-xs font-bold tracking-wider text-foreground/40">
                   GECAPS
                 </span>
-                <span className="rounded-full bg-neon-pink/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-neon-pink">
+                <span className="rounded-full bg-neon-pink/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-neon-pink">
                   {PILAR_LABELS[post.pilar]}
                 </span>
               </div>
 
               <div className="space-y-3">
                 {post.hook && (
-                  <p className="text-xs font-medium uppercase tracking-widest text-neon-cyan/60">
+                  <p className="text-xs font-medium uppercase tracking-widest text-neon-cyan/70 dark:text-neon-cyan/60">
                     {post.hook.split(" ").slice(0, 4).join(" ")}
                   </p>
                 )}
-                <h3 className="text-lg font-extrabold leading-tight text-white">
+                <h3 className="text-lg font-extrabold leading-tight text-foreground">
                   {post.title}
                 </h3>
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-neon-cyan">
+                <span className="text-xs font-semibold text-neon-pink dark:text-neon-cyan">
                   {post.cta}
                 </span>
-                <span className="text-xs font-medium text-white/30">
+                <span className="text-xs font-medium text-foreground/25">
                   @gecapsbrasil
                 </span>
               </div>
@@ -94,7 +94,7 @@ export function PostOfDay({ post }: PostOfDayProps) {
             </div>
 
             {post.hashtags && (
-              <p className="text-xs text-neon-cyan/70">
+              <p className="text-xs text-neon-pink dark:text-neon-cyan/70">
                 {post.hashtags}
               </p>
             )}
@@ -102,7 +102,7 @@ export function PostOfDay({ post }: PostOfDayProps) {
             <Separator />
 
             <div className="flex flex-wrap items-center gap-2">
-              <Button className="bg-neon-cyan text-black font-semibold hover:bg-neon-cyan/80">
+              <Button className="bg-primary text-primary-foreground font-semibold hover:bg-primary/80">
                 <CheckCircle2 className="size-4" />
                 Aprovar
               </Button>
