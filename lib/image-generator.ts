@@ -4,13 +4,31 @@ import { join } from "path";
 
 let _fontBase64Cache: { regular: string; bold: string; extraBold: string } | null = null;
 
+async function loadFontFile(name: string): Promise<Buffer> {
+  const fsPath = join(process.cwd(), "public", "assets", "fonts", name);
+  try {
+    return await readFile(fsPath);
+  } catch {
+    // Fallback: try .next/server path (Vercel standalone)
+    try {
+      return await readFile(join(process.cwd(), "assets", "fonts", name));
+    } catch {
+      // Last resort: fetch from public URL
+      const baseUrl = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000";
+      const res = await fetch(`${baseUrl}/assets/fonts/${name}`);
+      return Buffer.from(await res.arrayBuffer());
+    }
+  }
+}
+
 async function loadFontsBase64() {
   if (_fontBase64Cache) return _fontBase64Cache;
-  const fontsDir = join(process.cwd(), "public", "assets", "fonts");
   const [regular, bold, extraBold] = await Promise.all([
-    readFile(join(fontsDir, "Inter-Regular.ttf")).then((b) => b.toString("base64")),
-    readFile(join(fontsDir, "Inter-Bold.ttf")).then((b) => b.toString("base64")),
-    readFile(join(fontsDir, "Inter-ExtraBold.ttf")).then((b) => b.toString("base64")),
+    loadFontFile("Inter-Regular.ttf").then((b) => b.toString("base64")),
+    loadFontFile("Inter-Bold.ttf").then((b) => b.toString("base64")),
+    loadFontFile("Inter-ExtraBold.ttf").then((b) => b.toString("base64")),
   ]);
   _fontBase64Cache = { regular, bold, extraBold };
   return _fontBase64Cache;
@@ -48,18 +66,34 @@ async function loadProductImage(url?: string): Promise<Buffer | null> {
       const res = await fetch(url);
       return Buffer.from(await res.arrayBuffer());
     }
-    // Local file
-    const path = url.startsWith("/")
-      ? join(process.cwd(), "public", url)
-      : url;
-    return await readFile(path);
+    // Local file — try filesystem first, then HTTP
+    const fsPath = join(process.cwd(), "public", url);
+    try {
+      return await readFile(fsPath);
+    } catch {
+      const baseUrl = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000";
+      const res = await fetch(`${baseUrl}${url}`);
+      if (!res.ok) return null;
+      return Buffer.from(await res.arrayBuffer());
+    }
   } catch {
     return null;
   }
 }
 
 async function loadAsset(name: string): Promise<Buffer> {
-  return readFile(join(process.cwd(), "public", "assets", name));
+  const fsPath = join(process.cwd(), "public", "assets", name);
+  try {
+    return await readFile(fsPath);
+  } catch {
+    const baseUrl = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/assets/${name}`);
+    return Buffer.from(await res.arrayBuffer());
+  }
 }
 
 function createSvgText(opts: {
