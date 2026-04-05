@@ -33,12 +33,19 @@ export interface TrelloList {
   cards: TrelloCard[];
 }
 
-// Parse list name as date (DD/MM/YYYY format from Aline's board)
+// Parse list name as date — extracts DD/MM/YYYY from anywhere in the name
+// Handles: "02/04/2026 Embaixador", "Post 01/04/2026", "05/04/2026 Suplemento/ Curcuma"
 export function parseListDate(listName: string): string | null {
-  const match = listName.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  const match = listName.match(/(\d{2})\/(\d{2})\/(\d{4})/);
   if (!match) return null;
   const [, day, month, year] = match;
   return `${year}-${month}-${day}`;
+}
+
+// Extract topic/theme from list name (after the date)
+// "05/04/2026 Suplemento/ Curcuma" → "Suplemento/ Curcuma"
+export function parseListTopic(listName: string): string {
+  return listName.replace(/^.*?\d{2}\/\d{2}\/\d{4}\s*/, "").trim() || "";
 }
 
 // Map Trello label to pilar

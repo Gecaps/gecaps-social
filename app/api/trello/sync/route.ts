@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { getTrelloLists, parseListDate, labelToPilar } from "@/lib/trello";
+import { getTrelloLists, parseListDate, parseListTopic, labelToPilar } from "@/lib/trello";
 import type { TrelloList } from "@/lib/trello";
 
 async function syncTrello() {
@@ -9,7 +9,6 @@ async function syncTrello() {
     return { error: "TRELLO_BOARD_ID not set", created: 0, skipped: 0 };
   }
 
-  // Get default account (GECAPS Brasil)
   const { data: defaultAccount } = await supabase()
     .from("social_accounts")
     .select("id")
@@ -27,6 +26,8 @@ async function syncTrello() {
       continue;
     }
 
+    const topic = parseListTopic(list.name);
+
     for (const card of list.cards || []) {
       const { data: existing } = await supabase()
         .from("social_posts")
@@ -40,18 +41,25 @@ async function syncTrello() {
       }
 
       const pilar = labelToPilar(card.labels || []);
+      const cardName = card.name; // "Feed", "Stories", etc
       const lines = card.desc?.split("\n").filter(Boolean) || [];
       const hook = lines[0] || "";
       const cta = lines[lines.length - 1] || "";
 
+      // Build title from topic + card type
+      // "Suplemento/ Curcuma" + "Feed" → "Curcuma" (use topic as title)
+      const title = topic || cardName;
+      const format = cardName.toLowerCase().includes("stories") ? "story" : "estatico";
+      const time = format === "story" ? "19:00" : "10:00";
+
       await supabase().from("social_posts").insert({
-        title: card.name,
+        title,
         hook,
         pilar,
-        format: "estatico",
+        format,
         status: "pending",
         scheduled_date: date,
-        scheduled_time: "10:00",
+        scheduled_time: time,
         cta,
         trello_card_id: card.id,
         trello_list_name: list.name,
