@@ -6,11 +6,18 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const body = await request.json();
-  const { action, feedback } = body as {
-    action: "approve" | "reject";
-    feedback?: string;
-  };
+
+  let body: { action?: string; feedback?: string };
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json(
+      { error: "Body JSON obrigatorio com campo 'action'" },
+      { status: 400 }
+    );
+  }
+
+  const { action, feedback } = body;
 
   if (action === "approve") {
     const { data, error } = await supabase()

@@ -24,6 +24,7 @@ import {
 } from "@/lib/types";
 import { FeedbackDialog } from "./feedback-dialog";
 import { LayoutSelector } from "./layout-selector";
+import { GenerateCaptionButton } from "./generate-caption-button";
 
 interface PostDetailProps {
   post: Post;
@@ -37,6 +38,8 @@ export function PostDetail({ post, versions }: PostDetailProps) {
   const [showFeedback, setShowFeedback] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [layout, setLayout] = useState<PostLayout>((post.layout as PostLayout) || "branco");
+  const [captionText, setCaptionText] = useState(post.caption || "");
+  const [hashtagsText, setHashtagsText] = useState(post.hashtags || "");
 
   const previewUrl = `/api/preview?title=${encodeURIComponent(post.title)}&hook=${encodeURIComponent(post.hook || "")}&pilar=${post.pilar}&cta=${encodeURIComponent(post.cta || "")}&layout=${layout}`;
 
@@ -150,16 +153,23 @@ export function PostDetail({ post, versions }: PostDetailProps) {
 
           {/* Caption */}
           <Card>
-            <CardHeader className="pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm">Legenda</CardTitle>
+              <GenerateCaptionButton
+                postId={post.id}
+                onGenerated={(c, h) => {
+                  setCaptionText(c);
+                  setHashtagsText(h);
+                }}
+              />
             </CardHeader>
             <CardContent>
               <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/80">
-                {post.caption}
+                {captionText || post.caption || "Nenhuma legenda gerada ainda. Clique em 'Gerar com IA'."}
               </p>
-              {post.hashtags && (
+              {(hashtagsText || post.hashtags) && (
                 <p className="mt-3 text-xs text-neon-pink dark:text-neon-cyan/70">
-                  {post.hashtags}
+                  {hashtagsText || post.hashtags}
                 </p>
               )}
             </CardContent>

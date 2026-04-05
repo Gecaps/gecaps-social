@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { supabase } from "@/lib/supabase";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
 import { BottomNav } from "@/components/layout/mobile-nav";
@@ -22,11 +23,17 @@ export const metadata: Metadata = {
   description: "Painel de gestao de redes sociais da GECAPS",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { data: accounts } = await supabase()
+    .from("social_accounts")
+    .select("*")
+    .eq("active", true)
+    .order("created_at", { ascending: true });
+
   return (
     <html
       lang="pt-BR"
@@ -36,9 +43,9 @@ export default function RootLayout({
       <body className="flex h-full">
         <ThemeProvider>
           <TooltipProvider>
-            <Sidebar />
+            <Sidebar accounts={accounts || []} />
             <div className="flex flex-1 flex-col overflow-hidden">
-              <Topbar />
+              <Topbar accounts={accounts || []} />
               <main className="flex-1 overflow-y-auto pb-20 lg:pb-0">
                 {children}
               </main>

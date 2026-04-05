@@ -27,9 +27,24 @@ export async function PATCH(
   const { id } = await params;
   const body = await request.json();
 
+  const ALLOWED = [
+    "title", "hook", "pilar", "format", "status",
+    "scheduled_date", "scheduled_time", "caption",
+    "hashtags", "cta", "image_url", "layout", "account_id",
+  ];
+
+  const filtered: Record<string, unknown> = {};
+  for (const key of ALLOWED) {
+    if (key in body) filtered[key] = body[key];
+  }
+
+  if (Object.keys(filtered).length === 0) {
+    return NextResponse.json({ error: "Nenhum campo valido para atualizar" }, { status: 400 });
+  }
+
   const { data, error } = await supabase()
     .from("social_posts")
-    .update(body)
+    .update(filtered)
     .eq("id", id)
     .select()
     .single();

@@ -2,17 +2,39 @@ import { supabase } from "@/lib/supabase";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { PostOfDay } from "@/components/dashboard/post-of-day";
 import { WeekPreview } from "@/components/dashboard/week-preview";
+import { EditorialBalance } from "@/components/dashboard/editorial-balance";
 
 export const dynamic = "force-dynamic";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ account?: string }>;
+}) {
+  const { account } = await searchParams;
   const today = new Date().toISOString().split("T")[0];
 
-  const { data: posts } = await supabase()
+  let postsQuery = supabase()
     .from("social_posts")
     .select("*")
     .order("scheduled_date", { ascending: true })
     .order("scheduled_time", { ascending: true });
+
+  if (account) postsQuery = postsQuery.eq("account_id", account);
+
+  const [{ data: posts }, { data: editorialLines }] = await Promise.all([
+    postsQuery,
+    account
+      ? supabase()
+          .from("social_editorial_lines")
+          .select("*")
+          .eq("account_id", account)
+          .eq("active", true)
+      : supabase()
+          .from("social_editorial_lines")
+          .select("*")
+          .eq("active", true),
+  ]);
 
   const allPosts = posts || [];
 
@@ -54,7 +76,13 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <WeekPreview posts={allPosts} />
+        <div className="space-y-6">
+          <EditorialBalance
+            posts={allPosts}
+            editorialLines={editorialLines || []}
+          />
+          <WeekPreview posts={allPosts} />
+        </div>
       </div>
     </div>
   );

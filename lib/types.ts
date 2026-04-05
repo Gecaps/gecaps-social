@@ -43,6 +43,7 @@ export interface Post {
   image_url: string | null;
   current_version: number;
   layout: PostLayout;
+  account_id: string | null;
   trello_card_id: string | null;
   trello_list_name: string | null;
   created_at: string;
@@ -91,3 +92,22 @@ export const STATUS_LABELS: Record<PostStatus, string> = {
   rejected: "Rejeitado",
   published: "Publicado",
 };
+
+export interface Account {
+  id: string;
+  name: string;
+  handle: string;
+  platform: string;
+  avatar_color: string;
+  active: boolean;
+  created_at: string;
+}
+
+export interface EditorialLine {
+  id: string;
+  account_id: string;
+  pilar: PostPilar;
+  posts_per_week: number;
+  description: string | null;
+  active: boolean;
+}

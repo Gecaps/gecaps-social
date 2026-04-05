@@ -7,9 +7,15 @@ import {
   LayoutDashboard,
   Calendar,
   Settings,
+  Plus,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { AccountSwitcher } from "./account-switcher";
+import { CreatePostModal } from "@/components/post/create-post-modal";
+import { useState } from "react";
+import type { Account } from "@/lib/types";
 
 interface NavItem {
   label: string;
@@ -23,67 +29,92 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Configuracoes", href: "/configuracoes", icon: Settings },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  accounts: Account[];
+}
+
+export function Sidebar({ accounts }: SidebarProps) {
   const pathname = usePathname();
+  const [showCreate, setShowCreate] = useState(false);
 
   return (
-    <aside className="hidden lg:flex lg:w-60 lg:flex-col lg:border-r lg:border-border bg-sidebar">
-      <div className="flex h-14 items-center gap-2.5 border-b border-border px-5">
-        <Image
-          src="/assets/logo-gecaps.png"
-          alt="GECAPS"
-          width={100}
-          height={26}
-          priority
-          className="dark:hidden"
-        />
-        <Image
-          src="/assets/logo-gecaps-white.png"
-          alt="GECAPS"
-          width={100}
-          height={26}
-          priority
-          className="hidden dark:block"
-        />
-        <span className="rounded-md bg-neon-pink/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-neon-pink">
-          Social
-        </span>
-      </div>
+    <>
+      <aside className="hidden lg:flex lg:w-60 lg:flex-col lg:border-r lg:border-border bg-sidebar">
+        <div className="flex h-14 items-center gap-2.5 border-b border-border px-5">
+          <Image
+            src="/assets/logo-gecaps.png"
+            alt="GECAPS"
+            width={100}
+            height={26}
+            priority
+            className="dark:hidden"
+          />
+          <Image
+            src="/assets/logo-gecaps-white.png"
+            alt="GECAPS"
+            width={100}
+            height={26}
+            priority
+            className="hidden dark:block"
+          />
+          <span className="rounded-md bg-neon-pink/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-neon-pink">
+            Social
+          </span>
+        </div>
 
-      <nav className="flex flex-1 flex-col gap-1 p-3">
-        {NAV_ITEMS.map((item) => {
-          const isActive =
-            pathname === item.href ||
-            (item.href !== "/" && pathname.startsWith(item.href));
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-              )}
-            >
-              <item.icon className="size-4" />
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
+        <div className="pt-3">
+          <AccountSwitcher accounts={accounts} currentId={null} />
+        </div>
 
-      <div className="border-t border-border p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-neon-cyan to-neon-pink text-xs font-bold text-white">
-            A
-          </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-medium">Aline</span>
-            <span className="text-xs text-muted-foreground">Social Media</span>
+        <nav className="flex flex-1 flex-col gap-1 p-3">
+          {NAV_ITEMS.map((item) => {
+            const isActive =
+              pathname === item.href ||
+              (item.href !== "/" && pathname.startsWith(item.href));
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-primary/10 text-primary"
+                    : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                )}
+              >
+                <item.icon className="size-4" />
+                {item.label}
+              </Link>
+            );
+          })}
+
+          <Button
+            onClick={() => setShowCreate(true)}
+            className="mt-3 w-full bg-gradient-to-r from-neon-cyan to-neon-pink text-white font-semibold hover:opacity-90"
+          >
+            <Plus className="size-4" />
+            Novo post
+          </Button>
+        </nav>
+
+        <div className="border-t border-border p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-neon-cyan to-neon-pink text-xs font-bold text-white">
+              A
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-medium">Aline</span>
+              <span className="text-xs text-muted-foreground">Social Media</span>
+            </div>
           </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+
+      <CreatePostModal
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        accounts={accounts}
+      />
+    </>
   );
 }
