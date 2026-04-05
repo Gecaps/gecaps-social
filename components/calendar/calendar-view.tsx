@@ -1,19 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { Post } from "@/lib/types";
+import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
+import type { Post, Account } from "@/lib/types";
 import { MonthView } from "./month-view";
 import { WeekView } from "./week-view";
+import { CreatePostModal } from "@/components/post/create-post-modal";
 
 interface CalendarViewProps {
   posts: Post[];
+  accounts: Account[];
 }
 
-export function CalendarView({ posts }: CalendarViewProps) {
+export function CalendarView({ posts, accounts }: CalendarViewProps) {
+  const router = useRouter();
   const [view, setView] = useState<"week" | "month">("week");
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [syncing, setSyncing] = useState(false);
+  const [createDate, setCreateDate] = useState<string | null>(null);
 
   function navigateWeek(dir: number) {
     const d = new Date(currentDate);
@@ -46,6 +52,13 @@ export function CalendarView({ posts }: CalendarViewProps) {
     return `${s} - ${e}`;
   }
 
+  async function handleSync() {
+    setSyncing(true);
+    await fetch("/api/trello/sync", { method: "POST" });
+    router.refresh();
+    setSyncing(false);
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -69,35 +82,63 @@ export function CalendarView({ posts }: CalendarViewProps) {
           </Button>
         </div>
 
-        <div className="flex rounded-lg border border-border">
-          <button
-            className={`px-3 py-1.5 text-xs font-medium transition-colors ${
-              view === "week"
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            } rounded-l-lg`}
-            onClick={() => setView("week")}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleSync}
+            disabled={syncing}
+            className="text-xs"
           >
-            Semana
-          </button>
-          <button
-            className={`px-3 py-1.5 text-xs font-medium transition-colors ${
-              view === "month"
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            } rounded-r-lg`}
-            onClick={() => setView("month")}
-          >
-            Mes
-          </button>
+            <RefreshCw className={`size-3 ${syncing ? "animate-spin" : ""}`} />
+            {syncing ? "Sincronizando..." : "Sync Trello"}
+          </Button>
+
+          <div className="flex rounded-lg border border-border">
+            <button
+              className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+                view === "week"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              } rounded-l-lg`}
+              onClick={() => setView("week")}
+            >
+              Semana
+            </button>
+            <button
+              className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+                view === "month"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              } rounded-r-lg`}
+              onClick={() => setView("month")}
+            >
+              Mes
+            </button>
+          </div>
         </div>
       </div>
 
       {view === "week" ? (
-        <WeekView posts={posts} currentDate={currentDate} />
+        <WeekView
+          posts={posts}
+          currentDate={currentDate}
+          onCreatePost={(date) => setCreateDate(date)}
+        />
       ) : (
-        <MonthView posts={posts} currentDate={currentDate} />
+        <MonthView
+          posts={posts}
+          currentDate={currentDate}
+          onCreatePost={(date) => setCreateDate(date)}
+        />
       )}
+
+      <CreatePostModal
+        open={createDate !== null}
+        onClose={() => setCreateDate(null)}
+        accounts={accounts}
+        defaultDate={createDate || undefined}
+      />
     </div>
   );
 }

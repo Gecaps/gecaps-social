@@ -17,8 +17,8 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Home", href: "/", icon: LayoutDashboard },
   { label: "Calendario", href: "/calendario", icon: Calendar },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Config", href: "/configuracoes", icon: Settings },
 ];
 

@@ -21,13 +21,27 @@ export async function GET(request: Request) {
     const layout = url.searchParams.get("layout") || "branco";
     const handle = url.searchParams.get("handle") || "@gecapsbrasil";
 
+    const w = parseInt(url.searchParams.get("w") || "1080");
+    const baseHeight = layout === "quote" ? 1080 : 1350;
+    const scale = w / 1080;
+    const h = Math.round(baseHeight * scale);
+
     const pilarColor = PILAR_COLORS[pilar] || PILAR_COLORS.educativo;
     const props = { title, hook, pilar, cta, pilarColor, handle };
+    const size = { width: w, height: h };
 
-    if (layout === "verde") return renderVerde(props);
-    if (layout === "quote") return renderQuote(props);
-    if (layout === "foto") return renderFoto(props);
-    return renderBranco(props);
+    let response: Response;
+    if (layout === "verde") response = renderVerde(props, size);
+    else if (layout === "quote") response = renderQuote(props, size);
+    else if (layout === "foto") response = renderFoto(props, size);
+    else response = renderBranco(props, size);
+
+    // Cache thumbnails for 1 hour
+    if (w < 1080) {
+      response.headers.set("Cache-Control", "public, max-age=3600, s-maxage=3600");
+    }
+
+    return response;
   } catch (e) {
     console.error("Preview error:", e);
     return new Response(`Error: ${e instanceof Error ? e.message : "Unknown"}`, { status: 500 });
@@ -43,8 +57,13 @@ interface TemplateProps {
   handle: string;
 }
 
+interface Size {
+  width: number;
+  height: number;
+}
+
 // ── Layout 1: Branco ──
-function renderBranco({ title, hook, pilar, cta, pilarColor, handle }: TemplateProps) {
+function renderBranco({ title, hook, pilar, cta, pilarColor, handle }: TemplateProps, size: Size) {
   return new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", background: "#f7faf7", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>
@@ -67,12 +86,12 @@ function renderBranco({ title, hook, pilar, cta, pilarColor, handle }: TemplateP
         <div style={{ position: "absolute", bottom: 140, right: 50, width: 180, height: 180, borderRadius: "50%", background: "rgba(67,160,71,0.04)" }} />
       </div>
     ),
-    { width: 1080, height: 1350 }
+    size
   );
 }
 
 // ── Layout 2: Verde ──
-function renderVerde({ title, hook, pilar, cta, handle }: TemplateProps) {
+function renderVerde({ title, hook, pilar, cta, handle }: TemplateProps, size: Size) {
   return new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", background: "linear-gradient(170deg, #1B5E20 0%, #2E7D32 35%, #388E3C 65%, #2E7D32 100%)", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>
@@ -95,12 +114,12 @@ function renderVerde({ title, hook, pilar, cta, handle }: TemplateProps) {
         <div style={{ position: "absolute", bottom: 130, right: 40, width: 200, height: 200, borderRadius: "50%", background: "rgba(255,255,255,0.03)" }} />
       </div>
     ),
-    { width: 1080, height: 1350 }
+    size
   );
 }
 
 // ── Layout 3: Quote ──
-function renderQuote({ title, hook, handle }: TemplateProps) {
+function renderQuote({ title, hook, handle }: TemplateProps, size: Size) {
   return new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", background: "#0f0f1a", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", padding: 100, color: "#f5f5f5", position: "relative", overflow: "hidden", textAlign: "center" }}>
@@ -115,12 +134,12 @@ function renderQuote({ title, hook, handle }: TemplateProps) {
         <div style={{ position: "absolute", bottom: 60, fontSize: 15, fontWeight: 600, color: "#c9a96e", letterSpacing: 2, display: "flex" }}>{handle}</div>
       </div>
     ),
-    { width: 1080, height: 1080 }
+    size
   );
 }
 
 // ── Layout 4: Foto Premium (overlay verde sobre fundo escuro) ──
-function renderFoto({ title, hook, pilar, cta, handle }: TemplateProps) {
+function renderFoto({ title, hook, pilar, cta, handle }: TemplateProps, size: Size) {
   return new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg, #1a2e1a 0%, #0d1f0d 100%)", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>
@@ -159,6 +178,6 @@ function renderFoto({ title, hook, pilar, cta, handle }: TemplateProps) {
         <div style={{ position: "absolute", bottom: 200, right: -40, width: 200, height: 200, borderRadius: "50%", border: "40px solid rgba(255,255,255,0.03)", display: "flex" }} />
       </div>
     ),
-    { width: 1080, height: 1350 }
+    size
   );
 }

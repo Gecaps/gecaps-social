@@ -6,6 +6,7 @@ import { PILAR_COLORS } from "@/lib/types";
 interface MonthViewProps {
   posts: Post[];
   currentDate: Date;
+  onCreatePost: (date: string) => void;
 }
 
 const DAY_NAMES = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
@@ -17,7 +18,7 @@ const STATUS_DOT: Record<string, string> = {
   published: "bg-status-published",
 };
 
-export function MonthView({ posts, currentDate }: MonthViewProps) {
+export function MonthView({ posts, currentDate, onCreatePost }: MonthViewProps) {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const today = new Date().toISOString().split("T")[0];
