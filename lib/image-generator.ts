@@ -2,6 +2,29 @@ import sharp from "sharp";
 import { readFile } from "fs/promises";
 import { join } from "path";
 
+let _fontBase64Cache: { regular: string; bold: string; extraBold: string } | null = null;
+
+async function loadFontsBase64() {
+  if (_fontBase64Cache) return _fontBase64Cache;
+  const fontsDir = join(process.cwd(), "public", "assets", "fonts");
+  const [regular, bold, extraBold] = await Promise.all([
+    readFile(join(fontsDir, "Inter-Regular.ttf")).then((b) => b.toString("base64")),
+    readFile(join(fontsDir, "Inter-Bold.ttf")).then((b) => b.toString("base64")),
+    readFile(join(fontsDir, "Inter-ExtraBold.ttf")).then((b) => b.toString("base64")),
+  ]);
+  _fontBase64Cache = { regular, bold, extraBold };
+  return _fontBase64Cache;
+}
+
+function fontFaceSvg(fonts: { regular: string; bold: string; extraBold: string }): string {
+  return `
+    <style>
+      @font-face { font-family: 'Inter'; font-weight: 400; src: url('data:font/ttf;base64,${fonts.regular}') format('truetype'); }
+      @font-face { font-family: 'Inter'; font-weight: 700; src: url('data:font/ttf;base64,${fonts.bold}') format('truetype'); }
+      @font-face { font-family: 'Inter'; font-weight: 800; src: url('data:font/ttf;base64,${fonts.extraBold}') format('truetype'); }
+    </style>`;
+}
+
 export interface ProductPostOptions {
   layout: "produto-centro" | "produto-direita" | "produto-esquerda" | "produto-metricas";
   title: string;
@@ -85,7 +108,7 @@ function createSvgText(opts: {
     )
     .join("");
 
-  return `<text x="${x}" y="${y}" font-family="Inter, Helvetica, Arial, sans-serif" font-size="${fontSize}" font-weight="${fontWeight}" fill="${color}" text-anchor="${anchor}">${tspans}</text>`;
+  return `<text x="${x}" y="${y}" font-family="Inter" font-size="${fontSize}" font-weight="${fontWeight}" fill="${color}" text-anchor="${anchor}">${tspans}</text>`;
 }
 
 function escapeXml(str: string): string {
@@ -139,12 +162,7 @@ export async function generateProductPost(
     composites.push({ input: logo, top: 40, left: 64 });
   } catch {}
 
-  // Category badge (top right)
-  const badgeSvg = Buffer.from(`<svg width="160" height="36">
-    <rect width="160" height="36" rx="18" fill="none" stroke="#43A047" stroke-width="2"/>
-    <text x="80" y="24" font-family="Inter, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#43A047" text-anchor="middle" letter-spacing="2">${escapeXml(category.toUpperCase())}</text>
-  </svg>`);
-  composites.push({ input: badgeSvg, top: 40, left: WIDTH - 64 - 160 });
+  // Category badge will be added to SVG overlay
 
   // Product image positioning based on layout
   if (productBuf) {
@@ -251,6 +269,11 @@ export async function generateProductPost(
     }
   }
 
+  // Category badge (top right)
+  const badgeX = WIDTH - 64 - 160;
+  textElements.push(`<rect x="${badgeX}" y="40" width="160" height="36" rx="18" fill="none" stroke="#43A047" stroke-width="2"/>`);
+  textElements.push(createSvgText({ text: category.toUpperCase(), fontSize: 12, fontWeight: 700, color: "#43A047", x: badgeX + 80, y: 64, maxWidth: 140, anchor: "middle" }));
+
   // Footer: handle + info
   textElements.push(createSvgText({ text: handle, fontSize: 16, fontWeight: 700, color: "#43A047", x: 64, y: HEIGHT - 50, maxWidth: 400 }));
   textElements.push(createSvgText({ text: "GECAPS · Cosmeticos & Suplementos", fontSize: 12, fontWeight: 400, color: "#999", x: WIDTH - 64, y: HEIGHT - 50, maxWidth: 400, anchor: "end" }));
@@ -263,9 +286,10 @@ export async function generateProductPost(
     textElements.push(createSvgText({ text: cta.toUpperCase() + " →", fontSize: 12, fontWeight: 700, color: "#fff", x: ctaX + 100, y: ctaY + 28, maxWidth: 180, anchor: "middle" }));
   }
 
-  // Compose all text as SVG overlay
+  // Load fonts and compose all text as SVG overlay
+  const fonts = await loadFontsBase64();
   const svgOverlay = Buffer.from(
-    `<svg width="${WIDTH}" height="${HEIGHT}">${textElements.join("")}</svg>`
+    `<svg width="${WIDTH}" height="${HEIGHT}" xmlns="http://www.w3.org/2000/svg">${fontFaceSvg(fonts)}${textElements.join("")}</svg>`
   );
   composites.push({ input: svgOverlay, top: 0, left: 0 });
 
