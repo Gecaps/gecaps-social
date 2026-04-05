@@ -11,11 +11,17 @@ export default async function PostPage({
 
   const { data: post } = await supabase()
     .from("social_posts")
-    .select("*")
+    .select("*, social_accounts(handle)")
     .eq("id", id)
     .single();
 
   if (!post) notFound();
+
+  // Flatten account handle
+  const postWithHandle = {
+    ...post,
+    account_handle: post.social_accounts?.handle || "@gecapsbrasil",
+  };
 
   const { data: versions } = await supabase()
     .from("social_post_versions")
@@ -23,5 +29,5 @@ export default async function PostPage({
     .eq("post_id", id)
     .order("version", { ascending: false });
 
-  return <PostDetail post={post} versions={versions || []} />;
+  return <PostDetail post={postWithHandle} versions={versions || []} />;
 }

@@ -25,7 +25,7 @@ export function LayoutSelector({ selected, onSelect }: LayoutSelectorProps) {
       {LAYOUTS.map((layout) => {
         const preview = LAYOUT_PREVIEW[layout];
         const isActive = selected === layout;
-        const isDisabled = layout === "foto" || layout === "premium";
+        const isDisabled = layout === "premium";
 
         return (
           <button

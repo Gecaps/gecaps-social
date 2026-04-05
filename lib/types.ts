@@ -24,8 +24,8 @@ export const LAYOUT_DESCRIPTIONS: Record<PostLayout, string> = {
   branco: "Fundo claro, acentos verdes. Clean e profissional.",
   verde: "Gradiente verde escuro. Bold e impactante.",
   quote: "Fundo escuro luxo, moldura dourada. Para frases.",
-  foto: "Imagem de fundo com overlay de texto.",
-  premium: "Foto premium com overlay elegante.",
+  foto: "Foto premium com overlay verde. Conteudo na parte inferior.",
+  premium: "Em breve.",
 };
 
 export interface Post {

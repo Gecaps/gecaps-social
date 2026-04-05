@@ -14,6 +14,7 @@ import {
   ArrowLeft,
   Clock,
   History,
+  Download,
 } from "lucide-react";
 import type { Post, PostVersion, PostLayout } from "@/lib/types";
 import {
@@ -27,7 +28,7 @@ import { LayoutSelector } from "./layout-selector";
 import { GenerateCaptionButton } from "./generate-caption-button";
 
 interface PostDetailProps {
-  post: Post;
+  post: Post & { account_handle?: string };
   versions: PostVersion[];
 }
 
@@ -41,7 +42,18 @@ export function PostDetail({ post, versions }: PostDetailProps) {
   const [captionText, setCaptionText] = useState(post.caption || "");
   const [hashtagsText, setHashtagsText] = useState(post.hashtags || "");
 
-  const previewUrl = `/api/preview?title=${encodeURIComponent(post.title)}&hook=${encodeURIComponent(post.hook || "")}&pilar=${post.pilar}&cta=${encodeURIComponent(post.cta || "")}&layout=${layout}`;
+  const previewUrl = `/api/preview?title=${encodeURIComponent(post.title)}&hook=${encodeURIComponent(post.hook || "")}&pilar=${post.pilar}&cta=${encodeURIComponent(post.cta || "")}&layout=${layout}&handle=${encodeURIComponent(post.account_handle || "@gecapsbrasil")}`;
+
+  async function handleDownload() {
+    const res = await fetch(previewUrl);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `gecaps-post-${post.scheduled_date}-${layout}.png`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   async function handleLayoutChange(newLayout: PostLayout) {
     setLayout(newLayout);
@@ -212,6 +224,14 @@ export function PostDetail({ post, versions }: PostDetailProps) {
                 Revisar novamente
               </Button>
             )}
+            <Button
+              variant="outline"
+              onClick={handleDownload}
+              className="ml-auto"
+            >
+              <Download className="size-4" />
+              Baixar imagem
+            </Button>
           </div>
 
           {/* Version history */}
