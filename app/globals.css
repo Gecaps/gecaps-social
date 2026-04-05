@@ -47,12 +47,10 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* GECAPS custom colors */
-  --color-gecaps-green: var(--gecaps-green);
-  --color-gecaps-green-light: var(--gecaps-green-light);
-  --color-gecaps-green-dark: var(--gecaps-green-dark);
-  --color-gecaps-gold: var(--gecaps-gold);
-  --color-gecaps-gold-dark: var(--gecaps-gold-dark);
+  /* Neon social palette */
+  --color-neon-cyan: var(--neon-cyan);
+  --color-neon-pink: var(--neon-pink);
+  --color-neon-purple: var(--neon-purple);
   --color-status-approved: var(--status-approved);
   --color-status-pending: var(--status-pending);
   --color-status-rejected: var(--status-rejected);
@@ -60,49 +58,47 @@
 }
 
 :root {
-  --background: oklch(0.985 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.55 0.18 145);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.96 0.01 145);
-  --secondary-foreground: oklch(0.25 0.05 145);
-  --muted: oklch(0.96 0 0);
-  --muted-foreground: oklch(0.5 0 0);
-  --accent: oklch(0.96 0.01 145);
-  --accent-foreground: oklch(0.25 0.05 145);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.91 0 0);
-  --input: oklch(0.91 0 0);
-  --ring: oklch(0.55 0.18 145);
-  --chart-1: oklch(0.55 0.18 145);
-  --chart-2: oklch(0.65 0.15 85);
-  --chart-3: oklch(0.6 0.18 260);
-  --chart-4: oklch(0.7 0.12 30);
-  --chart-5: oklch(0.5 0.1 200);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.98 0.005 145);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.55 0.18 145);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.94 0.02 145);
-  --sidebar-accent-foreground: oklch(0.25 0.05 145);
-  --sidebar-border: oklch(0.91 0 0);
-  --sidebar-ring: oklch(0.55 0.18 145);
+  --background: oklch(0.13 0.005 270);
+  --foreground: oklch(0.95 0 0);
+  --card: oklch(0.17 0.005 270);
+  --card-foreground: oklch(0.95 0 0);
+  --popover: oklch(0.17 0.005 270);
+  --popover-foreground: oklch(0.95 0 0);
+  --primary: oklch(0.75 0.18 195);
+  --primary-foreground: oklch(0.13 0.005 270);
+  --secondary: oklch(0.22 0.01 270);
+  --secondary-foreground: oklch(0.9 0 0);
+  --muted: oklch(0.22 0.008 270);
+  --muted-foreground: oklch(0.6 0 0);
+  --accent: oklch(0.22 0.015 330);
+  --accent-foreground: oklch(0.95 0 0);
+  --destructive: oklch(0.65 0.2 25);
+  --border: oklch(0.25 0.01 270);
+  --input: oklch(0.25 0.01 270);
+  --ring: oklch(0.75 0.18 195);
+  --chart-1: oklch(0.75 0.18 195);
+  --chart-2: oklch(0.7 0.2 340);
+  --chart-3: oklch(0.6 0.2 290);
+  --chart-4: oklch(0.7 0.15 85);
+  --chart-5: oklch(0.6 0.15 230);
+  --radius: 0.75rem;
+  --sidebar: oklch(0.11 0.005 270);
+  --sidebar-foreground: oklch(0.9 0 0);
+  --sidebar-primary: oklch(0.75 0.18 195);
+  --sidebar-primary-foreground: oklch(0.13 0.005 270);
+  --sidebar-accent: oklch(0.18 0.01 270);
+  --sidebar-accent-foreground: oklch(0.95 0 0);
+  --sidebar-border: oklch(0.22 0.01 270);
+  --sidebar-ring: oklch(0.75 0.18 195);
 
-  /* GECAPS brand */
-  --gecaps-green: #43A047;
-  --gecaps-green-light: #66BB6A;
-  --gecaps-green-dark: #2E7D32;
-  --gecaps-gold: #FFB300;
-  --gecaps-gold-dark: #FF8F00;
-  --status-approved: #43A047;
+  /* Neon palette */
+  --neon-cyan: #25F4EE;
+  --neon-pink: #FE2C55;
+  --neon-purple: #B829DD;
+  --status-approved: #25F4EE;
   --status-pending: #FFB300;
-  --status-rejected: #E53935;
-  --status-published: #1E88E5;
+  --status-rejected: #FE2C55;
+  --status-published: #B829DD;
 }
 
 @layer base {

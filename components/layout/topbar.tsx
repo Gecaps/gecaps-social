@@ -11,12 +11,15 @@ export function Topbar() {
       <div className="flex items-center gap-3 lg:hidden">
         <MobileNav />
         <Image
-          src="/assets/logo-gecaps.png"
+          src="/assets/logo-gecaps-white.png"
           alt="GECAPS"
-          width={90}
-          height={23}
+          width={80}
+          height={20}
           priority
         />
+        <span className="rounded-md bg-neon-pink/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-neon-pink">
+          Social
+        </span>
       </div>
 
       <div className="hidden lg:block">
@@ -26,10 +29,10 @@ export function Topbar() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-neon-cyan">
           <Bell className="size-4" />
         </Button>
-        <div className="flex size-8 items-center justify-center rounded-full bg-gecaps-green text-xs font-bold text-white lg:hidden">
+        <div className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-neon-cyan to-neon-pink text-xs font-bold text-white lg:hidden">
           A
         </div>
       </div>

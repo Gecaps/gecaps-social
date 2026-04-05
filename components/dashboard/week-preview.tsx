@@ -33,7 +33,7 @@ export function WeekPreview({ posts }: WeekPreviewProps) {
                 <div
                   className={`flex size-10 shrink-0 flex-col items-center justify-center rounded-lg text-xs ${
                     isToday
-                      ? "bg-gecaps-green text-white font-bold"
+                      ? "bg-gradient-to-br from-neon-cyan to-neon-pink text-white font-bold"
                       : "bg-muted text-muted-foreground"
                   }`}
                 >

@@ -51,19 +51,19 @@ export const PILAR_LABELS: Record<PostPilar, string> = {
 };
 
 export const PILAR_COLORS: Record<PostPilar, string> = {
-  educativo: "bg-blue-100 text-blue-700",
-  autoridade: "bg-purple-100 text-purple-700",
-  produto: "bg-gecaps-green/10 text-gecaps-green-dark",
-  conexao: "bg-orange-100 text-orange-700",
-  "social-proof": "bg-amber-100 text-amber-700",
-  objecao: "bg-red-100 text-red-700",
+  educativo: "bg-neon-cyan/10 text-neon-cyan border-neon-cyan/20",
+  autoridade: "bg-neon-purple/10 text-neon-purple border-neon-purple/20",
+  produto: "bg-neon-pink/10 text-neon-pink border-neon-pink/20",
+  conexao: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  "social-proof": "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  objecao: "bg-orange-500/10 text-orange-400 border-orange-500/20",
 };
 
 export const STATUS_COLORS: Record<PostStatus, string> = {
-  pending: "bg-status-pending/15 text-amber-700 border-status-pending/30",
-  approved: "bg-status-approved/15 text-green-700 border-status-approved/30",
-  rejected: "bg-status-rejected/15 text-red-700 border-status-rejected/30",
-  published: "bg-status-published/15 text-blue-700 border-status-published/30",
+  pending: "bg-status-pending/10 text-amber-400 border-status-pending/25",
+  approved: "bg-status-approved/10 text-neon-cyan border-status-approved/25",
+  rejected: "bg-status-rejected/10 text-neon-pink border-status-rejected/25",
+  published: "bg-status-published/10 text-neon-purple border-status-published/25",
 };
 
 export const STATUS_LABELS: Record<PostStatus, string> = {

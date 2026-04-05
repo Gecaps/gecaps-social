@@ -19,36 +19,40 @@ export function StatsCards({
       label: "Aprovados",
       value: approved,
       icon: CheckCircle2,
-      color: "text-status-approved",
-      bg: "bg-status-approved/10",
+      color: "text-neon-cyan",
+      bg: "bg-neon-cyan/10",
+      glow: "shadow-neon-cyan/5",
     },
     {
       label: "Pendentes",
       value: pending,
       icon: Clock,
-      color: "text-status-pending",
-      bg: "bg-status-pending/10",
+      color: "text-amber-400",
+      bg: "bg-amber-400/10",
+      glow: "shadow-amber-400/5",
     },
     {
       label: "Rejeitados",
       value: rejected,
       icon: XCircle,
-      color: "text-status-rejected",
-      bg: "bg-status-rejected/10",
+      color: "text-neon-pink",
+      bg: "bg-neon-pink/10",
+      glow: "shadow-neon-pink/5",
     },
     {
       label: "Publicados",
       value: published,
       icon: Send,
-      color: "text-status-published",
-      bg: "bg-status-published/10",
+      color: "text-neon-purple",
+      bg: "bg-neon-purple/10",
+      glow: "shadow-neon-purple/5",
     },
   ];
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       {cards.map((card) => (
-        <Card key={card.label}>
+        <Card key={card.label} className={`shadow-lg ${card.glow}`}>
           <CardContent className="flex items-center gap-3 p-4">
             <div
               className={`flex size-10 items-center justify-center rounded-lg ${card.bg}`}

@@ -28,15 +28,15 @@ export function Sidebar() {
 
   return (
     <aside className="hidden lg:flex lg:w-60 lg:flex-col lg:border-r lg:border-border bg-sidebar">
-      <div className="flex h-14 items-center gap-2 border-b border-border px-5">
+      <div className="flex h-14 items-center gap-2.5 border-b border-border px-5">
         <Image
-          src="/assets/logo-gecaps.png"
+          src="/assets/logo-gecaps-white.png"
           alt="GECAPS"
-          width={110}
-          height={28}
+          width={100}
+          height={26}
           priority
         />
-        <span className="text-xs font-medium text-muted-foreground">
+        <span className="rounded-md bg-neon-pink/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-neon-pink">
           Social
         </span>
       </div>
@@ -53,8 +53,8 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-sidebar-accent text-sidebar-primary"
-                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                  ? "bg-neon-cyan/10 text-neon-cyan"
+                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
               )}
             >
               <item.icon className="size-4" />
@@ -66,7 +66,7 @@ export function Sidebar() {
 
       <div className="border-t border-border p-4">
         <div className="flex items-center gap-3">
-          <div className="flex size-8 items-center justify-center rounded-full bg-gecaps-green text-xs font-bold text-white">
+          <div className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-neon-cyan to-neon-pink text-xs font-bold text-white">
             A
           </div>
           <div className="flex flex-col">

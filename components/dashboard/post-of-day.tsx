@@ -36,21 +36,22 @@ export function PostOfDay({ post }: PostOfDayProps) {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-5 lg:flex-row">
-          {/* Preview placeholder */}
-          <div className="relative aspect-[4/5] w-full max-w-[270px] shrink-0 overflow-hidden rounded-lg bg-gradient-to-b from-gecaps-green-dark to-gecaps-green">
-            <div className="flex h-full flex-col justify-between p-5">
+          {/* Preview placeholder — dark neon style */}
+          <div className="relative aspect-[4/5] w-full max-w-[270px] shrink-0 overflow-hidden rounded-lg bg-gradient-to-b from-[#0a0a0a] via-[#121218] to-[#0a0a0a] border border-border">
+            <div className="absolute inset-0 bg-gradient-to-br from-neon-cyan/5 via-transparent to-neon-pink/5" />
+            <div className="relative flex h-full flex-col justify-between p-5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold tracking-wider text-white/80">
+                <span className="text-xs font-bold tracking-wider text-white/50">
                   GECAPS
                 </span>
-                <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                <span className="rounded-full bg-neon-pink/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-neon-pink">
                   {PILAR_LABELS[post.pilar]}
                 </span>
               </div>
 
               <div className="space-y-3">
                 {post.hook && (
-                  <p className="text-xs font-medium uppercase tracking-widest text-white/60">
+                  <p className="text-xs font-medium uppercase tracking-widest text-neon-cyan/60">
                     {post.hook.split(" ").slice(0, 4).join(" ")}
                   </p>
                 )}
@@ -60,10 +61,10 @@ export function PostOfDay({ post }: PostOfDayProps) {
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gecaps-gold">
+                <span className="text-xs font-semibold text-neon-cyan">
                   {post.cta}
                 </span>
-                <span className="text-xs font-medium text-white/50">
+                <span className="text-xs font-medium text-white/30">
                   @gecapsbrasil
                 </span>
               </div>
@@ -87,13 +88,13 @@ export function PostOfDay({ post }: PostOfDayProps) {
               <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Legenda
               </p>
-              <p className="whitespace-pre-line text-sm leading-relaxed">
+              <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/80">
                 {post.caption}
               </p>
             </div>
 
             {post.hashtags && (
-              <p className="text-xs text-gecaps-green">
+              <p className="text-xs text-neon-cyan/70">
                 {post.hashtags}
               </p>
             )}
@@ -101,15 +102,15 @@ export function PostOfDay({ post }: PostOfDayProps) {
             <Separator />
 
             <div className="flex flex-wrap items-center gap-2">
-              <Button className="bg-gecaps-green hover:bg-gecaps-green-dark text-white">
+              <Button className="bg-neon-cyan text-black font-semibold hover:bg-neon-cyan/80">
                 <CheckCircle2 className="size-4" />
                 Aprovar
               </Button>
-              <Button variant="outline">
+              <Button variant="outline" className="border-neon-pink/30 text-neon-pink hover:bg-neon-pink/10">
                 <RefreshCw className="size-4" />
                 Refazer
               </Button>
-              <Button variant="ghost" size="sm" className="ml-auto">
+              <Button variant="ghost" size="sm" className="ml-auto text-muted-foreground hover:text-foreground">
                 <ExternalLink className="size-4" />
                 Ver completo
               </Button>
