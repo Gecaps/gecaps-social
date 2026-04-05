@@ -1,12 +1,31 @@
+import { supabase } from "@/lib/supabase";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { PostOfDay } from "@/components/dashboard/post-of-day";
 import { WeekPreview } from "@/components/dashboard/week-preview";
-import { getWeekStats, getTodayPost, getWeekPosts } from "@/lib/mock-data";
 
-export default function DashboardPage() {
-  const stats = getWeekStats();
-  const todayPost = getTodayPost();
-  const weekPosts = getWeekPosts();
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const today = new Date().toISOString().split("T")[0];
+
+  const { data: posts } = await supabase()
+    .from("social_posts")
+    .select("*")
+    .order("scheduled_date", { ascending: true })
+    .order("scheduled_time", { ascending: true });
+
+  const allPosts = posts || [];
+
+  const stats = {
+    approved: allPosts.filter((p) => p.status === "approved").length,
+    pending: allPosts.filter((p) => p.status === "pending").length,
+    rejected: allPosts.filter((p) => p.status === "rejected").length,
+    published: allPosts.filter((p) => p.status === "published").length,
+  };
+
+  const todayPost = allPosts.find(
+    (p) => p.scheduled_date === today && p.status === "pending"
+  );
 
   return (
     <div className="space-y-6 p-4 lg:p-6">
@@ -35,7 +54,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <WeekPreview posts={weekPosts} />
+        <WeekPreview posts={allPosts} />
       </div>
     </div>
   );

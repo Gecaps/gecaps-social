@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -110,10 +111,12 @@ export function PostOfDay({ post }: PostOfDayProps) {
                 <RefreshCw className="size-4" />
                 Refazer
               </Button>
-              <Button variant="ghost" size="sm" className="ml-auto text-muted-foreground hover:text-foreground">
-                <ExternalLink className="size-4" />
-                Ver completo
-              </Button>
+              <Link href={`/post/${post.id}`} className="ml-auto">
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  <ExternalLink className="size-4" />
+                  Ver completo
+                </Button>
+              </Link>
             </div>
 
             <p className="text-xs text-muted-foreground">

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Post } from "@/lib/types";
@@ -26,8 +27,9 @@ export function WeekPreview({ posts }: WeekPreviewProps) {
             const isToday = post.scheduled_date === today;
 
             return (
-              <div
+              <Link
                 key={post.id}
+                href={`/post/${post.id}`}
                 className="flex items-start gap-3 rounded-lg p-2 transition-colors hover:bg-muted/50"
               >
                 <div
@@ -65,7 +67,7 @@ export function WeekPreview({ posts }: WeekPreviewProps) {
                     </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
