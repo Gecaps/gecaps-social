@@ -1,4 +1,15 @@
-export default function CalendarioPage() {
+import { supabase } from "@/lib/supabase";
+import { CalendarView } from "@/components/calendar/calendar-view";
+
+export const dynamic = "force-dynamic";
+
+export default async function CalendarioPage() {
+  const { data: posts } = await supabase()
+    .from("social_posts")
+    .select("*")
+    .order("scheduled_date", { ascending: true })
+    .order("scheduled_time", { ascending: true });
+
   return (
     <div className="space-y-6 p-4 lg:p-6">
       <div>
@@ -7,11 +18,7 @@ export default function CalendarioPage() {
           Visualizacao semanal e mensal dos posts
         </p>
       </div>
-      <div className="flex items-center justify-center rounded-lg border border-dashed border-border p-24">
-        <p className="text-sm text-muted-foreground">
-          Calendario sera implementado na Fase 3
-        </p>
-      </div>
+      <CalendarView posts={posts || []} />
     </div>
   );
 }
