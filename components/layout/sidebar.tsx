@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   Calendar,
   Settings,
-  Sparkles,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -36,17 +35,19 @@ export function Sidebar({ accounts }: SidebarProps) {
     <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 lg:left-0 bg-sidebar py-8 px-6 z-50">
       {/* Logo */}
       <div className="flex items-center gap-3 mb-2">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-primary/60 flex items-center justify-center">
-          <Sparkles className="size-5 text-primary-foreground" />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-xl font-heading font-extrabold text-foreground uppercase tracking-tighter">
-            GECAPS
-          </span>
-          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">
-            Social Manager
-          </span>
-        </div>
+        <img
+          src="/assets/logo-gecaps.png"
+          alt="GECAPS"
+          className="h-8 dark:hidden"
+        />
+        <img
+          src="/assets/logo-gecaps-white.png"
+          alt="GECAPS"
+          className="h-8 hidden dark:block"
+        />
+        <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-md">
+          Social
+        </span>
       </div>
 
       {/* Account switcher */}
