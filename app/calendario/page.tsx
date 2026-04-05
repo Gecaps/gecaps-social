@@ -27,7 +27,7 @@ export default async function CalendarioPage() {
   ]);
 
   return (
-    <div className="space-y-4 p-4 lg:p-6">
+    <div className="space-y-4 p-4 lg:px-8 lg:pt-6 lg:pb-12">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold">Calendario</h1>

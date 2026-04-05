@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
+import { Manrope } from "next/font/google";
 import { supabase } from "@/lib/supabase";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
@@ -8,13 +9,13 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
 });
 
@@ -37,16 +38,16 @@ export default async function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${manrope.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="flex h-full">
+      <body className="h-full">
         <ThemeProvider>
           <TooltipProvider>
             <Sidebar accounts={accounts || []} />
-            <div className="flex flex-1 flex-col overflow-hidden">
+            <div className="flex flex-col min-h-full lg:ml-64">
               <Topbar accounts={accounts || []} />
-              <main className="flex-1 overflow-y-auto pb-20 lg:pb-0">
+              <main className="flex-1 pb-20 lg:pb-0">
                 {children}
               </main>
             </div>

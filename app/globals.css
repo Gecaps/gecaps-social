@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
-  --font-heading: var(--font-sans);
+  --font-heading: "Manrope", "Inter", ui-sans-serif, system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -47,103 +47,92 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* Neon social palette */
-  --color-neon-cyan: var(--neon-cyan);
-  --color-neon-pink: var(--neon-pink);
-  --color-neon-purple: var(--neon-purple);
+  /* Status colors */
   --color-status-approved: var(--status-approved);
   --color-status-pending: var(--status-pending);
   --color-status-rejected: var(--status-rejected);
   --color-status-published: var(--status-published);
 }
 
-/* ── Light mode: rosa/pink social ── */
+/* ── Light mode: Clean SaaS ── */
 :root {
-  --background: oklch(0.98 0.005 340);
-  --foreground: oklch(0.15 0.01 340);
+  --background: oklch(0.97 0.003 250);
+  --foreground: oklch(0.2 0.01 250);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.01 340);
+  --card-foreground: oklch(0.2 0.01 250);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.01 340);
-  --primary: oklch(0.6 0.22 340);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.95 0.015 340);
-  --secondary-foreground: oklch(0.3 0.05 340);
-  --muted: oklch(0.95 0.01 340);
-  --muted-foreground: oklch(0.45 0.02 340);
-  --accent: oklch(0.93 0.025 340);
-  --accent-foreground: oklch(0.3 0.08 340);
+  --popover-foreground: oklch(0.2 0.01 250);
+  --primary: oklch(0.55 0.2 15);
+  --primary-foreground: oklch(0.97 0.01 15);
+  --secondary: oklch(0.94 0.015 15);
+  --secondary-foreground: oklch(0.35 0.05 15);
+  --muted: oklch(0.95 0.005 250);
+  --muted-foreground: oklch(0.5 0.01 250);
+  --accent: oklch(0.94 0.01 250);
+  --accent-foreground: oklch(0.2 0.01 250);
   --destructive: oklch(0.55 0.22 25);
-  --border: oklch(0.91 0.015 340);
-  --input: oklch(0.91 0.015 340);
-  --ring: oklch(0.6 0.22 340);
-  --chart-1: oklch(0.6 0.22 340);
-  --chart-2: oklch(0.7 0.18 195);
-  --chart-3: oklch(0.55 0.2 290);
+  --border: oklch(0.92 0.005 250);
+  --input: oklch(0.92 0.005 250);
+  --ring: oklch(0.55 0.2 15);
+  --chart-1: oklch(0.55 0.2 15);
+  --chart-2: oklch(0.7 0.12 15);
+  --chart-3: oklch(0.6 0.18 260);
   --chart-4: oklch(0.7 0.15 85);
-  --chart-5: oklch(0.6 0.15 230);
+  --chart-5: oklch(0.5 0.1 200);
   --radius: 0.75rem;
-  --sidebar: oklch(0.97 0.01 340);
-  --sidebar-foreground: oklch(0.15 0.01 340);
-  --sidebar-primary: oklch(0.6 0.22 340);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.94 0.02 340);
-  --sidebar-accent-foreground: oklch(0.3 0.08 340);
-  --sidebar-border: oklch(0.91 0.015 340);
-  --sidebar-ring: oklch(0.6 0.22 340);
+  --sidebar: oklch(0.97 0.003 250);
+  --sidebar-foreground: oklch(0.2 0.01 250);
+  --sidebar-primary: oklch(0.55 0.2 15);
+  --sidebar-primary-foreground: oklch(0.97 0.01 15);
+  --sidebar-accent: oklch(0.98 0.005 250);
+  --sidebar-accent-foreground: oklch(0.2 0.01 250);
+  --sidebar-border: oklch(0.92 0.005 250);
+  --sidebar-ring: oklch(0.55 0.2 15);
 
-  /* Light neon palette — vivid but not neon */
-  --neon-cyan: #0891B2;
-  --neon-pink: #E11D63;
-  --neon-purple: #9333EA;
-  --status-approved: #0891B2;
-  --status-pending: #D97706;
-  --status-rejected: #E11D63;
-  --status-published: #9333EA;
+  --status-approved: #22c55e;
+  --status-pending: #f59e0b;
+  --status-rejected: #ef4444;
+  --status-published: #3b82f6;
 }
 
-/* ── Dark mode: neon TikTok ── */
+/* ── Dark mode ── */
 .dark {
-  --background: oklch(0.13 0.005 270);
+  --background: oklch(0.13 0.005 250);
   --foreground: oklch(0.95 0 0);
-  --card: oklch(0.17 0.005 270);
+  --card: oklch(0.17 0.005 250);
   --card-foreground: oklch(0.95 0 0);
-  --popover: oklch(0.17 0.005 270);
+  --popover: oklch(0.17 0.005 250);
   --popover-foreground: oklch(0.95 0 0);
-  --primary: oklch(0.75 0.18 195);
-  --primary-foreground: oklch(0.13 0.005 270);
-  --secondary: oklch(0.22 0.01 270);
+  --primary: oklch(0.65 0.2 15);
+  --primary-foreground: oklch(0.13 0.005 250);
+  --secondary: oklch(0.22 0.01 250);
   --secondary-foreground: oklch(0.9 0 0);
-  --muted: oklch(0.22 0.008 270);
+  --muted: oklch(0.22 0.008 250);
   --muted-foreground: oklch(0.6 0 0);
-  --accent: oklch(0.22 0.015 330);
+  --accent: oklch(0.22 0.015 250);
   --accent-foreground: oklch(0.95 0 0);
   --destructive: oklch(0.65 0.2 25);
-  --border: oklch(0.25 0.01 270);
-  --input: oklch(0.25 0.01 270);
-  --ring: oklch(0.75 0.18 195);
-  --chart-1: oklch(0.75 0.18 195);
-  --chart-2: oklch(0.7 0.2 340);
+  --border: oklch(0.25 0.01 250);
+  --input: oklch(0.25 0.01 250);
+  --ring: oklch(0.65 0.2 15);
+  --chart-1: oklch(0.65 0.2 15);
+  --chart-2: oklch(0.7 0.12 15);
   --chart-3: oklch(0.6 0.2 290);
   --chart-4: oklch(0.7 0.15 85);
   --chart-5: oklch(0.6 0.15 230);
-  --sidebar: oklch(0.11 0.005 270);
+  --sidebar: oklch(0.11 0.005 250);
   --sidebar-foreground: oklch(0.9 0 0);
-  --sidebar-primary: oklch(0.75 0.18 195);
-  --sidebar-primary-foreground: oklch(0.13 0.005 270);
-  --sidebar-accent: oklch(0.18 0.01 270);
+  --sidebar-primary: oklch(0.65 0.2 15);
+  --sidebar-primary-foreground: oklch(0.13 0.005 250);
+  --sidebar-accent: oklch(0.18 0.01 250);
   --sidebar-accent-foreground: oklch(0.95 0 0);
-  --sidebar-border: oklch(0.22 0.01 270);
-  --sidebar-ring: oklch(0.75 0.18 195);
+  --sidebar-border: oklch(0.22 0.01 250);
+  --sidebar-ring: oklch(0.65 0.2 15);
 
-  /* Dark neon palette — full neon */
-  --neon-cyan: #25F4EE;
-  --neon-pink: #FE2C55;
-  --neon-purple: #B829DD;
-  --status-approved: #25F4EE;
-  --status-pending: #FFB300;
-  --status-rejected: #FE2C55;
-  --status-published: #B829DD;
+  --status-approved: #34d399;
+  --status-pending: #fbbf24;
+  --status-rejected: #f87171;
+  --status-published: #60a5fa;
 }
 
 @layer base {
@@ -155,5 +144,8 @@
   }
   html {
     @apply font-sans;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading);
   }
 }

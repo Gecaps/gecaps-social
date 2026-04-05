@@ -1,20 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Calendar,
   Settings,
-  Plus,
+  Sparkles,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { AccountSwitcher } from "./account-switcher";
-import { CreatePostModal } from "@/components/post/create-post-modal";
-import { useState } from "react";
 import type { Account } from "@/lib/types";
 
 interface NavItem {
@@ -35,86 +31,65 @@ interface SidebarProps {
 
 export function Sidebar({ accounts }: SidebarProps) {
   const pathname = usePathname();
-  const [showCreate, setShowCreate] = useState(false);
 
   return (
-    <>
-      <aside className="hidden lg:flex lg:w-60 lg:flex-col lg:border-r lg:border-border bg-sidebar">
-        <div className="flex h-14 items-center gap-2.5 border-b border-border px-5">
-          <Image
-            src="/assets/logo-gecaps.png"
-            alt="GECAPS"
-            width={100}
-            height={26}
-            priority
-            className="dark:hidden"
-          />
-          <Image
-            src="/assets/logo-gecaps-white.png"
-            alt="GECAPS"
-            width={100}
-            height={26}
-            priority
-            className="hidden dark:block"
-          />
-          <span className="rounded-md bg-neon-pink/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-neon-pink">
-            Social
+    <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 lg:left-0 bg-sidebar py-8 px-6 z-50">
+      {/* Logo */}
+      <div className="flex items-center gap-3 mb-2">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-primary/60 flex items-center justify-center">
+          <Sparkles className="size-5 text-primary-foreground" />
+        </div>
+        <div className="flex flex-col">
+          <span className="text-xl font-heading font-extrabold text-foreground uppercase tracking-tighter">
+            GECAPS
+          </span>
+          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">
+            Social Manager
           </span>
         </div>
+      </div>
 
-        <div className="pt-3">
-          <AccountSwitcher accounts={accounts} currentId={null} />
-        </div>
+      {/* Account switcher */}
+      <div className="mt-4 mb-2">
+        <AccountSwitcher accounts={accounts} currentId={null} />
+      </div>
 
-        <nav className="flex flex-1 flex-col gap-1 p-3">
-          {NAV_ITEMS.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/" && pathname.startsWith(item.href));
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                  isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                )}
-              >
-                <item.icon className="size-4" />
-                {item.label}
-              </Link>
-            );
-          })}
+      {/* Navigation */}
+      <nav className="flex flex-col gap-y-1 mt-4">
+        {NAV_ITEMS.map((item) => {
+          const isActive =
+            pathname === item.href ||
+            (item.href !== "/" && pathname.startsWith(item.href));
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center gap-3 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-200",
+                isActive
+                  ? "text-primary font-bold bg-card shadow-sm"
+                  : "text-muted-foreground hover:text-primary"
+              )}
+            >
+              <item.icon className="size-[18px]" />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
 
-          <Button
-            onClick={() => setShowCreate(true)}
-            className="mt-3 w-full bg-gradient-to-r from-neon-cyan to-neon-pink text-white font-semibold hover:opacity-90"
-          >
-            <Plus className="size-4" />
-            Novo post
-          </Button>
-        </nav>
-
-        <div className="border-t border-border p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-neon-cyan to-neon-pink text-xs font-bold text-white">
-              A
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">Aline</span>
-              <span className="text-xs text-muted-foreground">Social Media</span>
-            </div>
+      {/* User profile at bottom */}
+      <div className="mt-auto bg-muted/50 p-4 rounded-xl">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-primary/60 flex items-center justify-center text-xs font-bold text-primary-foreground">
+            A
+          </div>
+          <div className="flex flex-col">
+            <span className="text-xs font-bold">Aline</span>
+            <span className="text-[10px] text-muted-foreground">Social Media</span>
           </div>
         </div>
-      </aside>
-
-      <CreatePostModal
-        open={showCreate}
-        onClose={() => setShowCreate(false)}
-        accounts={accounts}
-      />
-    </>
+      </div>
+    </aside>
   );
 }
