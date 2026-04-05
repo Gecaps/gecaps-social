@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/render": ["./templates/**/*"],
   },
-  serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core"],
+  serverExternalPackages: ["@sparticuz/chromium", "@sparticuz/chromium-min", "puppeteer-core"],
 };
 
 export default nextConfig;
