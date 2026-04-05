@@ -15,7 +15,7 @@ import {
   Clock,
   History,
 } from "lucide-react";
-import type { Post, PostVersion } from "@/lib/types";
+import type { Post, PostVersion, PostLayout } from "@/lib/types";
 import {
   PILAR_LABELS,
   PILAR_COLORS,
@@ -23,6 +23,7 @@ import {
   STATUS_COLORS,
 } from "@/lib/types";
 import { FeedbackDialog } from "./feedback-dialog";
+import { LayoutSelector } from "./layout-selector";
 
 interface PostDetailProps {
   post: Post;
@@ -35,8 +36,18 @@ export function PostDetail({ post, versions }: PostDetailProps) {
   const [loading, setLoading] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [layout, setLayout] = useState<PostLayout>((post.layout as PostLayout) || "branco");
 
-  const previewUrl = `/api/preview?title=${encodeURIComponent(post.title)}&hook=${encodeURIComponent(post.hook || "")}&pilar=${post.pilar}&cta=${encodeURIComponent(post.cta || "")}`;
+  const previewUrl = `/api/preview?title=${encodeURIComponent(post.title)}&hook=${encodeURIComponent(post.hook || "")}&pilar=${post.pilar}&cta=${encodeURIComponent(post.cta || "")}&layout=${layout}`;
+
+  async function handleLayoutChange(newLayout: PostLayout) {
+    setLayout(newLayout);
+    await fetch(`/api/posts/${post.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ layout: newLayout }),
+    });
+  }
 
   async function handleApprove() {
     setLoading(true);
@@ -97,19 +108,23 @@ export function PostDetail({ post, versions }: PostDetailProps) {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[auto_1fr]">
-        {/* Preview image — Satori generated */}
-        <Card className="overflow-hidden lg:w-[400px]">
-          <CardContent className="p-0">
-            <Image
-              src={previewUrl}
-              alt={post.title}
-              width={1080}
-              height={1350}
-              className="w-full"
-              unoptimized
-            />
-          </CardContent>
-        </Card>
+        {/* Preview + layout selector */}
+        <div className="space-y-3 lg:w-[400px]">
+          <LayoutSelector selected={layout} onSelect={handleLayoutChange} />
+          <Card className="overflow-hidden">
+            <CardContent className="p-0">
+              <Image
+                key={layout}
+                src={previewUrl}
+                alt={post.title}
+                width={1080}
+                height={layout === "quote" ? 1080 : 1350}
+                className="w-full"
+                unoptimized
+              />
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Details panel */}
         <div className="space-y-4">

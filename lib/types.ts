@@ -10,6 +10,24 @@ export type PostStatus = "pending" | "approved" | "rejected" | "published";
 
 export type PostFormat = "estatico" | "carrossel" | "story" | "reels";
 
+export type PostLayout = "branco" | "verde" | "quote" | "foto" | "premium";
+
+export const LAYOUT_LABELS: Record<PostLayout, string> = {
+  branco: "Branco",
+  verde: "Verde",
+  quote: "Quote",
+  foto: "Foto",
+  premium: "Premium",
+};
+
+export const LAYOUT_DESCRIPTIONS: Record<PostLayout, string> = {
+  branco: "Fundo claro, acentos verdes. Clean e profissional.",
+  verde: "Gradiente verde escuro. Bold e impactante.",
+  quote: "Fundo escuro luxo, moldura dourada. Para frases.",
+  foto: "Imagem de fundo com overlay de texto.",
+  premium: "Foto premium com overlay elegante.",
+};
+
 export interface Post {
   id: string;
   title: string;
@@ -24,6 +42,7 @@ export interface Post {
   cta: string | null;
   image_url: string | null;
   current_version: number;
+  layout: PostLayout;
   trello_card_id: string | null;
   trello_list_name: string | null;
   created_at: string;
