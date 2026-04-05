@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  .container {
+    width: 1080px;
+    height: 1080px;
+    background: #0f0f1a;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 100px;
+    font-family: 'Inter', sans-serif;
+    color: #f5f5f5;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  /* Moldura sutil dourada */
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    right: 40px;
+    bottom: 40px;
+    border: 1px solid rgba(201,169,110,0.15);
+  }
+
+  /* Detalhe corner */
+  .corner-tl, .corner-br {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+  }
+
+  .corner-tl {
+    top: 35px;
+    left: 35px;
+    border-top: 2px solid #c9a96e;
+    border-left: 2px solid #c9a96e;
+  }
+
+  .corner-br {
+    bottom: 35px;
+    right: 35px;
+    border-bottom: 2px solid #c9a96e;
+    border-right: 2px solid #c9a96e;
+  }
+
+  /* Marca no topo */
+  .brand {
+    position: absolute;
+    top: 60px;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: #c9a96e;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    z-index: 1;
+  }
+
+  /* Aspas decorativas */
+  .quote-mark {
+    font-family: 'Playfair Display', serif;
+    font-size: 180px;
+    font-weight: 900;
+    color: rgba(201,169,110,0.1);
+    line-height: 1;
+    position: absolute;
+    top: 120px;
+    left: 80px;
+  }
+
+  /* Conteúdo */
+  .content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .content .quote-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 46px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #f5f5f5;
+    margin-bottom: 40px;
+    font-style: italic;
+    max-width: 800px;
+  }
+
+  /* Divisor */
+  .divider {
+    width: 50px;
+    height: 2px;
+    background: #c9a96e;
+    margin: 0 auto 24px;
+  }
+
+  /* Autor */
+  .author {
+    font-size: 16px;
+    font-weight: 500;
+    color: #c9a96e;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+  }
+
+  .author-title {
+    font-size: 14px;
+    color: #8a8a9a;
+    margin-top: 8px;
+    letter-spacing: 1px;
+  }
+
+  /* Handle no rodapé */
+  .handle {
+    position: absolute;
+    bottom: 60px;
+    font-size: 16px;
+    color: #8a8a9a;
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <span class="brand">GECAPS</span>
+
+  <!-- Aspas decorativas -->
+  <span class="quote-mark">"</span>
+
+  <div class="content">
+    <!-- Trocar: frase/citação -->
+    <p class="quote-text">"{{FRASE}}"</p>
+
+    <div class="divider"></div>
+
+    <!-- Trocar: autor da frase -->
+    <p class="author">{{AUTOR}}</p>
+    <!-- Trocar: cargo/título do autor -->
+    <p class="author-title">{{AUTOR_TITULO}}</p>
+  </div>
+
+  <span class="handle">@gecaps</span>
+
+</div>
+</body>
+</html>
