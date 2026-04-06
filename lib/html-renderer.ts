@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises";
 import { join } from "path";
 import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium-min";
+import chromium from "@sparticuz/chromium";
 
 export interface RenderOptions {
   template: "branco" | "verde" | "quote";
@@ -21,9 +21,7 @@ const TEMPLATE_FILES: Record<string, string> = {
   quote: "post-quote.html",
 };
 
-// Chromium CDN URL for serverless
-const CHROMIUM_URL =
-  "https://github.com/nichochar/chromium-for-lambda/releases/download/v143.0.4/chromium-v143.0.4-pack.tar";
+// Chromium is bundled with @sparticuz/chromium
 
 async function loadTemplate(name: string): Promise<string> {
   // Try multiple paths (local dev vs Vercel)
@@ -117,8 +115,8 @@ export async function renderTemplate(opts: RenderOptions): Promise<Buffer> {
     // Local: use system Chrome
     executablePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
   } else {
-    // Vercel: download chromium from CDN
-    executablePath = await chromium.executablePath(CHROMIUM_URL);
+    // Vercel: use bundled chromium
+    executablePath = await chromium.executablePath();
   }
 
   const browser = await puppeteer.launch({
