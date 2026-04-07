@@ -7,14 +7,12 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import {
-  CheckCircle2,
-  RefreshCw,
   ArrowLeft,
-  Clock,
-  History,
   Download,
+  Sparkles,
+  Loader2,
+  Save,
 } from "lucide-react";
 import type { Post, PostVersion, PostLayout } from "@/lib/types";
 import {
@@ -23,9 +21,7 @@ import {
   STATUS_LABELS,
   STATUS_COLORS,
 } from "@/lib/types";
-import { FeedbackDialog } from "./feedback-dialog";
 import { LayoutSelector } from "./layout-selector";
-import { GenerateCaptionButton } from "./generate-caption-button";
 
 interface PostDetailProps {
   post: Post & { account_handle?: string };
@@ -34,293 +30,346 @@ interface PostDetailProps {
 
 export function PostDetail({ post, versions }: PostDetailProps) {
   const router = useRouter();
-  const [status, setStatus] = useState(post.status);
-  const [loading, setLoading] = useState(false);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
-  const [layout, setLayout] = useState<PostLayout>((post.layout as PostLayout) || "branco");
-  const [captionText, setCaptionText] = useState(post.caption || "");
-  const [hashtagsText, setHashtagsText] = useState(post.hashtags || "");
-
   const handle = post.account_handle || "@gecapsbrasil";
-  const pilarLabels: Record<string, string> = {
-    educativo: "Educativo", autoridade: "Autoridade", produto: "Produto",
-    conexao: "Conexao", "social-proof": "Social Proof", objecao: "Objecao",
-  };
-  const badge = pilarLabels[post.pilar] || post.pilar;
 
-  // Satori preview (fast, for inline preview)
-  const previewUrl = `/api/preview?title=${encodeURIComponent(post.title)}&hook=${encodeURIComponent(post.hook || "")}&pilar=${post.pilar}&cta=${encodeURIComponent(post.cta || "")}&layout=${layout}&handle=${encodeURIComponent(handle)}&w=540`;
+  // Editable fields for the creative
+  const [titulo, setTitulo] = useState(cleanMarkdown(post.title));
+  const [subtitulo, setSubtitulo] = useState("");
+  const [tags, setTags] = useState(
+    post.pilar ? PILAR_LABELS[post.pilar]?.toUpperCase() || "" : ""
+  );
+  const [cta, setCta] = useState(cleanMarkdown(post.cta || ""));
+  const [highlight, setHighlight] = useState("");
+  const [bigNum, setBigNum] = useState("");
+  const [layout, setLayout] = useState<PostLayout>(
+    (post.layout as PostLayout) || "branco"
+  );
+  const badge = PILAR_LABELS[post.pilar] || post.pilar;
 
-  // Cloudflare render (high quality, for download)
+  // Caption
+  const [caption, setCaption] = useState(post.caption || "");
+  const [hashtags, setHashtags] = useState(post.hashtags || "");
+
+  // States
+  const [downloading, setDownloading] = useState(false);
+  const [generatingAI, setGeneratingAI] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  // Build Satori preview URL (fast, low-res)
+  const template = layout === "quote" ? "quote" : layout === "verde" ? "verde" : "branco";
+  const previewParams = new URLSearchParams({
+    title: titulo,
+    pilar: post.pilar,
+    layout: template,
+    handle,
+    w: "540",
+  });
+  if (subtitulo) previewParams.set("subtitle", subtitulo);
+  if (tags) previewParams.set("tags", tags);
+  if (cta) previewParams.set("cta", cta);
+  if (highlight) previewParams.set("highlight", highlight);
+  if (bigNum) previewParams.set("bigNum", bigNum);
+  const previewUrl = `/api/preview?${previewParams.toString()}`;
+
+  // Build Cloudflare render URL (HD)
   function getRenderUrl() {
     const params = new URLSearchParams({
-      template: layout === "foto" ? "branco" : (layout === "quote" ? "quote" : layout as string),
-      title: post.title,
+      template,
+      title: titulo,
       badge,
       handle,
     });
-    if (post.hook) params.set("tags", post.hook.split(" ").slice(0, 4).join(" ").toUpperCase());
-    if (post.cta) params.set("cta", post.cta);
+    if (subtitulo) params.set("subtitle", subtitulo);
+    if (tags) params.set("tags", tags);
+    if (cta) params.set("cta", cta);
+    if (highlight) params.set("highlight", highlight);
+    if (bigNum) params.set("bigNum", bigNum);
     return `/api/render?${params.toString()}`;
   }
 
-  const [downloading, setDownloading] = useState(false);
-
   async function handleDownload() {
     setDownloading(true);
+    showToast("Gerando imagem HD...");
     try {
       const res = await fetch(getRenderUrl());
-      if (!res.ok) throw new Error("Falha ao gerar imagem");
+      if (!res.ok) throw new Error("Falha");
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `gecaps-post-${post.scheduled_date}-${layout}.png`;
+      a.download = `gecaps-${post.scheduled_date}-${template}.png`;
       a.click();
       URL.revokeObjectURL(url);
-      setToast("Imagem baixada!");
-      setTimeout(() => setToast(null), 3000);
+      showToast("Imagem HD baixada!");
     } catch {
-      setToast("Erro ao gerar imagem. Tente novamente.");
-      setTimeout(() => setToast(null), 3000);
+      showToast("Erro ao gerar. Tente novamente.");
     }
     setDownloading(false);
   }
 
-  async function handleLayoutChange(newLayout: PostLayout) {
-    setLayout(newLayout);
+  async function handleGenerateAI() {
+    setGeneratingAI(true);
+    try {
+      const res = await fetch("/api/posts/generate-caption", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: titulo,
+          hook: subtitulo || tags,
+          pilar: post.pilar,
+          cta,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setCaption(data.caption);
+        setHashtags(data.hashtags);
+        showToast("Legenda gerada!");
+      }
+    } catch {
+      showToast("Erro ao gerar legenda.");
+    }
+    setGeneratingAI(false);
+  }
+
+  async function handleSave() {
+    setSaving(true);
     await fetch(`/api/posts/${post.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ layout: newLayout }),
+      body: JSON.stringify({
+        title: titulo,
+        cta,
+        caption: caption || null,
+        hashtags: hashtags || null,
+        layout: template,
+      }),
     });
+    showToast("Salvo!");
+    setSaving(false);
+    router.refresh();
   }
 
-  async function handleApprove() {
-    setLoading(true);
-    const res = await fetch(`/api/posts/${post.id}/approve`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "approve" }),
-    });
-    if (res.ok) {
-      setStatus("approved");
-      setToast("Post aprovado!");
-      setTimeout(() => setToast(null), 3000);
-      router.refresh();
-    }
-    setLoading(false);
-  }
-
-  async function handleReject(feedback: string) {
-    setLoading(true);
-    const res = await fetch(`/api/posts/${post.id}/approve`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "reject", feedback }),
-    });
-    if (res.ok) {
-      setStatus("rejected");
-      setShowFeedback(false);
-      setToast("Post rejeitado. Nova versao sera gerada.");
-      setTimeout(() => setToast(null), 3000);
-      router.refresh();
-    }
-    setLoading(false);
+  function showToast(msg: string) {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
   }
 
   return (
     <div className="space-y-6 p-4 lg:p-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <Link href="/">
+        <Link href="/calendario">
           <Button variant="ghost" size="icon">
             <ArrowLeft className="size-4" />
           </Button>
         </Link>
         <div className="flex-1">
-          <h1 className="text-xl font-bold">Detalhe do post</h1>
-          <p className="text-sm text-muted-foreground">
-            {post.scheduled_date} as {post.scheduled_time}
+          <h1 className="text-lg font-heading font-bold">Editor de Criativo</h1>
+          <p className="text-xs text-muted-foreground">
+            {post.scheduled_date} · {post.scheduled_time} · {post.format}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className={PILAR_COLORS[post.pilar]}>
-            {PILAR_LABELS[post.pilar]}
-          </Badge>
-          <Badge variant="outline" className={STATUS_COLORS[status]}>
-            {STATUS_LABELS[status]}
-          </Badge>
-        </div>
+        <Badge variant="outline" className={PILAR_COLORS[post.pilar]}>
+          {PILAR_LABELS[post.pilar]}
+        </Badge>
+        <Badge variant="outline" className={STATUS_COLORS[post.status]}>
+          {STATUS_LABELS[post.status]}
+        </Badge>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[auto_1fr]">
-        {/* Preview + layout selector */}
-        <div className="space-y-3 lg:w-[400px]">
-          <LayoutSelector selected={layout} onSelect={handleLayoutChange} />
-          <Card className="overflow-hidden">
+      <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
+        {/* Left: Editor */}
+        <div className="space-y-4">
+          {/* Rascunho do Trello */}
+          <Card className="border-primary/20 bg-primary/5">
+            <CardContent className="p-4">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-1">Rascunho do Trello</p>
+              <p className="text-xs text-muted-foreground whitespace-pre-line">
+                {post.hook || post.title}
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Titulo */}
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Titulo do Post *
+            </label>
+            <textarea
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)}
+              className="w-full rounded-xl border border-input bg-card px-4 py-3 text-lg font-bold leading-tight placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+              rows={2}
+              placeholder="Ex: O superativo que a ciencia comprova"
+            />
+          </div>
+
+          {/* Subtitulo */}
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Subtitulo
+            </label>
+            <input
+              value={subtitulo}
+              onChange={(e) => setSubtitulo(e.target.value)}
+              className="w-full rounded-xl border border-input bg-card px-4 py-2.5 text-sm placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Ex: Anti-inflamatorio. Antioxidante."
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            {/* Tags */}
+            <div>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Tags (separar com ·)
+              </label>
+              <input
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                className="w-full rounded-xl border border-input bg-card px-4 py-2.5 text-sm placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="CURCUMA · SUPLEMENTO"
+              />
+            </div>
+
+            {/* CTA */}
+            <div>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                CTA
+              </label>
+              <input
+                value={cta}
+                onChange={(e) => setCta(e.target.value)}
+                className="w-full rounded-xl border border-input bg-card px-4 py-2.5 text-sm placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Saiba mais"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            {/* Highlight */}
+            <div>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Destaque (palavras com fundo verde)
+              </label>
+              <input
+                value={highlight}
+                onChange={(e) => setHighlight(e.target.value)}
+                className="w-full rounded-xl border border-input bg-card px-4 py-2.5 text-sm placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="comprova, adora"
+              />
+            </div>
+
+            {/* Big Number */}
+            <div>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Numero decorativo
+              </label>
+              <input
+                value={bigNum}
+                onChange={(e) => setBigNum(e.target.value)}
+                className="w-full rounded-xl border border-input bg-card px-4 py-2.5 text-sm placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="5"
+                maxLength={2}
+              />
+            </div>
+          </div>
+
+          {/* Legenda */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Legenda Instagram
+              </label>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleGenerateAI}
+                disabled={generatingAI}
+                className="text-primary hover:text-primary/80 text-xs h-7"
+              >
+                {generatingAI ? <Loader2 className="size-3 animate-spin mr-1" /> : <Sparkles className="size-3 mr-1" />}
+                {generatingAI ? "Gerando..." : "Gerar com IA"}
+              </Button>
+            </div>
+            <textarea
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              className="w-full rounded-xl border border-input bg-card px-4 py-3 text-sm placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+              rows={4}
+              placeholder="Escreva a legenda ou clique em 'Gerar com IA'..."
+            />
+            <input
+              value={hashtags}
+              onChange={(e) => setHashtags(e.target.value)}
+              className="mt-2 w-full rounded-xl border border-input bg-card px-4 py-2 text-xs placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="#gecaps #cosmeticos #marcapropria"
+            />
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex items-center gap-3 pt-2">
+            <Button
+              onClick={handleSave}
+              disabled={saving}
+              variant="outline"
+              className="flex-1"
+            >
+              <Save className="size-4" />
+              {saving ? "Salvando..." : "Salvar"}
+            </Button>
+            <Button
+              onClick={handleDownload}
+              disabled={downloading}
+              className="flex-1 bg-primary text-primary-foreground font-semibold hover:bg-primary/90"
+            >
+              <Download className={`size-4 ${downloading ? "animate-pulse" : ""}`} />
+              {downloading ? "Gerando HD..." : "Baixar Imagem HD"}
+            </Button>
+          </div>
+        </div>
+
+        {/* Right: Preview */}
+        <div className="space-y-3">
+          <LayoutSelector selected={layout} onSelect={(l) => setLayout(l)} />
+          <Card className="overflow-hidden sticky top-20">
             <CardContent className="p-0">
               <Image
-                key={layout}
+                key={`${layout}-${titulo}-${tags}-${cta}-${highlight}-${bigNum}-${subtitulo}`}
                 src={previewUrl}
-                alt={post.title}
-                width={1080}
-                height={layout === "quote" ? 1080 : 1350}
+                alt="Preview"
+                width={540}
+                height={layout === "quote" ? 540 : 675}
                 className="w-full"
                 unoptimized
               />
             </CardContent>
           </Card>
-        </div>
-
-        {/* Details panel */}
-        <div className="space-y-4">
-          {/* Title & hook */}
-          <Card>
-            <CardContent className="space-y-3 p-5">
-              <h2 className="text-lg font-bold">{post.title}</h2>
-              {post.hook && (
-                <p className="text-sm italic text-muted-foreground">
-                  &ldquo;{post.hook}&rdquo;
-                </p>
-              )}
-              <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Clock className="size-3" />
-                  {post.scheduled_time}
-                </span>
-                <span>Versao {post.current_version}</span>
-                <span className="capitalize">{post.format}</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Caption */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm">Legenda</CardTitle>
-              <GenerateCaptionButton
-                postId={post.id}
-                onGenerated={(c, h) => {
-                  setCaptionText(c);
-                  setHashtagsText(h);
-                }}
-              />
-            </CardHeader>
-            <CardContent>
-              <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/80">
-                {captionText || post.caption || "Nenhuma legenda gerada ainda. Clique em 'Gerar com IA'."}
-              </p>
-              {(hashtagsText || post.hashtags) && (
-                <p className="mt-3 text-xs text-neon-pink dark:text-neon-cyan/70">
-                  {hashtagsText || post.hashtags}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Actions */}
-          <div className="flex flex-wrap items-center gap-2">
-            {status === "pending" && (
-              <>
-                <Button
-                  onClick={handleApprove}
-                  disabled={loading}
-                  className="bg-primary text-primary-foreground font-semibold hover:bg-primary/80"
-                >
-                  <CheckCircle2 className="size-4" />
-                  Aprovar
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowFeedback(true)}
-                  disabled={loading}
-                  className="border-neon-pink/30 text-neon-pink hover:bg-neon-pink/10"
-                >
-                  <RefreshCw className="size-4" />
-                  Refazer
-                </Button>
-              </>
-            )}
-            {status === "approved" && (
-              <div className="flex items-center gap-2 rounded-lg bg-status-approved/10 px-4 py-2 text-sm font-medium text-neon-cyan dark:text-neon-cyan">
-                <CheckCircle2 className="size-4" />
-                Post aprovado
-              </div>
-            )}
-            {status === "rejected" && (
-              <Button
-                onClick={() => setStatus("pending")}
-                className="bg-primary text-primary-foreground font-semibold hover:bg-primary/80"
-              >
-                Revisar novamente
-              </Button>
-            )}
-            <Button
-              variant="outline"
-              onClick={handleDownload}
-              disabled={downloading}
-              className="ml-auto"
-            >
-              <Download className={`size-4 ${downloading ? "animate-pulse" : ""}`} />
-              {downloading ? "Gerando..." : "Baixar imagem HD"}
-            </Button>
-          </div>
-
-          {/* Version history */}
-          {versions.length > 0 && (
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-sm">
-                  <History className="size-4" />
-                  Historico de versoes
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {versions.map((v) => (
-                  <div
-                    key={v.id}
-                    className="rounded-lg border border-border p-3"
-                  >
-                    <div className="mb-1 flex items-center justify-between">
-                      <span className="text-xs font-semibold">
-                        Versao {v.version}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {new Date(v.created_at).toLocaleDateString("pt-BR")}
-                      </span>
-                    </div>
-                    {v.feedback && (
-                      <p className="text-xs text-neon-pink">
-                        Feedback: {v.feedback}
-                      </p>
-                    )}
-                    <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-                      {v.caption}
-                    </p>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          )}
+          <p className="text-[10px] text-center text-muted-foreground">
+            Preview rapido (Satori). Clique "Baixar Imagem HD" pra versao final.
+          </p>
         </div>
       </div>
 
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-20 left-1/2 z-50 -translate-x-1/2 rounded-lg bg-card px-4 py-2 text-sm font-medium shadow-lg border border-border lg:bottom-6">
+        <div className="fixed bottom-20 left-1/2 z-50 -translate-x-1/2 rounded-xl bg-card px-5 py-2.5 text-sm font-semibold shadow-lg border border-border lg:bottom-6">
           {toast}
         </div>
       )}
-
-      {/* Feedback dialog */}
-      <FeedbackDialog
-        open={showFeedback}
-        onClose={() => setShowFeedback(false)}
-        onSubmit={handleReject}
-        loading={loading}
-      />
     </div>
   );
+}
+
+// Remove markdown formatting from Trello text
+function cleanMarkdown(text: string): string {
+  return text
+    .replace(/\*\*/g, "")
+    .replace(/_/g, "")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/^#+\s*/gm, "")
+    .replace(/·/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
