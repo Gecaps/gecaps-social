@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { notifyPostApproved } from "@/lib/telegram";
 
 export async function POST(
   request: Request,
@@ -30,6 +31,8 @@ export async function POST(
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    await notifyPostApproved(data.title || "Post");
 
     return NextResponse.json(data);
   }

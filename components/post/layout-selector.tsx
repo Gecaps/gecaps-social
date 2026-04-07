@@ -9,7 +9,7 @@ interface LayoutSelectorProps {
   onSelect: (layout: PostLayout) => void;
 }
 
-const LAYOUTS: PostLayout[] = ["branco", "verde", "quote"];
+const LAYOUTS: PostLayout[] = ["branco", "verde", "quote", "foto"];
 
 const LAYOUT_PREVIEW: Record<PostLayout, { bg: string; text: string; accent: string }> = {
   branco: { bg: "bg-[#f7faf7]", text: "text-[#1B2A1B]", accent: "bg-[#43A047]" },
@@ -25,7 +25,7 @@ export function LayoutSelector({ selected, onSelect }: LayoutSelectorProps) {
       {LAYOUTS.map((layout) => {
         const preview = LAYOUT_PREVIEW[layout];
         const isActive = selected === layout;
-        const isDisabled = layout === "premium";
+        const isDisabled = layout === "premium" as PostLayout;
 
         return (
           <button

@@ -16,6 +16,7 @@ export async function GET(request: Request) {
     const handle = url.searchParams.get("handle") || "@gecapsbrasil";
     const bigNum = url.searchParams.get("bigNum") || "";
     const highlight = url.searchParams.get("highlight") || "";
+    const imageUrl = url.searchParams.get("image") || "";
 
     const buffer = await renderWithCloudflare({
       template,
@@ -27,6 +28,7 @@ export async function GET(request: Request) {
       handle,
       bigNum: bigNum || undefined,
       highlight: highlight || undefined,
+      imageUrl: imageUrl || undefined,
     });
 
     return new Response(new Uint8Array(buffer), {

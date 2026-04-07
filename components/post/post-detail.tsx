@@ -56,8 +56,12 @@ export function PostDetail({ post, versions }: PostDetailProps) {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
+  // Editable image URL for foto-premium
+  const [imageUrl, setImageUrl] = useState("");
+
   // Build Satori preview URL (fast, low-res)
-  const template = layout === "quote" ? "quote" : layout === "verde" ? "verde" : "branco";
+  const templateMap: Record<string, string> = { branco: "branco", verde: "verde", quote: "quote", foto: "foto" };
+  const template = templateMap[layout] || "branco";
   const previewParams = new URLSearchParams({
     title: titulo,
     pilar: post.pilar,
@@ -74,8 +78,9 @@ export function PostDetail({ post, versions }: PostDetailProps) {
 
   // Build Cloudflare render URL (HD)
   function getRenderUrl() {
+    const renderTemplate = layout === "foto" ? "foto-premium" : template;
     const params = new URLSearchParams({
-      template,
+      template: renderTemplate,
       title: titulo,
       badge,
       handle,
@@ -85,6 +90,7 @@ export function PostDetail({ post, versions }: PostDetailProps) {
     if (cta) params.set("cta", cta);
     if (highlight) params.set("highlight", highlight);
     if (bigNum) params.set("bigNum", bigNum);
+    if (imageUrl) params.set("image", imageUrl);
     return `/api/render?${params.toString()}`;
   }
 
@@ -275,6 +281,24 @@ export function PostDetail({ post, versions }: PostDetailProps) {
               />
             </div>
           </div>
+
+          {/* Image URL for foto-premium */}
+          {layout === "foto" && (
+            <div>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                URL da imagem de fundo
+              </label>
+              <input
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                className="w-full rounded-xl border border-input bg-card px-4 py-2.5 text-sm placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Cole a URL da imagem (Pexels, Unsplash, etc)"
+              />
+              <p className="mt-1 text-[10px] text-muted-foreground">
+                Dica: busque no <a href="https://www.pexels.com/pt-br/procurar/cosmeticos/" target="_blank" rel="noopener" className="text-primary underline">Pexels</a> e cole o link da imagem
+              </p>
+            </div>
+          )}
 
           {/* Legenda */}
           <div>

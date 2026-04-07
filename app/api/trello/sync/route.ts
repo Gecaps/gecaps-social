@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { getTrelloLists, parseListDate, parseListTopic, labelToPilar } from "@/lib/trello";
+import { getTrelloLists, parseListDate, parseListTopic, labelToPilar, cleanTrelloText } from "@/lib/trello";
 import type { TrelloList } from "@/lib/trello";
+import { sendTelegramMessage } from "@/lib/telegram";
 
 async function syncTrello() {
   const boardId = process.env.TRELLO_BOARD_ID;
@@ -43,13 +44,18 @@ async function syncTrello() {
       const pilar = labelToPilar(card.labels || []);
       const cardName = card.name; // "Feed", "Stories", etc
       const lines = card.desc?.split("\n").filter(Boolean) || [];
-      const hook = lines[0] || "";
-      const cta = lines[lines.length - 1] || "";
+      const hook = cleanTrelloText(lines[0] || "");
+      const cta = cleanTrelloText(lines[lines.length - 1] || "");
 
       // Build title from topic + card type
       // "Suplemento/ Curcuma" + "Feed" → "Curcuma" (use topic as title)
       const title = topic || cardName;
-      const format = cardName.toLowerCase().includes("stories") ? "story" : "estatico";
+      const cardNameLower = cardName.toLowerCase();
+      const format = cardNameLower.includes("stories") || cardNameLower.includes("story")
+        ? "story"
+        : cardNameLower.includes("carrossel") || cardNameLower.includes("carousel")
+        ? "carrossel"
+        : "estatico";
       const time = format === "story" ? "19:00" : "10:00";
 
       await supabase().from("social_posts").insert({
@@ -68,6 +74,14 @@ async function syncTrello() {
 
       created++;
     }
+  }
+
+  if (created > 0) {
+    const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://social.gecaps.com.br";
+    await sendTelegramMessage(
+      `📱 <b>${created} novo(s) post(s) sincronizado(s) do Trello!</b>\n\n` +
+      `👉 <a href="${baseUrl}/calendario">Ver no calendario</a>`
+    );
   }
 
   return { created, skipped };

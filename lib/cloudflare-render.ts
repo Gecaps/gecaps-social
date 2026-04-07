@@ -2,7 +2,7 @@ import { readFile } from "fs/promises";
 import { join } from "path";
 
 export interface RenderOptions {
-  template: "branco" | "verde" | "quote";
+  template: "branco" | "verde" | "quote" | "foto-premium";
   title: string;
   subtitle?: string;
   tags?: string;
@@ -11,12 +11,14 @@ export interface RenderOptions {
   handle?: string;
   bigNum?: string;
   highlight?: string;
+  imageUrl?: string;
 }
 
 const TEMPLATE_FILES: Record<string, string> = {
   branco: "post-final-branco.html",
   verde: "post-final-verde.html",
   quote: "post-quote.html",
+  "foto-premium": "post-foto-premium.html",
 };
 
 async function loadTemplate(name: string): Promise<string> {
@@ -94,6 +96,11 @@ function injectVariables(html: string, opts: RenderOptions): string {
       /<span class="handle">[^<]*<\/span>/,
       `<span class="handle">${opts.handle}</span>`
     );
+  }
+
+  // Image URL for foto-premium template
+  if (opts.imageUrl) {
+    result = result.replace(/\{\{IMAGE_URL\}\}/g, opts.imageUrl);
   }
 
   return result;

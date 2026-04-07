@@ -48,6 +48,21 @@ export function parseListTopic(listName: string): string {
   return listName.replace(/^.*?\d{2}\/\d{2}\/\d{4}\s*/, "").trim() || "";
 }
 
+// Clean raw markdown and format indicators from Trello text
+export function cleanTrelloText(text: string): string {
+  return text
+    .replace(/\*\*/g, "")
+    .replace(/_/g, "")
+    .replace(/^#+\s*/gm, "")
+    .replace(/Feed\s*·?\s*(Post estático|Carrossel|Reels)?\s*/gi, "")
+    .replace(/Stories?\s*·?\s*/gi, "")
+    .replace(/^\d+\s*CTA:\s*/i, "")
+    .replace(/CTA:\s*/gi, "")
+    .replace(/[""\u201C\u201D]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 // Map Trello label to pilar
 export function labelToPilar(
   labels: { name: string; color: string }[]
