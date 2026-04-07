@@ -9,7 +9,7 @@ interface LayoutSelectorProps {
   onSelect: (layout: PostLayout) => void;
 }
 
-const LAYOUTS: PostLayout[] = ["branco", "verde", "quote", "foto", "premium"];
+const LAYOUTS: PostLayout[] = ["branco", "verde", "quote"];
 
 const LAYOUT_PREVIEW: Record<PostLayout, { bg: string; text: string; accent: string }> = {
   branco: { bg: "bg-[#f7faf7]", text: "text-[#1B2A1B]", accent: "bg-[#43A047]" },

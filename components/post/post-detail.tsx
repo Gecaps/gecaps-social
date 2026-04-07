@@ -42,17 +42,50 @@ export function PostDetail({ post, versions }: PostDetailProps) {
   const [captionText, setCaptionText] = useState(post.caption || "");
   const [hashtagsText, setHashtagsText] = useState(post.hashtags || "");
 
-  const previewUrl = `/api/preview?title=${encodeURIComponent(post.title)}&hook=${encodeURIComponent(post.hook || "")}&pilar=${post.pilar}&cta=${encodeURIComponent(post.cta || "")}&layout=${layout}&handle=${encodeURIComponent(post.account_handle || "@gecapsbrasil")}`;
+  const handle = post.account_handle || "@gecapsbrasil";
+  const pilarLabels: Record<string, string> = {
+    educativo: "Educativo", autoridade: "Autoridade", produto: "Produto",
+    conexao: "Conexao", "social-proof": "Social Proof", objecao: "Objecao",
+  };
+  const badge = pilarLabels[post.pilar] || post.pilar;
+
+  // Satori preview (fast, for inline preview)
+  const previewUrl = `/api/preview?title=${encodeURIComponent(post.title)}&hook=${encodeURIComponent(post.hook || "")}&pilar=${post.pilar}&cta=${encodeURIComponent(post.cta || "")}&layout=${layout}&handle=${encodeURIComponent(handle)}&w=540`;
+
+  // Cloudflare render (high quality, for download)
+  function getRenderUrl() {
+    const params = new URLSearchParams({
+      template: layout === "foto" ? "branco" : (layout === "quote" ? "quote" : layout as string),
+      title: post.title,
+      badge,
+      handle,
+    });
+    if (post.hook) params.set("tags", post.hook.split(" ").slice(0, 4).join(" ").toUpperCase());
+    if (post.cta) params.set("cta", post.cta);
+    return `/api/render?${params.toString()}`;
+  }
+
+  const [downloading, setDownloading] = useState(false);
 
   async function handleDownload() {
-    const res = await fetch(previewUrl);
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `gecaps-post-${post.scheduled_date}-${layout}.png`;
-    a.click();
-    URL.revokeObjectURL(url);
+    setDownloading(true);
+    try {
+      const res = await fetch(getRenderUrl());
+      if (!res.ok) throw new Error("Falha ao gerar imagem");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `gecaps-post-${post.scheduled_date}-${layout}.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setToast("Imagem baixada!");
+      setTimeout(() => setToast(null), 3000);
+    } catch {
+      setToast("Erro ao gerar imagem. Tente novamente.");
+      setTimeout(() => setToast(null), 3000);
+    }
+    setDownloading(false);
   }
 
   async function handleLayoutChange(newLayout: PostLayout) {
@@ -227,10 +260,11 @@ export function PostDetail({ post, versions }: PostDetailProps) {
             <Button
               variant="outline"
               onClick={handleDownload}
+              disabled={downloading}
               className="ml-auto"
             >
-              <Download className="size-4" />
-              Baixar imagem
+              <Download className={`size-4 ${downloading ? "animate-pulse" : ""}`} />
+              {downloading ? "Gerando..." : "Baixar imagem HD"}
             </Button>
           </div>
 
