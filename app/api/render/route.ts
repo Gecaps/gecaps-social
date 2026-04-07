@@ -1,5 +1,5 @@
-import { renderTemplate } from "@/lib/html-renderer";
-import type { RenderOptions } from "@/lib/html-renderer";
+import { renderWithCloudflare } from "@/lib/cloudflare-render";
+import type { RenderOptions } from "@/lib/cloudflare-render";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     const bigNum = url.searchParams.get("bigNum") || "";
     const highlight = url.searchParams.get("highlight") || "";
 
-    const buffer = await renderTemplate({
+    const buffer = await renderWithCloudflare({
       template,
       title,
       subtitle: subtitle || undefined,
