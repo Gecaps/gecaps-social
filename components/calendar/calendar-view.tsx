@@ -1,24 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
-import type { Post, Account } from "@/lib/types";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import type { Account } from "@/modules/accounts/types";
+import type { Piece } from "@/modules/pieces/types";
 import { MonthView } from "./month-view";
 import { WeekView } from "./week-view";
-import { CreatePostModal } from "@/components/post/create-post-modal";
 
 interface CalendarViewProps {
-  posts: Post[];
+  posts: Piece[];
   accounts: Account[];
 }
 
-export function CalendarView({ posts, accounts }: CalendarViewProps) {
-  const router = useRouter();
+export function CalendarView({ posts }: CalendarViewProps) {
   const [view, setView] = useState<"week" | "month">("week");
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [syncing, setSyncing] = useState(false);
   const [createDate, setCreateDate] = useState<string | null>(null);
 
   function navigateWeek(dir: number) {
@@ -52,13 +49,6 @@ export function CalendarView({ posts, accounts }: CalendarViewProps) {
     return `${s} - ${e}`;
   }
 
-  async function handleSync() {
-    setSyncing(true);
-    await fetch("/api/trello/sync", { method: "POST" });
-    router.refresh();
-    setSyncing(false);
-  }
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -83,17 +73,6 @@ export function CalendarView({ posts, accounts }: CalendarViewProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSync}
-            disabled={syncing}
-            className="text-xs"
-          >
-            <RefreshCw className={`size-3 ${syncing ? "animate-spin" : ""}`} />
-            {syncing ? "Sincronizando..." : "Sync Trello"}
-          </Button>
-
           <div className="flex rounded-lg border border-border">
             <button
               className={`px-3 py-1.5 text-xs font-medium transition-colors ${
@@ -133,12 +112,7 @@ export function CalendarView({ posts, accounts }: CalendarViewProps) {
         />
       )}
 
-      <CreatePostModal
-        open={createDate !== null}
-        onClose={() => setCreateDate(null)}
-        accounts={accounts}
-        defaultDate={createDate || undefined}
-      />
+      {/* TODO: CreatePieceModal will replace this */}
     </div>
   );
 }

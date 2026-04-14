@@ -2,11 +2,11 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";
-import type { Post } from "@/lib/types";
-import { PILAR_LABELS, PILAR_COLORS } from "@/lib/types";
+import type { Piece } from "@/modules/pieces/types";
+import { PILAR_LABELS, PILAR_COLORS } from "@/modules/accounts/types";
 
 interface WeekViewProps {
-  posts: Post[];
+  posts: Piece[];
   currentDate: Date;
   onCreatePost: (date: string) => void;
 }
@@ -14,10 +14,16 @@ interface WeekViewProps {
 const DAY_NAMES = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
 
 const STATUS_BORDER: Record<string, string> = {
-  pending: "border-l-status-pending",
-  approved: "border-l-status-approved",
-  rejected: "border-l-status-rejected",
-  published: "border-l-status-published",
+  reference: "border-l-gray-400",
+  idea: "border-l-purple-400",
+  idea_approved: "border-l-violet-400",
+  in_production: "border-l-amber-400",
+  final_approved: "border-l-emerald-400",
+  scheduled: "border-l-blue-400",
+  published: "border-l-indigo-400",
+  rejected: "border-l-red-400",
+  in_adjustment: "border-l-orange-400",
+  paused: "border-l-gray-400",
 };
 
 export function WeekView({ posts, currentDate, onCreatePost }: WeekViewProps) {

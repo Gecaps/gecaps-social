@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import type { Post } from "@/lib/types";
-import { PILAR_COLORS } from "@/lib/types";
+import type { Piece } from "@/modules/pieces/types";
+import { PILAR_COLORS } from "@/modules/accounts/types";
 
 interface MonthViewProps {
-  posts: Post[];
+  posts: Piece[];
   currentDate: Date;
   onCreatePost: (date: string) => void;
 }
@@ -12,10 +12,16 @@ interface MonthViewProps {
 const DAY_NAMES = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
 
 const STATUS_DOT: Record<string, string> = {
-  pending: "bg-status-pending",
-  approved: "bg-status-approved",
-  rejected: "bg-status-rejected",
-  published: "bg-status-published",
+  reference: "bg-gray-400",
+  idea: "bg-purple-400",
+  idea_approved: "bg-violet-400",
+  in_production: "bg-amber-400",
+  final_approved: "bg-emerald-400",
+  scheduled: "bg-blue-400",
+  published: "bg-indigo-400",
+  rejected: "bg-red-400",
+  in_adjustment: "bg-orange-400",
+  paused: "bg-gray-400",
 };
 
 export function MonthView({ posts, currentDate, onCreatePost }: MonthViewProps) {
