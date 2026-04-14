@@ -3,32 +3,45 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
+  BarChart3,
   Calendar,
+  Kanban,
+  Bookmark,
+  Lightbulb,
+  CheckCircle,
+  BookOpen,
   Settings,
+  ArrowLeft,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AccountSwitcher } from "./account-switcher";
-import type { Account } from "@/lib/types";
+import type { Account } from "@/modules/accounts/types";
 
 interface NavItem {
   label: string;
-  href: string;
+  segment: string;
   icon: LucideIcon;
+  separator?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Calendario", href: "/calendario", icon: Calendar },
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Configuracoes", href: "/configuracoes", icon: Settings },
+  { label: "Metricas", segment: "metricas", icon: BarChart3 },
+  { label: "Calendario", segment: "calendario", icon: Calendar },
+  { label: "Pipeline", segment: "pipeline", icon: Kanban },
+  { label: "Referencias", segment: "referencias", icon: Bookmark, separator: true },
+  { label: "Ideias", segment: "ideias", icon: Lightbulb },
+  { label: "Publicados", segment: "publicados", icon: CheckCircle, separator: true },
+  { label: "Playbook", segment: "playbook", icon: BookOpen, separator: true },
+  { label: "Configuracoes", segment: "configuracoes", icon: Settings },
 ];
 
 interface SidebarProps {
   accounts: Account[];
+  currentAccountId: string;
 }
 
-export function Sidebar({ accounts }: SidebarProps) {
+export function Sidebar({ accounts, currentAccountId }: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -52,44 +65,47 @@ export function Sidebar({ accounts }: SidebarProps) {
 
       {/* Account switcher */}
       <div className="mt-4 mb-2">
-        <AccountSwitcher accounts={accounts} currentId={null} />
+        <AccountSwitcher accounts={accounts} currentId={currentAccountId} />
       </div>
 
       {/* Navigation */}
       <nav className="flex flex-col gap-y-1 mt-4">
         {NAV_ITEMS.map((item) => {
+          const href = `/${currentAccountId}/${item.segment}`;
           const isActive =
-            pathname === item.href ||
-            (item.href !== "/" && pathname.startsWith(item.href));
+            pathname === href || pathname.startsWith(href + "/");
+
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-200",
-                isActive
-                  ? "text-primary font-bold bg-card shadow-sm"
-                  : "text-muted-foreground hover:text-primary"
+            <div key={item.segment}>
+              {item.separator && (
+                <div className="my-2 h-px bg-border/50" />
               )}
-            >
-              <item.icon className="size-[18px]" />
-              <span>{item.label}</span>
-            </Link>
+              <Link
+                href={href}
+                className={cn(
+                  "flex items-center gap-3 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-200",
+                  isActive
+                    ? "text-primary font-bold bg-card shadow-sm"
+                    : "text-muted-foreground hover:text-primary"
+                )}
+              >
+                <item.icon className="size-[18px]" />
+                <span>{item.label}</span>
+              </Link>
+            </div>
           );
         })}
       </nav>
 
-      {/* User profile at bottom */}
-      <div className="mt-auto bg-muted/50 p-4 rounded-xl">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-primary/60 flex items-center justify-center text-xs font-bold text-primary-foreground">
-            A
-          </div>
-          <div className="flex flex-col">
-            <span className="text-xs font-bold">Aline</span>
-            <span className="text-[10px] text-muted-foreground">Social Media</span>
-          </div>
-        </div>
+      {/* Back to all accounts */}
+      <div className="mt-auto">
+        <Link
+          href="/contas"
+          className="flex items-center gap-2 px-4 py-3 text-xs text-muted-foreground hover:text-primary transition-colors"
+        >
+          <ArrowLeft className="size-3.5" />
+          Todas as contas
+        </Link>
       </div>
     </aside>
   );

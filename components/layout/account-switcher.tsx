@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import type { Account } from "@/lib/types";
+import { useRouter, usePathname } from "next/navigation";
+import type { Account } from "@/modules/accounts/types";
 
 interface AccountSwitcherProps {
   accounts: Account[];
@@ -10,6 +10,7 @@ interface AccountSwitcherProps {
 
 export function AccountSwitcher({ accounts, currentId }: AccountSwitcherProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const current = accounts.find(a => a.id === currentId) || accounts[0];
 
   return (
@@ -17,9 +18,19 @@ export function AccountSwitcher({ accounts, currentId }: AccountSwitcherProps) {
       <select
         value={current?.id || ""}
         onChange={(e) => {
-          const params = new URLSearchParams(window.location.search);
-          params.set("account", e.target.value);
-          router.push(`/?${params.toString()}`);
+          const newId = e.target.value;
+          if (!newId) {
+            router.push("/contas");
+            return;
+          }
+          // Replace current accountId segment in pathname
+          const segments = pathname.split("/");
+          if (segments.length >= 2) {
+            segments[1] = newId;
+            router.push(segments.join("/"));
+          } else {
+            router.push(`/${newId}/metricas`);
+          }
         }}
         className="w-full rounded-lg border border-border bg-sidebar px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring"
       >
