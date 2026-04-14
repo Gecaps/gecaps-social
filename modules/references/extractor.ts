@@ -47,9 +47,9 @@ async function extractFromLink(url: string): Promise<string> {
 }
 
 async function extractFromPdf(source: string): Promise<string> {
-  const pdfParse = (await import("pdf-parse")).default;
+  const { PDFParse } = await import("pdf-parse");
 
-  let buffer: Buffer;
+  let data: Uint8Array;
 
   if (source.startsWith("http://") || source.startsWith("https://")) {
     const response = await fetch(source);
@@ -57,12 +57,13 @@ async function extractFromPdf(source: string): Promise<string> {
       throw new Error(`Failed to fetch PDF: ${response.status}`);
     }
     const arrayBuffer = await response.arrayBuffer();
-    buffer = Buffer.from(arrayBuffer);
+    data = new Uint8Array(arrayBuffer);
   } else {
     // Assume base64 input
-    buffer = Buffer.from(source, "base64");
+    data = new Uint8Array(Buffer.from(source, "base64"));
   }
 
-  const result = await pdfParse(buffer);
+  const parser = new PDFParse({ data });
+  const result = await parser.getText();
   return result.text.slice(0, MAX_CONTENT_LENGTH);
 }

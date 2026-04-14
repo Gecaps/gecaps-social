@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { generatePieceFromIdea } from "@/modules/ai/pipeline";
 import { getIdeaById } from "@/modules/ideas/queries";
 import { listPieces } from "@/modules/pieces/queries";
+import type { Piece } from "@/modules/pieces/types";
 
 export const maxDuration = 60;
 
@@ -17,7 +18,7 @@ export async function POST(req: Request) {
 
     // Fetch top 5 published pieces for style reference
     const idea = await getIdeaById(idea_id);
-    let topPosts = [];
+    let topPosts: Piece[] = [];
     if (idea) {
       topPosts = await listPieces(idea.account_id, {
         status: "published",
