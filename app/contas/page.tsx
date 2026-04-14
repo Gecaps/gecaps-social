@@ -1,0 +1,81 @@
+import Link from "next/link";
+import { listAccounts } from "@/modules/accounts/queries";
+
+export default async function ContasPage() {
+  const accounts = await listAccounts();
+
+  return (
+    <div className="min-h-full bg-background">
+      <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-heading font-extrabold tracking-tight">
+              Contas
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Selecione uma conta para gerenciar seu conteudo
+            </p>
+          </div>
+          <Link
+            href="/contas/nova"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
+          >
+            + Nova conta
+          </Link>
+        </div>
+
+        {/* Grid */}
+        {accounts.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-muted-foreground text-sm">
+              Nenhuma conta cadastrada ainda.
+            </p>
+            <Link
+              href="/contas/nova"
+              className="mt-4 inline-block text-sm font-medium text-primary hover:underline"
+            >
+              Criar primeira conta
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {accounts.map((account) => (
+              <Link
+                key={account.id}
+                href={`/${account.id}/metricas`}
+                className="group flex items-center gap-4 rounded-xl border border-border bg-card p-5 shadow-sm transition-all hover:shadow-md hover:border-primary/30"
+              >
+                {/* Avatar */}
+                {account.avatar_url ? (
+                  <img
+                    src={account.avatar_url}
+                    alt={account.name}
+                    className="h-12 w-12 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-primary to-primary/60 text-lg font-bold text-primary-foreground">
+                    {account.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+
+                {/* Info */}
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm font-bold truncate group-hover:text-primary transition-colors">
+                    {account.name}
+                  </span>
+                  <span className="text-xs text-muted-foreground truncate">
+                    @{account.handle}
+                  </span>
+                  <span className="mt-1 text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+                    {account.platform}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
