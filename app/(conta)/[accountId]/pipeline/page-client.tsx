@@ -38,13 +38,13 @@ export function PipelinePageClient({
   ];
 
   return (
-    <div className="px-4 py-8 sm:px-6 lg:px-8">
+    <div className="px-4 py-8 sm:px-6 lg:px-8 animate-fade-in">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-heading font-extrabold tracking-tight">
+      <div className="mb-8">
+        <h1 className="text-3xl font-heading font-extrabold tracking-tight">
           Pipeline
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-sm text-muted-foreground mt-1.5">
           Kanban de produção de conteúdo
         </p>
       </div>
@@ -56,7 +56,7 @@ export function PipelinePageClient({
             {stats.map((stat) => (
               <div
                 key={stat.label}
-                className="rounded-xl border border-border bg-card p-3 text-center"
+                className="rounded-xl border border-border bg-card p-3 text-center transition-all duration-200 hover:border-primary/20 dark:bg-card/80"
               >
                 <div className="flex items-center justify-center gap-1.5 mb-1">
                   <stat.icon className="size-3.5 text-muted-foreground" />

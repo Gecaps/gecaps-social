@@ -41,14 +41,14 @@ export function ReferencesPageClient({
   ).length;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-heading font-extrabold tracking-tight">
+          <h1 className="text-3xl font-heading font-extrabold tracking-tight">
             Referências
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1.5">
             Links, textos e PDFs para a IA processar
           </p>
         </div>
@@ -61,15 +61,15 @@ export function ReferencesPageClient({
       {/* Stats */}
       {totalCount > 0 && (
         <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="rounded-xl border border-border bg-card p-3 text-center">
+          <div className="rounded-xl border border-border bg-card p-3 text-center transition-all duration-200 hover:border-primary/20">
             <p className="text-lg font-heading font-bold">{totalCount}</p>
             <p className="text-xs text-muted-foreground">Total</p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-3 text-center">
+          <div className="rounded-xl border border-border bg-card p-3 text-center transition-all duration-200 hover:border-primary/20">
             <p className="text-lg font-heading font-bold">{processedCount}</p>
             <p className="text-xs text-muted-foreground">Processadas</p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-3 text-center">
+          <div className="rounded-xl border border-border bg-card p-3 text-center transition-all duration-200 hover:border-primary/20">
             <p className="text-lg font-heading font-bold">{withIdeasCount}</p>
             <p className="text-xs text-muted-foreground">Com ideias</p>
           </div>

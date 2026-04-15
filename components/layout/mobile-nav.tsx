@@ -34,7 +34,10 @@ export function BottomNav({ accountId }: BottomNavProps) {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 flex h-16 items-center justify-around border-t border-border bg-card/95 backdrop-blur-sm lg:hidden">
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 flex h-16 items-center justify-around bg-background/70 backdrop-blur-2xl lg:hidden"
+      style={{ borderImage: "linear-gradient(to right, transparent, var(--border), transparent) 1", borderTopWidth: "1px", borderTopStyle: "solid" }}
+    >
       {NAV_ITEMS.map((item) => {
         const href = `/${accountId}/${item.segment}`;
         const isActive =
@@ -44,13 +47,16 @@ export function BottomNav({ accountId }: BottomNavProps) {
             key={item.segment}
             href={href}
             className={cn(
-              "flex flex-col items-center gap-1 px-3 py-2 text-xs transition-colors",
+              "flex flex-col items-center gap-1 px-3 py-2 text-xs transition-colors relative",
               isActive
                 ? "text-primary"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
-            <item.icon className="size-5" />
+            {isActive && (
+              <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full bg-primary" />
+            )}
+            <item.icon className="size-5.5" />
             {item.label}
           </Link>
         );

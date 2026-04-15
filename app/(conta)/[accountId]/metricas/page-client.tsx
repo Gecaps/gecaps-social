@@ -55,13 +55,13 @@ export function MetricasPageClient({
   const hasData = metrics.length > 0;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 animate-fade-in">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-heading font-extrabold tracking-tight">
+      <div className="mb-8">
+        <h1 className="text-3xl font-heading font-extrabold tracking-tight">
           Métricas
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-sm text-muted-foreground mt-1.5">
           Dashboard de performance
         </p>
       </div>
