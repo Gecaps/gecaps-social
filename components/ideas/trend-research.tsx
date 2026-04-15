@@ -134,7 +134,7 @@ export function TrendResearch({
           <Button
             onClick={handleSearch}
             disabled={searching || !query.trim()}
-            className="shrink-0 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white"
+            className="shrink-0 text-white shadow-md hover:shadow-lg transition-all bg-gradient-to-r from-[oklch(0.75_0.15_85)] to-[oklch(0.65_0.25_310)] hover:opacity-90"
           >
             {searching ? (
               <>
@@ -165,7 +165,7 @@ export function TrendResearch({
       {results && !searching && (
         <div className="space-y-6">
           {/* Generate Ideas CTA */}
-          <div className="rounded-xl border border-violet-500/20 bg-violet-500/5 p-4 flex items-center justify-between">
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 flex items-center justify-between">
             <div>
               <p className="text-sm font-bold">Pesquisa concluida</p>
               <p className="text-xs text-muted-foreground">
@@ -175,7 +175,8 @@ export function TrendResearch({
             <Button
               onClick={handleGenerateIdeas}
               disabled={generatingIdeas}
-              className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white"
+              className="text-primary-foreground shadow-md hover:shadow-lg transition-all"
+              style={{ background: "var(--gradient-primary)" }}
             >
               {generatingIdeas ? (
                 <>
@@ -229,18 +230,20 @@ export function TrendResearch({
           {results.competitor_angles.length > 0 && (
             <section>
               <SectionHeader icon={Users} title="Angulos de Concorrentes" />
-              <div className="rounded-xl border border-border bg-card p-4">
-                <ul className="space-y-2">
-                  {results.competitor_angles.map((angle, i) => (
-                    <li
-                      key={i}
-                      className="text-sm text-muted-foreground flex gap-2"
-                    >
-                      <span className="shrink-0 text-violet-400">&#8226;</span>
-                      {angle}
-                    </li>
-                  ))}
-                </ul>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {results.competitor_angles.map((angle, i) => (
+                  <div
+                    key={i}
+                    className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 hover:shadow-[0_0_8px_var(--glow-primary)] transition-all duration-200"
+                  >
+                    <div className="flex gap-2">
+                      <Users className="size-4 shrink-0 mt-0.5" style={{ color: "var(--accent-violet)" }} />
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {angle}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
           )}
@@ -253,10 +256,10 @@ export function TrendResearch({
                 {results.expert_opinions.map((opinion, i) => (
                   <div
                     key={i}
-                    className="rounded-xl border border-border bg-card p-4"
+                    className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 hover:shadow-[0_0_8px_var(--glow-primary)] transition-all duration-200"
                   >
                     <div className="flex gap-2">
-                      <Quote className="size-4 shrink-0 text-violet-400 mt-0.5" />
+                      <Quote className="size-4 shrink-0 mt-0.5" style={{ color: "var(--accent-violet)" }} />
                       <p className="text-sm text-muted-foreground italic leading-relaxed">
                         {opinion}
                       </p>
@@ -371,7 +374,7 @@ function SectionHeader({
 }) {
   return (
     <h3 className="flex items-center gap-2 text-sm font-bold mb-3">
-      <Icon className="size-4 text-violet-400" />
+      <Icon className="size-4 text-primary" />
       {title}
     </h3>
   );
@@ -440,7 +443,7 @@ function ArticleCard({ article }: { article: ArticleItem }) {
                 key={i}
                 className="text-xs text-muted-foreground flex gap-1.5"
               >
-                <span className="shrink-0 text-violet-400">&#8226;</span>
+                <span className="shrink-0 text-primary">&#8226;</span>
                 {point}
               </li>
             ))}

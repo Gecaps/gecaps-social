@@ -78,15 +78,15 @@ export function ReferencesPageClient({
 
       {/* Filters */}
       {totalCount > 0 && (
-        <div className="flex gap-1 mb-6 overflow-x-auto">
+        <div className="flex gap-2 mb-6 overflow-x-auto">
           {filterTabs.map((tab) => (
             <button
               key={tab.value}
               onClick={() => setActiveFilter(tab.value)}
-              className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+              className={`shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                 activeFilter === tab.value
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  ? "bg-primary/10 border border-primary/30 text-primary"
+                  : "bg-card border border-border hover:border-primary/50"
               }`}
             >
               {tab.label}

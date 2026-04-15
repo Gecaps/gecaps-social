@@ -66,13 +66,13 @@ export function IdeasPageClient({
       </div>
 
       {/* Page Tabs */}
-      <div className="flex gap-1 mb-6 border-b border-border pb-0">
+      <div className="flex gap-2 mb-6">
         <button
           onClick={() => setActiveTab("ideias")}
-          className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
             activeTab === "ideias"
-              ? "border-primary text-foreground"
-              : "border-transparent text-muted-foreground hover:text-foreground"
+              ? "bg-primary/10 border border-primary/30 text-primary"
+              : "bg-card border border-border hover:border-primary/50 text-muted-foreground"
           }`}
         >
           <Lightbulb className="size-4" />
@@ -80,10 +80,10 @@ export function IdeasPageClient({
         </button>
         <button
           onClick={() => setActiveTab("pesquisa")}
-          className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
             activeTab === "pesquisa"
-              ? "border-primary text-foreground"
-              : "border-transparent text-muted-foreground hover:text-foreground"
+              ? "bg-primary/10 border border-primary/30 text-primary"
+              : "bg-card border border-border hover:border-primary/50 text-muted-foreground"
           }`}
         >
           <Search className="size-4" />
@@ -132,15 +132,15 @@ export function IdeasPageClient({
 
       {/* Filter tabs */}
       {totalCount > 0 && (
-        <div className="flex gap-1 mb-6 overflow-x-auto">
+        <div className="flex gap-2 mb-6 overflow-x-auto">
           {filterTabs.map((tab) => (
             <button
               key={tab.value}
               onClick={() => setActiveFilter(tab.value)}
-              className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+              className={`shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                 activeFilter === tab.value
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  ? "bg-primary/10 border border-primary/30 text-primary"
+                  : "bg-card border border-border hover:border-primary/50"
               }`}
             >
               {tab.label}

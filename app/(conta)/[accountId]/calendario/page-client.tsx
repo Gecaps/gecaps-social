@@ -79,32 +79,34 @@ export function CalendarioPageClient({
       {/* Filters */}
       {showFilters && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <Badge
-            variant={statusFilter === null ? "default" : "outline"}
-            className="cursor-pointer text-xs"
+          <button
             onClick={() => setStatusFilter(null)}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+              statusFilter === null
+                ? "bg-primary/10 border border-primary/30 text-primary"
+                : "bg-card border border-border hover:border-primary/50"
+            }`}
           >
             Todos
-          </Badge>
+          </button>
           {CALENDAR_STATUSES.map((status) => {
             const count = scheduledPieces.filter(
               (p) => p.status === status
             ).length;
             return (
-              <Badge
+              <button
                 key={status}
-                variant="outline"
-                className={`cursor-pointer text-xs ${
-                  statusFilter === status
-                    ? STATUS_COLORS[status]
-                    : "text-muted-foreground"
-                }`}
                 onClick={() =>
                   setStatusFilter(statusFilter === status ? null : status)
                 }
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                  statusFilter === status
+                    ? "bg-primary/10 border border-primary/30 text-primary"
+                    : "bg-card border border-border hover:border-primary/50"
+                }`}
               >
                 {STATUS_LABELS[status]} ({count})
-              </Badge>
+              </button>
             );
           })}
         </div>

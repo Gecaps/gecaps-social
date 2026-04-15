@@ -56,7 +56,7 @@ export function PipelinePageClient({
             {stats.map((stat) => (
               <div
                 key={stat.label}
-                className="rounded-xl border border-border bg-card p-3 text-center transition-all duration-200 hover:border-primary/20 dark:bg-card/80"
+                className="rounded-xl border border-border bg-card p-3 text-center transition-all duration-200 hover:border-primary/30 hover:bg-primary/5 dark:bg-card/80 cursor-default"
               >
                 <div className="flex items-center justify-center gap-1.5 mb-1">
                   <stat.icon className="size-3.5 text-muted-foreground" />

@@ -73,7 +73,7 @@ export function PipelineCard({ piece, accountId }: PipelineCardProps) {
     : null;
 
   return (
-    <div className="group relative rounded-lg border border-border bg-card p-3 hover:border-primary/50 transition-colors">
+    <div className="group relative rounded-lg border border-border bg-card p-3 hover:border-primary/50 hover:shadow-[0_0_10px_var(--glow-primary)] transition-all duration-200">
       {/* Clickable area */}
       <button
         type="button"
@@ -116,14 +116,14 @@ export function PipelineCard({ piece, accountId }: PipelineCardProps) {
               Mover para...
             </button>
           ) : (
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1.5">
               {validNext.map((status) => (
                 <button
                   key={status}
                   type="button"
                   disabled={transitioning}
                   onClick={() => handleTransition(status)}
-                  className="inline-flex items-center gap-1 rounded-md border border-border px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-xl border border-border bg-card px-2.5 py-1 text-[10px] font-medium text-muted-foreground hover:border-primary/50 hover:bg-primary/5 hover:text-foreground hover:shadow-[0_0_6px_var(--glow-primary)] transition-all duration-200 disabled:opacity-50 cursor-pointer"
                 >
                   <span>{TRANSITION_ICONS[status] ?? "→"}</span>
                   {STATUS_LABELS[status]}
