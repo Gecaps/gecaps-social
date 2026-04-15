@@ -8,7 +8,7 @@ export type PiecePilar =
 
 export type PieceFormat = "estatico" | "carrossel" | "story" | "reels";
 
-export type PieceLayout = "branco" | "verde" | "quote" | "foto";
+export type PieceLayout = "branco" | "verde" | "quote" | "foto" | "magazine" | "editorial";
 
 export type PieceStatus =
   | "reference"
@@ -81,6 +81,8 @@ export const LAYOUT_LABELS: Record<PieceLayout, string> = {
   verde: "Verde",
   quote: "Quote",
   foto: "Foto",
+  magazine: "Magazine",
+  editorial: "Editorial",
 };
 
 export const LAYOUT_DESCRIPTIONS: Record<PieceLayout, string> = {
@@ -88,4 +90,6 @@ export const LAYOUT_DESCRIPTIONS: Record<PieceLayout, string> = {
   verde: "Gradiente verde escuro. Bold e impactante.",
   quote: "Fundo escuro luxo, moldura dourada. Para frases.",
   foto: "Foto premium com overlay verde. Conteúdo na parte inferior.",
+  magazine: "Capa de revista. Foto full-bleed, tipografia editorial dourada.",
+  editorial: "Split editorial. Foto topo, conteúdo embaixo. Elegante e fino.",
 };

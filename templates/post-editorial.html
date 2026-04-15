@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1350px; overflow: hidden; }
+
+  .post {
+    width: 1080px; height: 1350px;
+    position: relative; overflow: hidden;
+    background: #f5f0eb;
+    display: flex; flex-direction: column;
+  }
+
+  /* Split layout: photo top 60%, content bottom 40% */
+  .photo-area {
+    position: relative;
+    height: 60%;
+    overflow: hidden;
+  }
+
+  .bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-size: cover; background-position: center top;
+  }
+
+  /* Subtle warm overlay on photo */
+  .photo-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(
+      180deg,
+      rgba(245,240,235,0) 60%,
+      rgba(245,240,235,0.3) 80%,
+      rgba(245,240,235,1) 100%
+    );
+  }
+
+  /* Gold badge floating on photo */
+  .float-badge {
+    position: absolute; top: 36px; right: 48px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px; font-weight: 700;
+    color: #fff;
+    background: #c9a96e;
+    padding: 8px 20px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    z-index: 5;
+  }
+
+  /* Thin line accent on photo */
+  .accent-line {
+    position: absolute; bottom: 0; left: 60px;
+    width: 80px; height: 3px;
+    background: #c9a96e;
+    z-index: 5;
+  }
+
+  /* ── CONTENT AREA ── */
+  .content-area {
+    flex: 1;
+    padding: 36px 60px 0;
+    display: flex; flex-direction: column;
+    background: #f5f0eb;
+  }
+
+  .category {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 700;
+    color: #c9a96e;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .title {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px; font-weight: 800;
+    color: #1a1410;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+    max-width: 900px;
+  }
+  .title .hl {
+    color: #c9a96e;
+  }
+
+  .subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 17px; font-weight: 400;
+    color: #6b5d50;
+    line-height: 1.6;
+    max-width: 750px;
+    margin-bottom: 24px;
+  }
+
+  .divider {
+    width: 60px; height: 1.5px;
+    background: #c9a96e;
+    margin-bottom: 20px;
+  }
+
+  .cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 700;
+    color: #1a1410;
+    letter-spacing: 3px; text-transform: uppercase;
+    padding: 14px 32px;
+    border: 1.5px solid #1a1410;
+    background: transparent;
+    width: fit-content;
+  }
+
+  .tags {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 600;
+    color: #a89585;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 60px 32px;
+    margin-top: auto;
+  }
+
+  .brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px; font-weight: 700;
+    color: #1a1410;
+    letter-spacing: 4px;
+  }
+
+  .handle {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: #c9a96e;
+    letter-spacing: 1px;
+  }
+
+  .footer-right {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; color: #a89585;
+    letter-spacing: 2px;
+  }
+
+  /* ── DECORATIVE ── */
+  .side-text {
+    position: absolute;
+    top: 50%; left: 20px;
+    transform: rotate(-90deg) translateX(-50%);
+    transform-origin: left center;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px; font-weight: 600;
+    color: rgba(0,0,0,0.15);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+<div class="post">
+  <!-- Photo area (top 60%) -->
+  <div class="photo-area">
+    <div class="bg" style="background-image: url('{{IMAGE_URL}}')"></div>
+    <div class="photo-overlay"></div>
+    <div class="float-badge">Educativo</div>
+    <div class="accent-line"></div>
+  </div>
+
+  <!-- Side decorative text -->
+  <div class="side-text">GECAPS · Social Content Studio · 2026</div>
+
+  <!-- Content area (bottom 40%) -->
+  <div class="content-area">
+    <div class="category">Suplementos · Marca Própria</div>
+    <h1 class="title">Colágeno Hidrolisado: o ingrediente que <span class="hl">domina</span> o mercado</h1>
+    <p class="subtitle">Descubra por que as maiores redes de varejo estão investindo em marcas próprias de colágeno</p>
+    <div class="divider"></div>
+    <div class="cta">Leia mais <span>→</span></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span class="brand">GECAPS</span>
+    <span class="handle">@gecapsbrasil</span>
+    <span class="footer-right">COSMÉTICOS & SUPLEMENTOS</span>
+  </div>
+</div>
+</body>
+</html>

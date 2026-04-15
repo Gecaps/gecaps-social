@@ -109,7 +109,7 @@ export function IdeaCard({ idea, accountId }: IdeaCardProps) {
   }
 
   return (
-    <Card className="transition-all hover:ring-2 hover:ring-primary/30">
+    <Card className="transition-all hover:ring-2 hover:ring-primary/30 hover:shadow-[0_0_12px_var(--glow-primary)]">
       <CardContent className="space-y-3">
         {/* Header: theme + status */}
         <div className="flex items-start justify-between gap-2">
@@ -197,7 +197,8 @@ export function IdeaCard({ idea, accountId }: IdeaCardProps) {
           <div className="flex gap-2 pt-1">
             <Button
               size="sm"
-              className="bg-emerald-600 hover:bg-emerald-700 text-white"
+              className="text-primary-foreground shadow-md hover:shadow-lg transition-all"
+              style={{ background: "var(--gradient-primary)" }}
               onClick={() => handleStatusChange("approved")}
               disabled={loading !== null}
             >
@@ -211,7 +212,7 @@ export function IdeaCard({ idea, accountId }: IdeaCardProps) {
             <Button
               size="sm"
               variant="outline"
-              className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+              className="border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all"
               onClick={() => handleStatusChange("rejected")}
               disabled={loading !== null}
             >

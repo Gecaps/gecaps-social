@@ -20,10 +20,10 @@ export function LayoutSelector({ selected, onSelect }: LayoutSelectorProps) {
           type="button"
           onClick={() => onSelect(layout)}
           className={cn(
-            "rounded-lg border p-3 text-left transition-all",
+            "rounded-xl border p-3 text-left transition-all duration-200",
             selected === layout
-              ? "border-primary bg-primary/5"
-              : "border-border bg-card hover:border-primary/40"
+              ? "border-primary/50 bg-primary/8 shadow-[0_0_10px_var(--glow-primary)] ring-1 ring-primary/20"
+              : "border-border bg-card hover:border-primary/30 hover:shadow-[0_0_6px_var(--glow-primary)]"
           )}
         >
           <span className="text-sm font-semibold">{LAYOUT_LABELS[layout]}</span>

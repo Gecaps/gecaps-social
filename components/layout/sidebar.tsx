@@ -59,7 +59,8 @@ export function Sidebar({ accounts, currentAccountId }: SidebarProps) {
           alt="GECAPS"
           className="h-8 hidden dark:block"
         />
-        <span className="text-[10px] uppercase tracking-[0.2em] font-bold bg-primary/15 text-primary px-2.5 py-1 rounded-md ring-1 ring-primary/20 shadow-[0_0_8px_var(--glow-primary)]">
+        <span className="text-[10px] uppercase tracking-[0.2em] font-bold px-2.5 py-1 rounded-md ring-1 ring-primary/20 shadow-[0_0_8px_var(--glow-primary)]"
+          style={{ background: "var(--gradient-primary)", color: "var(--primary-foreground)" }}>
           Social
         </span>
       </div>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1350px; overflow: hidden; }
+
+  .post {
+    width: 1080px; height: 1350px;
+    position: relative; overflow: hidden;
+    background: #0a0a0a;
+  }
+
+  /* Full-bleed photo */
+  .bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-size: cover; background-position: center top;
+  }
+
+  /* Cinematic gradient overlay — dark at top and bottom, clear in middle */
+  .overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(
+      180deg,
+      rgba(0,0,0,0.85) 0%,
+      rgba(0,0,0,0.4) 15%,
+      rgba(0,0,0,0.05) 35%,
+      rgba(0,0,0,0.0) 45%,
+      rgba(0,0,0,0.05) 55%,
+      rgba(0,0,0,0.5) 70%,
+      rgba(0,0,0,0.88) 85%,
+      rgba(0,0,0,0.95) 100%
+    );
+  }
+
+  /* Subtle golden vignette */
+  .vignette {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 50%,
+      rgba(0,0,0,0.4) 100%
+    );
+  }
+
+  /* ── HEADER: Magazine masthead ── */
+  .masthead {
+    position: absolute; top: 0; left: 0; right: 0;
+    padding: 48px 60px 0;
+    z-index: 10;
+    display: flex; align-items: flex-start; justify-content: space-between;
+  }
+
+  .logo-area {
+    display: flex; flex-direction: column;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px; font-weight: 800;
+    color: #fff;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .logo-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 500;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  .edition {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 600;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  /* Thin gold line under masthead */
+  .masthead-line {
+    position: absolute; top: 130px; left: 60px; right: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,169,110,0.4), transparent);
+    z-index: 10;
+  }
+
+  /* ── SIDEBAR highlights ── */
+  .sidebar-left {
+    position: absolute; top: 180px; left: 60px;
+    z-index: 10;
+    display: flex; flex-direction: column; gap: 24px;
+    max-width: 240px;
+  }
+
+  .sidebar-item {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 600;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    line-height: 1.5;
+  }
+
+  .sidebar-item strong {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-weight: 700;
+    color: #fff;
+    letter-spacing: 0;
+    text-transform: none;
+    margin-top: 4px;
+  }
+
+  /* ── MAIN CONTENT: Bottom area ── */
+  .content {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 0 60px 56px;
+    z-index: 10;
+  }
+
+  .category {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 700;
+    color: #c9a96e;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .title {
+    font-family: 'Playfair Display', serif;
+    font-size: 64px; font-weight: 800;
+    color: #fff;
+    line-height: 1.08;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+    max-width: 900px;
+  }
+  .title .hl {
+    color: #c9a96e;
+  }
+
+  .subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px; font-weight: 400;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+    max-width: 700px;
+    margin-bottom: 28px;
+  }
+
+  .cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 700;
+    color: #c9a96e;
+    letter-spacing: 3px; text-transform: uppercase;
+    padding: 14px 32px;
+    border: 1.5px solid rgba(201,169,110,0.4);
+    border-radius: 0;
+    background: rgba(201,169,110,0.06);
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 0 60px 20px;
+    z-index: 10;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .handle {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: rgba(201,169,110,0.7);
+    letter-spacing: 1px;
+  }
+
+  .footer-right {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; color: rgba(255,255,255,0.2);
+    letter-spacing: 2px;
+  }
+
+  /* ── DECORATIVE ELEMENTS ── */
+  .corner-tl {
+    position: absolute; top: 140px; left: 48px;
+    width: 20px; height: 20px;
+    border-top: 1.5px solid rgba(201,169,110,0.25);
+    border-left: 1.5px solid rgba(201,169,110,0.25);
+    z-index: 10;
+  }
+  .corner-br {
+    position: absolute; bottom: 48px; right: 48px;
+    width: 20px; height: 20px;
+    border-bottom: 1.5px solid rgba(201,169,110,0.25);
+    border-right: 1.5px solid rgba(201,169,110,0.25);
+    z-index: 10;
+  }
+</style>
+</head>
+<body>
+<div class="post">
+  <div class="bg" style="background-image: url('{{IMAGE_URL}}')"></div>
+  <div class="overlay"></div>
+  <div class="vignette"></div>
+
+  <!-- Decorative corners -->
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <!-- Masthead -->
+  <div class="masthead">
+    <div class="logo-area">
+      <div class="logo">GECAPS</div>
+      <div class="logo-sub">Beauty & Supplements</div>
+    </div>
+    <div class="edition">Social Content<br>Studio</div>
+  </div>
+  <div class="masthead-line"></div>
+
+  <!-- Sidebar highlights -->
+  <div class="sidebar-left">
+    <div class="sidebar-item">
+      <div class="tags">SUPLEMENTOS · COLÁGENO</div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="category">Educativo</div>
+    <h1 class="title">O mesmo ingrediente. Duas formulações. <span class="hl">Resultados diferentes.</span></h1>
+    <p class="subtitle">Por que a formulação importa mais que o ingrediente na hora de criar sua marca própria</p>
+    <div class="cta">Saiba mais <span>→</span></div>
+  </div>
+
+  <div class="footer">
+    <span class="handle">@gecapsbrasil</span>
+    <span class="footer-right">GECAPS · COSMÉTICOS & SUPLEMENTOS</span>
+  </div>
+</div>
+</body>
+</html>

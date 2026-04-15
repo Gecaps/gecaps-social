@@ -2,7 +2,7 @@ import { readFile } from "fs/promises";
 import { join } from "path";
 
 export interface RenderOptions {
-  template: "branco" | "verde" | "quote" | "foto-premium";
+  template: "branco" | "verde" | "quote" | "foto-premium" | "magazine" | "editorial";
   title: string;
   subtitle?: string;
   tags?: string;
@@ -19,6 +19,8 @@ const TEMPLATE_FILES: Record<string, string> = {
   verde: "post-final-verde.html",
   quote: "post-quote.html",
   "foto-premium": "post-foto-premium.html",
+  magazine: "post-magazine.html",
+  editorial: "post-editorial.html",
 };
 
 async function loadTemplate(name: string): Promise<string> {
