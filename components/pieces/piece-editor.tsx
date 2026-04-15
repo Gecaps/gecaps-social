@@ -30,6 +30,8 @@ const RENDER_TEMPLATE: Record<PieceLayout, string> = {
   verde: "verde",
   quote: "quote",
   foto: "foto-premium",
+  magazine: "magazine",
+  editorial: "editorial",
 };
 
 export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {

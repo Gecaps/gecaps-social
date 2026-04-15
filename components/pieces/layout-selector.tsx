@@ -4,7 +4,7 @@ import type { PieceLayout } from "@/modules/accounts/types";
 import { LAYOUT_LABELS, LAYOUT_DESCRIPTIONS } from "@/modules/accounts/types";
 import { cn } from "@/lib/utils";
 
-const LAYOUTS: PieceLayout[] = ["branco", "verde", "quote", "foto"];
+const LAYOUTS: PieceLayout[] = ["branco", "verde", "quote", "foto", "magazine", "editorial"];
 
 interface LayoutSelectorProps {
   selected: PieceLayout;
