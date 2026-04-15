@@ -1,3 +1,9 @@
+import { listMetricsByAccount } from "@/modules/metrics/queries";
+import { rankPieces } from "@/modules/metrics/ranking";
+import { listInsights } from "@/modules/insights/queries";
+import { listPieces } from "@/modules/pieces/queries";
+import { MetricasPageClient } from "./page-client";
+
 export default async function MetricasPage({
   params,
 }: {
@@ -5,14 +11,21 @@ export default async function MetricasPage({
 }) {
   const { accountId } = await params;
 
+  const [metrics, insights, publishedPieces] = await Promise.all([
+    listMetricsByAccount(accountId),
+    listInsights(accountId),
+    listPieces(accountId, { status: "published" }),
+  ]);
+
+  const rankings = rankPieces(metrics);
+
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-heading font-extrabold tracking-tight">
-        Metricas
-      </h1>
-      <p className="text-sm text-muted-foreground mt-1">
-        Em construcao
-      </p>
-    </div>
+    <MetricasPageClient
+      accountId={accountId}
+      metrics={metrics}
+      rankings={rankings}
+      insights={insights}
+      publishedPieces={publishedPieces}
+    />
   );
 }

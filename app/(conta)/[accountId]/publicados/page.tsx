@@ -1,3 +1,7 @@
+import { listPieces } from "@/modules/pieces/queries";
+import { listMetricsByAccount } from "@/modules/metrics/queries";
+import { PublicadosPageClient } from "./page-client";
+
 export default async function PublicadosPage({
   params,
 }: {
@@ -5,14 +9,22 @@ export default async function PublicadosPage({
 }) {
   const { accountId } = await params;
 
+  const [pieces, metrics] = await Promise.all([
+    listPieces(accountId, { status: "published" }),
+    listMetricsByAccount(accountId),
+  ]);
+
+  // Build a map of piece_id -> Metrics for quick lookup
+  const metricsMap: Record<string, (typeof metrics)[number]> = {};
+  for (const m of metrics) {
+    metricsMap[m.piece_id] = m;
+  }
+
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-heading font-extrabold tracking-tight">
-        Publicados
-      </h1>
-      <p className="text-sm text-muted-foreground mt-1">
-        Em construcao
-      </p>
-    </div>
+    <PublicadosPageClient
+      accountId={accountId}
+      pieces={pieces}
+      metricsMap={metricsMap}
+    />
   );
 }
