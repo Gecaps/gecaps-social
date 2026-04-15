@@ -1,0 +1,165 @@
+<h2>Maquina de Estados + Plano de Migracao</h2>
+<p class="subtitle">Como as pecas transitam entre status e como migrar os dados existentes.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Maquina de Estados — Pipeline de Pecas</div>
+  <div class="mockup-body" style="padding:24px;font-size:13px;">
+
+    <div style="display:flex;flex-direction:column;gap:4px;font-size:12px;">
+
+      <!-- REFERENCIA -->
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="background:#666;color:white;padding:8px 16px;border-radius:8px;min-width:160px;text-align:center;font-weight:600;">
+          reference
+        </div>
+        <span style="opacity:0.5;">Referencia cadastrada, aguardando processamento IA</span>
+      </div>
+      <div style="margin-left:80px;color:#666;">↓ <span style="font-size:11px;">IA processa + gera 5 ideias</span></div>
+
+      <!-- IDEIA -->
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="background:#9C27B0;color:white;padding:8px 16px;border-radius:8px;min-width:160px;text-align:center;font-weight:600;">
+          idea
+        </div>
+        <span style="opacity:0.5;">Ideia gerada, aguardando avaliacao do operador</span>
+      </div>
+      <div style="margin-left:80px;color:#666;">↓ <span style="font-size:11px;">operador aprova</span></div>
+
+      <!-- IDEIA APROVADA -->
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="background:#7B1FA2;color:white;padding:8px 16px;border-radius:8px;min-width:160px;text-align:center;font-weight:600;">
+          idea_approved
+        </div>
+        <span style="opacity:0.5;">Ideia aprovada, IA gera peca automaticamente</span>
+      </div>
+      <div style="margin-left:80px;color:#666;">↓ <span style="font-size:11px;">IA gera peca completa</span></div>
+
+      <!-- EM PRODUCAO -->
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="background:#FFB300;color:black;padding:8px 16px;border-radius:8px;min-width:160px;text-align:center;font-weight:600;">
+          in_production
+        </div>
+        <span style="opacity:0.5;">Peca gerada, operador revisa e ajusta</span>
+      </div>
+      <div style="margin-left:80px;color:#666;">↓ <span style="font-size:11px;">operador aprova final</span></div>
+
+      <!-- APROVADO FINAL -->
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="background:#43A047;color:white;padding:8px 16px;border-radius:8px;min-width:160px;text-align:center;font-weight:600;">
+          final_approved
+        </div>
+        <span style="opacity:0.5;">Pronta. Aguardando agendamento ou publicacao.</span>
+      </div>
+      <div style="margin-left:80px;color:#666;">↓ <span style="font-size:11px;">operador agenda data</span></div>
+
+      <!-- AGENDADO -->
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="background:#2196F3;color:white;padding:8px 16px;border-radius:8px;min-width:160px;text-align:center;font-weight:600;">
+          scheduled
+        </div>
+        <span style="opacity:0.5;">Agendada no calendario com data e horario</span>
+      </div>
+      <div style="margin-left:80px;color:#666;">↓ <span style="font-size:11px;">operador publica (download manual)</span></div>
+
+      <!-- PUBLICADO -->
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="background:#1565C0;color:white;padding:8px 16px;border-radius:8px;min-width:160px;text-align:center;font-weight:600;">
+          published
+        </div>
+        <span style="opacity:0.5;">Publicada. Aguardando registro de metricas.</span>
+      </div>
+    </div>
+
+    <!-- ESTADOS LATERAIS -->
+    <div style="margin-top:24px;padding:16px;border:1px solid #333;border-radius:12px;background:#ffffff08;">
+      <h3 style="margin:0 0 12px;">Estados laterais (saem do fluxo principal)</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font-size:12px;">
+        <div style="border:1px solid #ef4444;border-radius:8px;padding:12px;background:#ef444408;">
+          <div style="font-weight:600;color:#ef4444;margin-bottom:4px;">rejected</div>
+          <span style="opacity:0.7;">Reprovada. Vai pra <code>in_adjustment</code>, NAO volta atras.</span><br>
+          <span style="font-size:11px;opacity:0.5;">De: idea, in_production</span>
+        </div>
+        <div style="border:1px solid #f59e0b;border-radius:8px;padding:12px;background:#f59e0b08;">
+          <div style="font-weight:600;color:#f59e0b;margin-bottom:4px;">in_adjustment</div>
+          <span style="opacity:0.7;">Em ajuste. Operador corrige e reenvia pra aprovacao.</span><br>
+          <span style="font-size:11px;opacity:0.5;">Vai pra: in_production</span>
+        </div>
+        <div style="border:1px solid #666;border-radius:8px;padding:12px;background:#66666608;">
+          <div style="font-weight:600;color:#999;margin-bottom:4px;">paused</div>
+          <span style="opacity:0.7;">Pausada temporariamente. Pode retomar de qualquer status.</span><br>
+          <span style="font-size:11px;opacity:0.5;">Volta pro status anterior</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSICOES VALIDAS -->
+    <div style="margin-top:20px;padding:16px;border:1px solid #333;border-radius:12px;background:#ffffff08;">
+      <h3 style="margin:0 0 12px;">Transicoes validas (status-machine.ts)</h3>
+      <pre style="background:#0a0a1a;padding:12px;border-radius:8px;font-size:12px;line-height:1.6;color:#e0e0e0;">
+reference     → idea                 (IA processa)
+idea          → idea_approved        (operador aprova)
+idea          → rejected             (operador rejeita)
+idea_approved → in_production        (IA gera peca)
+in_production → final_approved       (operador aprova)
+in_production → rejected             (operador rejeita)
+final_approved → scheduled           (operador agenda)
+scheduled     → published            (operador publica)
+rejected      → in_adjustment        (automatico)
+in_adjustment → in_production        (operador reenvia)
+qualquer      → paused               (operador pausa)
+paused        → {status anterior}    (operador retoma)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- MIGRACAO -->
+<div class="mockup" style="margin-top:20px;">
+  <div class="mockup-header">Plano de Migracao — Dados Existentes</div>
+  <div class="mockup-body" style="padding:24px;font-size:13px;">
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+      <div>
+        <h3 style="margin:0 0 12px;">Tabelas que mudam</h3>
+        <div style="font-size:12px;line-height:1.8;">
+          <code style="color:#FFB300;">social_accounts</code> → <code style="color:#43A047;">accounts</code><br>
+          <span style="opacity:0.6;font-size:11px;">Renomear. Adicionar campo avatar_url. Dados preservados.</span><br><br>
+
+          <code style="color:#FFB300;">social_posts</code> → <code style="color:#43A047;">pieces</code><br>
+          <span style="opacity:0.6;font-size:11px;">Renomear. Adicionar campos novos (idea_id, creative_brief, visual_direction, slide_structure, published_date, rejection_reason). Migrar status: pending→in_production, approved→final_approved, rejected→rejected, published→published. Remover campos Trello (trello_card_id, trello_list_name).</span><br><br>
+
+          <code style="color:#FFB300;">social_post_versions</code> → <code style="color:#43A047;">piece_versions</code><br>
+          <span style="opacity:0.6;font-size:11px;">Renomear. Adicionar campos novos (creative_brief, visual_direction, slide_structure, change_type).</span><br><br>
+
+          <code style="color:#ef4444;">social_editorial_lines</code> → <span style="color:#ef4444;">REMOVER</span><br>
+          <span style="opacity:0.6;font-size:11px;">Substituida pelo Brand Playbook. Dados nao sao migrados.</span>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="margin:0 0 12px;">Tabelas novas</h3>
+        <div style="font-size:12px;line-height:1.8;">
+          <code style="color:#E91E63;">brand_playbooks</code><br>
+          <span style="opacity:0.6;font-size:11px;">1 por conta. Criada vazia, operador preenche.</span><br><br>
+
+          <code style="color:#E91E63;">references</code><br>
+          <span style="opacity:0.6;font-size:11px;">Biblioteca de referencias. Comeca vazia.</span><br><br>
+
+          <code style="color:#E91E63;">ideas</code><br>
+          <span style="opacity:0.6;font-size:11px;">Ideias geradas/manuais. Comeca vazia.</span><br><br>
+
+          <code style="color:#E91E63;">metrics</code><br>
+          <span style="opacity:0.6;font-size:11px;">1 por peca publicada. Comeca vazia.</span><br><br>
+
+          <code style="color:#E91E63;">insights</code><br>
+          <span style="opacity:0.6;font-size:11px;">Insights por conta. Comeca vazia.</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;padding:12px;border:1px solid #FFB300;border-radius:8px;background:#FFB30010;font-size:12px;">
+      <strong style="color:#FFB300;">⚠ Estrategia de migracao:</strong> Uma unica migration SQL no Supabase que renomeia tabelas, adiciona colunas novas, migra status e cria tabelas novas. Os ~20 posts existentes sao preservados como pecas com status migrado. Nenhum dado e perdido.
+    </div>
+
+  </div>
+</div>

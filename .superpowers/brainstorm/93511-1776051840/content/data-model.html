@@ -1,0 +1,191 @@
+<h2>Modelo de Dados — Social Content OS</h2>
+<p class="subtitle">Entidades, relacoes e campos principais. Verde = ja existe no banco, amarelo = precisa alterar, rosa = novo.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Entity Relationship Diagram</div>
+  <div class="mockup-body" style="padding:24px;font-size:13px;">
+
+    <!-- ACCOUNTS -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
+      <div style="border:2px solid #43A047;border-radius:12px;padding:16px;background:#43A04710;">
+        <h3 style="margin:0 0 8px;color:#43A047;">accounts (ja existe)</h3>
+        <p style="margin:0 0 8px;font-size:12px;opacity:0.7">Renomear de social_accounts → accounts</p>
+        <code style="display:block;white-space:pre;font-size:12px;line-height:1.6;">
+id          UUID PK
+name        TEXT        -- "GECAPS Brasil"
+handle      TEXT        -- "@gecapsbrasil"
+platform    TEXT        -- "instagram"
+avatar_url  TEXT        -- (novo) logo da marca
+active      BOOL
+created_at  TIMESTAMPTZ</code>
+      </div>
+
+      <div style="border:2px solid #E91E63;border-radius:12px;padding:16px;background:#E91E6310;">
+        <h3 style="margin:0 0 8px;color:#E91E63;">brand_playbooks (novo)</h3>
+        <code style="display:block;white-space:pre;font-size:12px;line-height:1.6;">
+id              UUID PK
+account_id      UUID FK → accounts
+tone_of_voice   TEXT    -- tom de voz
+style           TEXT    -- estilo editorial
+mandatory_words TEXT[]  -- palavras obrigatorias
+forbidden_words TEXT[]  -- palavras proibidas
+default_cta     TEXT    -- CTA padrao
+do_examples     TEXT    -- jeito certo de falar
+dont_examples   TEXT    -- jeito errado de falar
+post_examples   JSONB   -- posts reais (few-shot)
+extra_instructions TEXT -- instrucoes adicionais
+updated_at      TIMESTAMPTZ</code>
+      </div>
+    </div>
+
+    <!-- REFERENCES + IDEAS -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
+      <div style="border:2px solid #E91E63;border-radius:12px;padding:16px;background:#E91E6310;">
+        <h3 style="margin:0 0 8px;color:#E91E63;">references (novo)</h3>
+        <code style="display:block;white-space:pre;font-size:12px;line-height:1.6;">
+id            UUID PK
+account_id    UUID FK → accounts
+type          TEXT    -- link, text, file, pdf
+source_url    TEXT    -- URL original (se link)
+raw_content   TEXT    -- conteudo extraido
+file_url      TEXT    -- URL do arquivo (se upload)
+summary       TEXT    -- resumo IA contextualizado
+tags          TEXT[]  -- tags automaticas IA
+suggested_pilar TEXT  -- pilar sugerido pela IA
+suggested_format TEXT -- formato sugerido pela IA
+relevance_score INT   -- 1-10 relevancia pra marca
+status        TEXT    -- novo,triado,relevante,
+                      -- virou_ideia,usado,
+                      -- descartado,arquivado
+created_at    TIMESTAMPTZ
+processed_at  TIMESTAMPTZ</code>
+      </div>
+
+      <div style="border:2px solid #E91E63;border-radius:12px;padding:16px;background:#E91E6310;">
+        <h3 style="margin:0 0 8px;color:#E91E63;">ideas (novo)</h3>
+        <code style="display:block;white-space:pre;font-size:12px;line-height:1.6;">
+id              UUID PK
+account_id      UUID FK → accounts
+reference_id    UUID FK → references (null se manual)
+theme           TEXT    -- tema da ideia
+angle           TEXT    -- angulo editorial
+objective       TEXT    -- objetivo do post
+suggested_format TEXT   -- estatico,carrossel,reels,story
+justification   TEXT    -- por que essa ideia
+brand_fit       TEXT    -- aderencia a marca
+status          TEXT    -- pending,approved,rejected
+is_manual       BOOL    -- criada manualmente?
+created_at      TIMESTAMPTZ</code>
+      </div>
+    </div>
+
+    <!-- PIECES (evolucao de social_posts) -->
+    <div style="margin-bottom:24px;">
+      <div style="border:2px solid #FFB300;border-radius:12px;padding:16px;background:#FFB30010;">
+        <h3 style="margin:0 0 8px;color:#FFB300;">pieces (renomear social_posts → pieces + novos campos)</h3>
+        <p style="margin:0 0 8px;font-size:12px;opacity:0.7">Evolucao da tabela existente. Campos verdes ja existem, amarelos mudam, rosas sao novos.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <code style="display:block;white-space:pre;font-size:12px;line-height:1.6;">
+<span style="color:#43A047">id              UUID PK</span>
+<span style="color:#43A047">account_id      UUID FK → accounts</span>
+<span style="color:#E91E63">idea_id         UUID FK → ideas</span>
+<span style="color:#43A047">title           TEXT</span>
+<span style="color:#43A047">hook            TEXT</span>
+<span style="color:#43A047">pilar           TEXT</span>
+<span style="color:#FFB300">format          TEXT  -- + reels</span>
+<span style="color:#FFB300">status          TEXT  -- 10 status do PRD</span>
+<span style="color:#43A047">scheduled_date  DATE</span>
+<span style="color:#43A047">scheduled_time  TEXT</span>
+<span style="color:#E91E63">published_date  TIMESTAMPTZ</span>
+<span style="color:#43A047">caption         TEXT</span>
+<span style="color:#43A047">hashtags        TEXT</span>
+<span style="color:#43A047">cta             TEXT</span></code>
+          <code style="display:block;white-space:pre;font-size:12px;line-height:1.6;">
+<span style="color:#43A047">image_url       TEXT</span>
+<span style="color:#43A047">layout          TEXT</span>
+<span style="color:#43A047">current_version INT</span>
+<span style="color:#E91E63">creative_brief  TEXT   -- briefing criativo</span>
+<span style="color:#E91E63">visual_direction TEXT  -- direcao visual</span>
+<span style="color:#E91E63">slide_structure JSONB  -- blocos carrossel</span>
+<span style="color:#E91E63">rejection_reason TEXT</span>
+<span style="color:#43A047">created_at      TIMESTAMPTZ</span>
+<span style="color:#43A047">updated_at      TIMESTAMPTZ</span>
+
+Status possiveis:
+reference → idea → idea_approved →
+in_production → final_approved →
+scheduled → published →
+rejected / paused / in_adjustment</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERSIONS + METRICS -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
+      <div style="border:2px solid #FFB300;border-radius:12px;padding:16px;background:#FFB30010;">
+        <h3 style="margin:0 0 8px;color:#FFB300;">piece_versions (renomear + expandir)</h3>
+        <p style="margin:0 0 8px;font-size:12px;opacity:0.7">Evolucao de social_post_versions</p>
+        <code style="display:block;white-space:pre;font-size:12px;line-height:1.6;">
+id            UUID PK
+piece_id      UUID FK → pieces
+version       INT
+caption       TEXT
+hashtags      TEXT
+image_url     TEXT
+<span style="color:#E91E63">creative_brief TEXT</span>
+<span style="color:#E91E63">visual_direction TEXT</span>
+<span style="color:#E91E63">slide_structure JSONB</span>
+<span style="color:#E91E63">change_type   TEXT  -- copy,visual,structure</span>
+feedback      TEXT
+created_at    TIMESTAMPTZ</code>
+      </div>
+
+      <div style="border:2px solid #E91E63;border-radius:12px;padding:16px;background:#E91E6310;">
+        <h3 style="margin:0 0 8px;color:#E91E63;">metrics (novo)</h3>
+        <code style="display:block;white-space:pre;font-size:12px;line-height:1.6;">
+id            UUID PK
+piece_id      UUID FK → pieces (unique)
+likes         INT
+comments      INT
+shares        INT
+saves         INT
+reach         INT
+impressions   INT
+engagement_rate FLOAT  -- calculado
+source        TEXT     -- manual, api
+notes         TEXT     -- observacoes do operador
+recorded_at   TIMESTAMPTZ
+updated_at    TIMESTAMPTZ</code>
+      </div>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div style="display:grid;grid-template-columns:1fr;gap:20px;">
+      <div style="border:2px solid #E91E63;border-radius:12px;padding:16px;background:#E91E6310;">
+        <h3 style="margin:0 0 8px;color:#E91E63;">insights (novo)</h3>
+        <code style="display:block;white-space:pre;font-size:12px;line-height:1.6;">
+id            UUID PK
+account_id    UUID FK → accounts
+content       TEXT       -- texto do insight
+type          TEXT       -- auto, manual
+source_pieces UUID[]     -- pecas que geraram o insight
+is_edited     BOOL       -- operador editou?
+created_at    TIMESTAMPTZ</code>
+      </div>
+    </div>
+
+    <!-- RELACOES -->
+    <div style="margin-top:24px;padding:16px;border:1px solid #333;border-radius:12px;background:#ffffff08;">
+      <h3 style="margin:0 0 12px;">Relacoes principais</h3>
+      <code style="display:block;white-space:pre;font-size:13px;line-height:1.8;">
+account  1 ←→ 1  brand_playbook
+account  1 ←→ N  references
+reference 1 ←→ N  ideas (5 por referencia + manuais)
+idea     1 ←→ 1  piece (1 ideia aprovada = 1 peca)
+piece    1 ←→ N  piece_versions
+piece    1 ←→ 1  metrics
+account  1 ←→ N  insights</code>
+    </div>
+
+  </div>
+</div>

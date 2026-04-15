@@ -16,6 +16,7 @@ export async function createManualIdeaAction(
   const idea = await createIdea({
     account_id: accountId,
     reference_id: null,
+    research_id: null,
     theme,
     angle,
     objective,

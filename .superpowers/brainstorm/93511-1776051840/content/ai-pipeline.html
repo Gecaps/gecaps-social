@@ -1,0 +1,157 @@
+<h2>Pipeline de IA — Social Content OS</h2>
+<p class="subtitle">4 pontos onde a IA atua no sistema. Todos usam Claude Sonnet 4 + Brand Playbook como contexto.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Fluxo Completo de IA</div>
+  <div class="mockup-body" style="padding:24px;font-size:13px;">
+
+    <!-- PROMPT BUILDER -->
+    <div style="background:#43A04715;border:1px solid #43A047;border-radius:12px;padding:16px;margin-bottom:20px;">
+      <h3 style="margin:0 0 8px;color:#43A047;">Base: Prompt Builder (modules/playbook/prompt-builder.ts)</h3>
+      <p style="margin:0 0 12px;font-size:12px;opacity:0.8;">Toda chamada de IA passa por aqui. Monta o system prompt com o contexto da marca.</p>
+      <pre style="background:#0a0a1a;padding:12px;border-radius:8px;font-size:12px;line-height:1.6;color:#e0e0e0;">
+System Prompt = Brand Playbook da conta:
+├── Tom de voz: "{tone_of_voice}"
+├── Estilo: "{style}"
+├── Palavras obrigatorias: [{mandatory_words}]
+├── Palavras proibidas: [{forbidden_words}]
+├── CTA padrao: "{default_cta}"
+├── Jeito certo: "{do_examples}"
+├── Jeito errado: "{dont_examples}"
+├── Exemplos reais (few-shot):
+│   ├── Post 1: legenda + metricas
+│   ├── Post 2: legenda + metricas
+│   └── Post 3: legenda + metricas
+└── Instrucoes extras: "{extra_instructions}"</pre>
+    </div>
+
+    <!-- 4 PONTOS DE IA -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+      <!-- 1. PROCESSAR REFERENCIA -->
+      <div style="border:1px solid #E91E63;border-radius:12px;padding:16px;background:#E91E6308;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="background:#E91E63;color:white;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">1</span>
+          <h3 style="margin:0;">Processar Referencia</h3>
+        </div>
+        <p style="font-size:12px;opacity:0.7;margin:0 0 8px;">Trigger: operador adiciona referencia</p>
+        <div style="font-size:12px;line-height:1.8;">
+          <strong>Input:</strong><br>
+          • Conteudo bruto (texto extraido de link/PDF/upload)<br>
+          • Brand Playbook da conta<br><br>
+          <strong>IA faz:</strong><br>
+          • Resume o conteudo (3-5 frases)<br>
+          • Contextualiza pro universo da marca<br>
+          • Classifica tags automaticas<br>
+          • Sugere pilar editorial<br>
+          • Sugere formato (estatico, carrossel, reels)<br>
+          • Score de relevancia (1-10)<br><br>
+          <strong>Output salvo em:</strong> <code>references</code><br>
+          (summary, tags, suggested_pilar, suggested_format, relevance_score)
+        </div>
+      </div>
+
+      <!-- 2. GERAR IDEIAS -->
+      <div style="border:1px solid #9C27B0;border-radius:12px;padding:16px;background:#9C27B008;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="background:#9C27B0;color:white;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">2</span>
+          <h3 style="margin:0;">Gerar 5 Ideias</h3>
+        </div>
+        <p style="font-size:12px;opacity:0.7;margin:0 0 8px;">Trigger: automatico apos processar referencia</p>
+        <div style="font-size:12px;line-height:1.8;">
+          <strong>Input:</strong><br>
+          • Referencia processada (resumo + tags)<br>
+          • Brand Playbook da conta<br>
+          • Ideias ja existentes (evitar duplicata)<br><br>
+          <strong>IA gera 5 ideias, cada uma com:</strong><br>
+          • Tema<br>
+          • Angulo editorial<br>
+          • Objetivo do post<br>
+          • Formato sugerido<br>
+          • Justificativa<br>
+          • Aderencia a marca (texto curto)<br><br>
+          <strong>Output salvo em:</strong> <code>ideas</code> (5 registros)<br>
+          Status inicial: <code>pending</code>
+        </div>
+      </div>
+
+      <!-- 3. GERAR PECA -->
+      <div style="border:1px solid #FFB300;border-radius:12px;padding:16px;background:#FFB30008;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="background:#FFB300;color:black;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">3</span>
+          <h3 style="margin:0;">Gerar Peca Completa</h3>
+        </div>
+        <p style="font-size:12px;opacity:0.7;margin:0 0 8px;">Trigger: operador aprova ideia</p>
+        <div style="font-size:12px;line-height:1.8;">
+          <strong>Input:</strong><br>
+          • Ideia aprovada (tema, angulo, formato)<br>
+          • Referencia original (conteudo bruto)<br>
+          • Brand Playbook da conta<br>
+          • Posts de melhor performance (few-shot)<br><br>
+          <strong>IA gera tudo de uma vez:</strong><br>
+          • Titulo do post<br>
+          • Hook / abertura<br>
+          • Legenda completa (caption)<br>
+          • Hashtags<br>
+          • CTA<br>
+          • Briefing criativo (descricao visual)<br>
+          • Direcao visual (cores, mood, estilo)<br>
+          • Estrutura de slides (se carrossel → JSONB)<br>
+          • Layout sugerido (branco/verde/quote/foto)<br><br>
+          <strong>Output salvo em:</strong> <code>pieces</code><br>
+          Status: <code>in_production</code> → operador revisa
+        </div>
+      </div>
+
+      <!-- 4. GERAR INSIGHTS -->
+      <div style="border:1px solid #2196F3;border-radius:12px;padding:16px;background:#2196F308;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="background:#2196F3;color:white;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">4</span>
+          <h3 style="margin:0;">Gerar Insights</h3>
+        </div>
+        <p style="font-size:12px;opacity:0.7;margin:0 0 8px;">Trigger: operador registra metricas / manual</p>
+        <div style="font-size:12px;line-height:1.8;">
+          <strong>Input:</strong><br>
+          • Metricas das pecas publicadas<br>
+          • Historico de performance da conta<br>
+          • Brand Playbook<br>
+          • Pilares e formatos usados<br><br>
+          <strong>IA analisa e gera:</strong><br>
+          • O que esta funcionando (formato, pilar, tom)<br>
+          • O que nao esta performando<br>
+          • Padroes identificados<br>
+          • Sugestoes acionaveis<br>
+          • Recomendacao de proximos conteudos<br><br>
+          <strong>Output salvo em:</strong> <code>insights</code><br>
+          Operador pode editar os insights gerados
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MODELO E CUSTOS -->
+    <div style="margin-top:20px;padding:16px;border:1px solid #333;border-radius:12px;background:#ffffff08;">
+      <h3 style="margin:0 0 12px;">Stack de IA</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font-size:12px;">
+        <div>
+          <strong>Modelo</strong><br>
+          Claude Sonnet 4 via @anthropic-ai/sdk<br>
+          <span style="opacity:0.6;">(ja configurado no projeto)</span>
+        </div>
+        <div>
+          <strong>Scraping (referencias)</strong><br>
+          Fetch + Readability (links)<br>
+          pdf-parse (PDFs)<br>
+          Texto direto (manual/upload)
+        </div>
+        <div>
+          <strong>Render de imagem</strong><br>
+          Satori → preview rapido<br>
+          Cloudflare Browser → HD final<br>
+          <span style="opacity:0.6;">(ja implementado)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

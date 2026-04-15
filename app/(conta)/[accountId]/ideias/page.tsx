@@ -1,4 +1,5 @@
 import { listIdeas } from "@/modules/ideas/queries";
+import { listResearch } from "@/modules/research/queries";
 import { IdeasPageClient } from "./page-client";
 
 export default async function IdeiasPage({
@@ -7,7 +8,16 @@ export default async function IdeiasPage({
   params: Promise<{ accountId: string }>;
 }) {
   const { accountId } = await params;
-  const ideas = await listIdeas(accountId);
+  const [ideas, researchSessions] = await Promise.all([
+    listIdeas(accountId),
+    listResearch(accountId),
+  ]);
 
-  return <IdeasPageClient accountId={accountId} ideas={ideas} />;
+  return (
+    <IdeasPageClient
+      accountId={accountId}
+      ideas={ideas}
+      researchSessions={researchSessions}
+    />
+  );
 }

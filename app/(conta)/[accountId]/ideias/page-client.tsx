@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Lightbulb } from "lucide-react";
+import { Plus, Lightbulb, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IdeaCard } from "@/components/ideas/idea-card";
 import { CreateIdeaModal } from "@/components/ideas/create-idea-modal";
+import { TrendResearch } from "@/components/ideas/trend-research";
 import type { Idea, IdeaStatus } from "@/modules/ideas/types";
+import type { ResearchSession } from "@/modules/research/types";
 
 interface IdeasPageClientProps {
   accountId: string;
   ideas: Idea[];
+  researchSessions: ResearchSession[];
 }
 
 type FilterTab = "todas" | "pending" | "approved" | "rejected";
@@ -21,9 +24,16 @@ const filterTabs: { value: FilterTab; label: string }[] = [
   { value: "rejected", label: "Rejeitadas" },
 ];
 
-export function IdeasPageClient({ accountId, ideas }: IdeasPageClientProps) {
+type PageTab = "ideias" | "pesquisa";
+
+export function IdeasPageClient({
+  accountId,
+  ideas,
+  researchSessions,
+}: IdeasPageClientProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterTab>("todas");
+  const [activeTab, setActiveTab] = useState<PageTab>("ideias");
 
   const filtered =
     activeFilter === "todas"
@@ -47,12 +57,51 @@ export function IdeasPageClient({ accountId, ideas }: IdeasPageClientProps) {
             Banco de ideias geradas e manuais
           </p>
         </div>
-        <Button onClick={() => setModalOpen(true)}>
-          <Plus className="size-4" />
-          Nova Ideia
-        </Button>
+        {activeTab === "ideias" && (
+          <Button onClick={() => setModalOpen(true)}>
+            <Plus className="size-4" />
+            Nova Ideia
+          </Button>
+        )}
       </div>
 
+      {/* Page Tabs */}
+      <div className="flex gap-1 mb-6 border-b border-border pb-0">
+        <button
+          onClick={() => setActiveTab("ideias")}
+          className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
+            activeTab === "ideias"
+              ? "border-primary text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Lightbulb className="size-4" />
+          Banco de Ideias
+        </button>
+        <button
+          onClick={() => setActiveTab("pesquisa")}
+          className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
+            activeTab === "pesquisa"
+              ? "border-primary text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Search className="size-4" />
+          Pesquisa de Tendencias
+        </button>
+      </div>
+
+      {/* Pesquisa Tab */}
+      {activeTab === "pesquisa" && (
+        <TrendResearch
+          accountId={accountId}
+          researchSessions={researchSessions}
+        />
+      )}
+
+      {/* Ideias Tab - Stats */}
+      {activeTab === "ideias" && (
+        <>
       {/* Stats */}
       {totalCount > 0 && (
         <div className="grid grid-cols-4 gap-3 mb-6">
@@ -129,6 +178,8 @@ export function IdeasPageClient({ accountId, ideas }: IdeasPageClientProps) {
             Nova Ideia
           </Button>
         </div>
+      )}
+        </>
       )}
 
       {/* Modal */}

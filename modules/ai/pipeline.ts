@@ -3,6 +3,10 @@ import { buildReferenceUserPrompt } from "./prompts/reference";
 import { buildIdeasUserPrompt } from "./prompts/ideas";
 import { buildPieceUserPrompt } from "./prompts/piece";
 import { buildInsightsUserPrompt } from "./prompts/insights";
+import {
+  buildPerplexitySearchPrompt,
+  buildIdeasFromResearchUserPrompt,
+} from "./prompts/research";
 import { buildSystemPrompt } from "@/modules/playbook/prompt-builder";
 import { getPlaybookByAccountId } from "@/modules/playbook/queries";
 import {
@@ -10,8 +14,15 @@ import {
   updateReferenceProcessed,
   updateReferenceStatus,
 } from "@/modules/references/queries";
-import { getIdeaById, createIdea } from "@/modules/ideas/queries";
+import { getIdeaById, createIdea, listIdeas } from "@/modules/ideas/queries";
 import { createPiece } from "@/modules/pieces/queries";
+import {
+  getResearchById,
+  updateResearchResults,
+  updateResearchStatus,
+} from "@/modules/research/queries";
+import { searchWithPerplexity } from "@/modules/research/perplexity-client";
+import type { ResearchResults } from "@/modules/research/types";
 import type { Piece } from "@/modules/pieces/types";
 import type { Metrics } from "@/modules/metrics/types";
 import type { Insight } from "@/modules/insights/types";
@@ -69,6 +80,7 @@ export async function generateIdeasFromReference(referenceId: string) {
       createIdea({
         account_id: ref.account_id,
         reference_id: ref.id,
+        research_id: null,
         theme: idea.theme,
         angle: idea.angle,
         objective: idea.objective,
@@ -136,6 +148,112 @@ export async function generatePieceFromIdea(
     slide_structure: result.slide_structure,
     rejection_reason: null,
   });
+}
+
+// ── Execute Research (Perplexity) ────────────────────────────────
+export async function executeResearch(researchId: string) {
+  const session = await getResearchById(researchId);
+  if (!session) throw new Error(`Research ${researchId} not found`);
+
+  try {
+    await updateResearchStatus(researchId, "searching");
+
+    const searchPrompt = buildPerplexitySearchPrompt(session.query);
+    const { text, citations } = await searchWithPerplexity(searchPrompt);
+
+    const playbook = await getPlaybookByAccountId(session.account_id);
+    const systemPrompt = buildSystemPrompt(playbook);
+
+    const results = await generateJSON<ResearchResults>(
+      systemPrompt,
+      `Estruture o texto de pesquisa abaixo no formato JSON especificado.
+
+## Texto da Pesquisa
+${text}
+
+## Citações encontradas
+${citations.map((c: string, i: number) => `[${i + 1}] ${c}`).join("\n")}
+
+## Estrutura esperada (JSON)
+\`\`\`json
+{
+  "trends": [{ "topic": "string", "description": "string", "platform": "string", "relevance": 8 }],
+  "articles": [{ "title": "string", "source": "string", "url": "string", "key_points": ["string"] }],
+  "competitor_angles": ["string"],
+  "expert_opinions": ["string"],
+  "summary": "Resumo geral da pesquisa em 2-3 parágrafos",
+  "citations": ["url1", "url2"]
+}
+\`\`\`
+
+## Regras
+- Extraia TODAS as tendências mencionadas, com relevância de 1 a 10
+- Liste TODOS os artigos/fontes citados
+- Identifique ângulos de concorrentes e opiniões de especialistas
+- Inclua as citações/URLs das fontes
+- Retorne APENAS o JSON, sem texto adicional`,
+      4000
+    );
+
+    // Merge citations from Perplexity API with extracted ones
+    const allCitations = [
+      ...new Set([...results.citations, ...citations]),
+    ];
+    results.citations = allCitations;
+
+    return await updateResearchResults(researchId, results);
+  } catch (error) {
+    await updateResearchStatus(researchId, "failed");
+    throw error;
+  }
+}
+
+// ── Generate Ideas from Research ────────────────────────────────
+export async function generateIdeasFromResearch(researchId: string) {
+  const session = await getResearchById(researchId);
+  if (!session) throw new Error(`Research ${researchId} not found`);
+  if (!session.results)
+    throw new Error(`Research ${researchId} has no results`);
+
+  const playbook = await getPlaybookByAccountId(session.account_id);
+  const systemPrompt = buildSystemPrompt(playbook);
+
+  const existingIdeas = await listIdeas(session.account_id);
+  const userPrompt = buildIdeasFromResearchUserPrompt(
+    session.results,
+    existingIdeas
+  );
+
+  const result = await generateJSON<{
+    ideas: Array<{
+      theme: string;
+      angle: string;
+      objective: string;
+      suggested_format: string;
+      justification: string;
+      brand_fit: string;
+    }>;
+  }>(systemPrompt, userPrompt);
+
+  const saved = await Promise.all(
+    result.ideas.map((idea) =>
+      createIdea({
+        account_id: session.account_id,
+        reference_id: null,
+        research_id: researchId,
+        theme: idea.theme,
+        angle: idea.angle,
+        objective: idea.objective,
+        suggested_format: idea.suggested_format,
+        justification: idea.justification,
+        brand_fit: idea.brand_fit,
+        status: "pending",
+        is_manual: false,
+      })
+    )
+  );
+
+  return saved;
 }
 
 // ── Generate Insights ────────────────────────────────────────────

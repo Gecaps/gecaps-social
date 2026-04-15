@@ -4,6 +4,7 @@ export interface Idea {
   id: string;
   account_id: string;
   reference_id: string | null;
+  research_id: string | null;
   theme: string;
   angle: string | null;
   objective: string | null;

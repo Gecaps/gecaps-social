@@ -3,7 +3,7 @@ import type { Idea, IdeaStatus } from "./types";
 
 export async function listIdeas(
   accountId: string,
-  filters?: { status?: IdeaStatus; referenceId?: string }
+  filters?: { status?: IdeaStatus; referenceId?: string; researchId?: string }
 ): Promise<Idea[]> {
   let query = supabase()
     .from("social_ideas")
@@ -16,6 +16,9 @@ export async function listIdeas(
   }
   if (filters?.referenceId) {
     query = query.eq("reference_id", filters.referenceId);
+  }
+  if (filters?.researchId) {
+    query = query.eq("research_id", filters.researchId);
   }
 
   const { data, error } = await query;

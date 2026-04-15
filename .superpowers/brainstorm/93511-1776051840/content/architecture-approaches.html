@@ -1,0 +1,145 @@
+<h2>Arquitetura do Social Content OS</h2>
+<p class="subtitle">3 abordagens para reestruturar o gecaps-social seguindo o PRD. Clique na que preferir.</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Modular por Dominio (Recomendada)</h3>
+      <p><strong>Estrutura:</strong> Cada modulo do PRD vira uma pasta isolada com seus proprios componentes, actions, types e hooks.</p>
+      <pre style="background:#1a1a2e;padding:12px;border-radius:8px;font-size:13px;margin:8px 0;overflow-x:auto;color:#e0e0e0">
+app/
+  (conta)/[accountId]/
+    metricas/          -- dashboard da conta
+    calendario/        -- calendario editorial
+    pipeline/          -- kanban de pecas
+    referencias/       -- biblioteca de referencias
+    ideias/            -- ideias geradas/manuais
+    pecas/[id]/        -- editor de peca
+    publicados/        -- historico publicado
+    playbook/          -- brand playbook
+    configuracoes/
+  api/
+    references/        -- CRUD referencias
+    ideas/             -- geracao + CRUD ideias
+    pieces/            -- geracao + CRUD pecas
+    accounts/          -- CRUD contas
+    ai/generate/       -- endpoint unificado IA
+    render/            -- Cloudflare render HD
+    metrics/           -- metricas manuais
+modules/
+  references/          -- logica de dominio
+  ideas/
+  pieces/
+  playbook/
+  metrics/
+  ai/                  -- prompts, few-shot, pipeline IA
+lib/                   -- clients (supabase, cloudflare, etc)</pre>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Cada modulo e independente e testavel</li>
+          <li>Facil de entender onde cada coisa mora</li>
+          <li>Escala bem pra SaaS (adicionar modulos sem bagunca)</li>
+          <li>Rotas por conta via [accountId] ja isolam contexto</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Mais pastas/arquivos que o projeto atual</li>
+          <li>Precisa refatorar a estrutura existente</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Feature Slices (Vertical)</h3>
+      <p><strong>Estrutura:</strong> Cada feature e uma fatia vertical completa (UI + API + logica + types) numa unica pasta.</p>
+      <pre style="background:#1a1a2e;padding:12px;border-radius:8px;font-size:13px;margin:8px 0;overflow-x:auto;color:#e0e0e0">
+features/
+  references/
+    components/        -- UI
+    actions/           -- server actions
+    api/               -- route handlers
+    lib/               -- logica de dominio
+    types.ts
+  ideas/
+    components/
+    actions/
+    api/
+    lib/
+    types.ts
+  pieces/
+    ...
+app/
+  (conta)/[accountId]/
+    metricas/page.tsx      -- importa de features/
+    calendario/page.tsx
+    pipeline/page.tsx
+    referencias/page.tsx</pre>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Tudo de uma feature num lugar so</li>
+          <li>Maximo de coesao por feature</li>
+          <li>Facil deletar/substituir um modulo inteiro</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Foge do padrao Next.js App Router (APIs fora de app/api)</li>
+          <li>Mais complexo de configurar rotas</li>
+          <li>Pode confundir — Next.js espera APIs em app/api/</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Flat Simples (Evoluir o atual)</h3>
+      <p><strong>Estrutura:</strong> Manter a estrutura flat do Next.js como esta, so adicionar as paginas e APIs novas conforme o PRD pede.</p>
+      <pre style="background:#1a1a2e;padding:12px;border-radius:8px;font-size:13px;margin:8px 0;overflow-x:auto;color:#e0e0e0">
+app/
+  calendario/page.tsx
+  dashboard/page.tsx
+  pipeline/page.tsx
+  referencias/page.tsx
+  ideias/page.tsx
+  post/[id]/page.tsx
+  playbook/page.tsx
+  publicados/page.tsx
+  api/
+    posts/
+    references/
+    ideas/
+    render/
+    ...
+components/
+  calendar/
+  post/
+  dashboard/
+  references/
+  ideas/
+  pipeline/
+lib/
+  supabase.ts
+  claude.ts
+  cloudflare-render.ts
+  references.ts
+  ideas.ts
+  pieces.ts</pre>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Menos refatoracao — evolui o que ja existe</li>
+          <li>Padrao classico Next.js App Router</li>
+          <li>Simples de entender</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Sem isolamento por conta (sem [accountId] na rota)</li>
+          <li>lib/ vira um saco de gatos com 12 modulos</li>
+          <li>Nao escala bem pra SaaS multi-tenant</li>
+          <li>E basicamente o que voce tem hoje — "remendo"</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div>

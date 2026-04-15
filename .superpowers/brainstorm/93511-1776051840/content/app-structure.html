@@ -1,0 +1,234 @@
+<h2>Estrutura de Pastas e Navegacao</h2>
+<p class="subtitle">Arquitetura modular por dominio. Esquerda: pastas do projeto. Direita: navegacao do usuario.</p>
+
+<div class="split">
+  <!-- ESTRUTURA DE PASTAS -->
+  <div class="mockup">
+    <div class="mockup-header">Estrutura de Pastas</div>
+    <div class="mockup-body" style="padding:20px;font-size:12px;">
+      <pre style="line-height:1.7;color:#e0e0e0;">
+gecaps-social/
+├── app/
+│   ├── layout.tsx                  <span style="color:#666">-- root layout (fonts, theme)</span>
+│   ├── page.tsx                    <span style="color:#666">-- redirect → /contas</span>
+│   │
+│   ├── contas/
+│   │   ├── page.tsx                <span style="color:#666">-- lista de contas</span>
+│   │   └── nova/page.tsx           <span style="color:#666">-- criar conta</span>
+│   │
+│   ├── (conta)/[accountId]/
+│   │   ├── layout.tsx              <span style="color:#666">-- sidebar + topbar da conta</span>
+│   │   ├── metricas/page.tsx       <span style="color:#666">-- HOME: dashboard metricas</span>
+│   │   ├── calendario/page.tsx     <span style="color:#666">-- calendario editorial</span>
+│   │   ├── pipeline/page.tsx       <span style="color:#666">-- kanban de pecas</span>
+│   │   ├── referencias/
+│   │   │   ├── page.tsx            <span style="color:#666">-- biblioteca</span>
+│   │   │   └── [id]/page.tsx       <span style="color:#666">-- detalhe + ideias</span>
+│   │   ├── ideias/page.tsx         <span style="color:#666">-- todas as ideias</span>
+│   │   ├── pecas/
+│   │   │   └── [id]/page.tsx       <span style="color:#666">-- editor de peca</span>
+│   │   ├── publicados/page.tsx     <span style="color:#666">-- historico publicado</span>
+│   │   ├── playbook/page.tsx       <span style="color:#666">-- brand playbook</span>
+│   │   └── configuracoes/page.tsx  <span style="color:#666">-- config da conta</span>
+│   │
+│   └── api/
+│       ├── accounts/               <span style="color:#666">-- CRUD contas</span>
+│       ├── playbook/               <span style="color:#666">-- CRUD playbook</span>
+│       ├── references/             <span style="color:#666">-- CRUD + processamento</span>
+│       ├── ideas/                  <span style="color:#666">-- geracao + CRUD</span>
+│       ├── pieces/                 <span style="color:#666">-- CRUD + aprovacao</span>
+│       ├── metrics/                <span style="color:#666">-- CRUD metricas</span>
+│       ├── insights/               <span style="color:#666">-- geracao + CRUD</span>
+│       ├── ai/
+│       │   ├── process-reference/  <span style="color:#666">-- extrai + resume + tags</span>
+│       │   ├── generate-ideas/     <span style="color:#666">-- 5 ideias por referencia</span>
+│       │   ├── generate-piece/     <span style="color:#666">-- peca completa</span>
+│       │   ├── generate-caption/   <span style="color:#666">-- legenda isolada</span>
+│       │   └── generate-insights/  <span style="color:#666">-- insights por metricas</span>
+│       ├── render/                 <span style="color:#666">-- Cloudflare HD (mantido)</span>
+│       ├── preview/                <span style="color:#666">-- Satori preview (mantido)</span>
+│       └── upload/                 <span style="color:#666">-- upload de arquivos</span>
+│
+├── modules/
+│   ├── accounts/
+│   │   ├── types.ts
+│   │   ├── queries.ts              <span style="color:#666">-- Supabase queries</span>
+│   │   └── actions.ts              <span style="color:#666">-- Server Actions</span>
+│   ├── playbook/
+│   │   ├── types.ts
+│   │   ├── queries.ts
+│   │   ├── actions.ts
+│   │   └── prompt-builder.ts       <span style="color:#666">-- monta prompt da IA</span>
+│   ├── references/
+│   │   ├── types.ts
+│   │   ├── queries.ts
+│   │   ├── actions.ts
+│   │   └── extractor.ts            <span style="color:#666">-- scraping + PDF parse</span>
+│   ├── ideas/
+│   │   ├── types.ts
+│   │   ├── queries.ts
+│   │   └── actions.ts
+│   ├── pieces/
+│   │   ├── types.ts
+│   │   ├── queries.ts
+│   │   ├── actions.ts
+│   │   └── status-machine.ts       <span style="color:#666">-- transicoes de status</span>
+│   ├── metrics/
+│   │   ├── types.ts
+│   │   ├── queries.ts
+│   │   └── ranking.ts              <span style="color:#666">-- calculo de ranking</span>
+│   ├── insights/
+│   │   ├── types.ts
+│   │   └── queries.ts
+│   └── ai/
+│       ├── client.ts               <span style="color:#666">-- Claude SDK wrapper</span>
+│       ├── prompts/
+│       │   ├── reference.ts        <span style="color:#666">-- prompt processar ref</span>
+│       │   ├── ideas.ts            <span style="color:#666">-- prompt gerar ideias</span>
+│       │   ├── piece.ts            <span style="color:#666">-- prompt gerar peca</span>
+│       │   └── insights.ts         <span style="color:#666">-- prompt gerar insights</span>
+│       └── pipeline.ts             <span style="color:#666">-- orquestrador IA</span>
+│
+├── components/
+│   ├── layout/
+│   │   ├── sidebar.tsx             <span style="color:#666">-- sidebar da conta</span>
+│   │   ├── topbar.tsx
+│   │   ├── mobile-nav.tsx
+│   │   └── account-switcher.tsx
+│   ├── references/
+│   │   ├── reference-list.tsx
+│   │   ├── reference-card.tsx
+│   │   ├── add-reference-modal.tsx
+│   │   └── reference-detail.tsx
+│   ├── ideas/
+│   │   ├── idea-list.tsx
+│   │   ├── idea-card.tsx
+│   │   └── create-idea-modal.tsx
+│   ├── pieces/
+│   │   ├── piece-editor.tsx        <span style="color:#666">-- editor completo</span>
+│   │   ├── layout-selector.tsx
+│   │   ├── approval-actions.tsx
+│   │   └── version-history.tsx
+│   ├── pipeline/
+│   │   ├── pipeline-board.tsx      <span style="color:#666">-- kanban</span>
+│   │   └── pipeline-card.tsx
+│   ├── calendar/
+│   │   ├── calendar-view.tsx
+│   │   ├── week-view.tsx
+│   │   └── month-view.tsx
+│   ├── metrics/
+│   │   ├── metrics-dashboard.tsx
+│   │   ├── ranking-list.tsx
+│   │   ├── insights-panel.tsx
+│   │   └── metric-input.tsx
+│   ├── playbook/
+│   │   └── playbook-form.tsx
+│   └── ui/                         <span style="color:#666">-- shadcn components</span>
+│
+├── lib/
+│   ├── supabase.ts                 <span style="color:#666">-- client (mantido)</span>
+│   ├── cloudflare-render.ts        <span style="color:#666">-- render HD (mantido)</span>
+│   ├── telegram.ts                 <span style="color:#666">-- notificacoes (mantido)</span>
+│   ├── pexels.ts                   <span style="color:#666">-- fotos stock (mantido)</span>
+│   └── utils.ts                    <span style="color:#666">-- cn() etc (mantido)</span>
+│
+└── templates/                      <span style="color:#666">-- HTML templates (mantido)</span>
+    ├── post-final-branco.html
+    ├── post-final-verde.html
+    ├── post-quote.html
+    └── post-foto-premium.html</pre>
+    </div>
+  </div>
+
+  <!-- NAVEGACAO -->
+  <div class="mockup">
+    <div class="mockup-header">Navegacao do Usuario</div>
+    <div class="mockup-body" style="padding:20px;font-size:13px;">
+
+      <div style="margin-bottom:20px;">
+        <h3 style="margin:0 0 8px;">Tela inicial: Lista de Contas</h3>
+        <div style="background:#1a1a2e;border-radius:8px;padding:16px;">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <div style="border:1px solid #43A047;border-radius:8px;padding:12px;width:140px;text-align:center;">
+              <div style="font-size:24px;margin-bottom:4px;">🟢</div>
+              <strong>GECAPS Brasil</strong>
+              <div style="font-size:11px;opacity:0.6;">@gecapsbrasil</div>
+            </div>
+            <div style="border:1px solid #FFB300;border-radius:8px;padding:12px;width:140px;text-align:center;">
+              <div style="font-size:24px;margin-bottom:4px;">🟡</div>
+              <strong>GECAPS PY</strong>
+              <div style="font-size:11px;opacity:0.6;">@gecapspy</div>
+            </div>
+            <div style="border:1px dashed #555;border-radius:8px;padding:12px;width:140px;text-align:center;opacity:0.5;">
+              <div style="font-size:24px;margin-bottom:4px;">+</div>
+              <strong>Nova conta</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <h3 style="margin:0 0 8px;">Dentro da conta: Sidebar</h3>
+        <div style="background:#1a1a2e;border-radius:8px;padding:16px;">
+          <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #333;">
+            <strong style="color:#43A047;">GECAPS Brasil</strong>
+            <div style="font-size:11px;opacity:0.6;">@gecapsbrasil · Instagram</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;">
+            <div style="padding:8px;border-radius:6px;background:#E91E6320;color:#E91E63;">📊 Metricas <span style="font-size:10px;opacity:0.6">(home)</span></div>
+            <div style="padding:8px;border-radius:6px;">📅 Calendario</div>
+            <div style="padding:8px;border-radius:6px;">🔄 Pipeline</div>
+            <div style="padding:8px;border-radius:6px;border-top:1px solid #222;margin-top:4px;padding-top:12px;">📎 Referencias</div>
+            <div style="padding:8px;border-radius:6px;">💡 Ideias</div>
+            <div style="padding:8px;border-radius:6px;border-top:1px solid #222;margin-top:4px;padding-top:12px;">✅ Publicados</div>
+            <div style="padding:8px;border-radius:6px;border-top:1px solid #222;margin-top:4px;padding-top:12px;">📖 Playbook</div>
+            <div style="padding:8px;border-radius:6px;">⚙️ Config</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="margin:0 0 8px;">Fluxo principal</h3>
+        <div style="background:#1a1a2e;border-radius:8px;padding:16px;font-size:12px;">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="background:#E91E63;color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">1</span>
+              <span>Configura <strong>Playbook</strong> da marca</span>
+            </div>
+            <div style="border-left:2px solid #333;margin-left:11px;height:8px;"></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="background:#E91E63;color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">2</span>
+              <span>Adiciona <strong>Referencia</strong> (link, texto, PDF)</span>
+            </div>
+            <div style="border-left:2px solid #333;margin-left:11px;height:8px;"></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="background:#E91E63;color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">3</span>
+              <span>IA processa → resumo + tags + 5 <strong>Ideias</strong></span>
+            </div>
+            <div style="border-left:2px solid #333;margin-left:11px;height:8px;"></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="background:#E91E63;color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">4</span>
+              <span>Aprova ideia → IA gera <strong>Peca</strong> completa</span>
+            </div>
+            <div style="border-left:2px solid #333;margin-left:11px;height:8px;"></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="background:#E91E63;color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">5</span>
+              <span>Revisa/ajusta → aprova final → entra no <strong>Calendario</strong></span>
+            </div>
+            <div style="border-left:2px solid #333;margin-left:11px;height:8px;"></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="background:#E91E63;color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">6</span>
+              <span>Baixa imagem HD → publica manual → registra <strong>Metricas</strong></span>
+            </div>
+            <div style="border-left:2px solid #333;margin-left:11px;height:8px;"></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="background:#E91E63;color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">7</span>
+              <span>IA gera <strong>Insights</strong> → retroalimenta novas ideias</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

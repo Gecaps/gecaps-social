@@ -11,6 +11,7 @@ import {
   ChevronUp,
   Link as LinkIcon,
   PenLine,
+  Search,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -147,7 +148,12 @@ export function IdeaCard({ idea, accountId }: IdeaCardProps) {
               {formatLabels[idea.suggested_format] || idea.suggested_format}
             </Badge>
           )}
-          {idea.reference_id ? (
+          {idea.research_id ? (
+            <span className="inline-flex items-center gap-1 text-[10px] text-violet-400">
+              <Search className="size-3" />
+              Via pesquisa
+            </span>
+          ) : idea.reference_id ? (
             <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
               <LinkIcon className="size-3" />
               Via referência
