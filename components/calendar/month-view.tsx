@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import type { Piece } from "@/modules/pieces/types";
-import { PILAR_COLORS } from "@/modules/accounts/types";
+import { PILAR_COLORS, type PiecePilar } from "@/modules/accounts/types";
 
 interface MonthViewProps {
-  posts: Piece[];
+  accountId: string;
+  pieces: Piece[];
   currentDate: Date;
   onCreatePost: (date: string) => void;
 }
@@ -24,7 +24,7 @@ const STATUS_DOT: Record<string, string> = {
   paused: "bg-gray-400",
 };
 
-export function MonthView({ posts, currentDate, onCreatePost }: MonthViewProps) {
+export function MonthView({ accountId, pieces, currentDate, onCreatePost }: MonthViewProps) {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const today = new Date().toISOString().split("T")[0];
@@ -42,10 +42,14 @@ export function MonthView({ posts, currentDate, onCreatePost }: MonthViewProps) 
   return (
     <div>
       <div className="grid grid-cols-7 gap-px">
-        {DAY_NAMES.map((name) => (
+        {DAY_NAMES.map((name, idx) => (
           <div
             key={name}
-            className="pb-2 text-center text-xs font-medium text-muted-foreground"
+            className={`pb-2 text-center text-xs font-medium ${
+              idx === 0 || idx === 6
+                ? "text-muted-foreground/50"
+                : "text-muted-foreground"
+            }`}
           >
             {name}
           </div>
@@ -56,14 +60,15 @@ export function MonthView({ posts, currentDate, onCreatePost }: MonthViewProps) 
             return (
               <div
                 key={`empty-${i}`}
-                className="min-h-[80px] rounded-lg border border-border/30 bg-muted/20 p-1"
+                className="min-h-[80px] rounded-lg border border-dashed border-border/20 bg-muted/10 p-1"
               />
             );
           }
 
           const dateStr = fmt(day);
-          const dayPosts = posts.filter((p) => p.scheduled_date === dateStr);
+          const dayPieces = pieces.filter((p) => p.scheduled_date === dateStr);
           const isToday = dateStr === today;
+          const isWeekend = day.getDay() === 0 || day.getDay() === 6;
 
           return (
             <div
@@ -71,7 +76,9 @@ export function MonthView({ posts, currentDate, onCreatePost }: MonthViewProps) 
               className={`min-h-[80px] rounded-lg border p-1.5 ${
                 isToday
                   ? "border-neon-cyan/40 bg-neon-cyan/5"
-                  : "border-border/50"
+                  : isWeekend
+                    ? "border-border/30 bg-muted/10"
+                    : "border-border/50"
               }`}
             >
               <div
@@ -83,14 +90,21 @@ export function MonthView({ posts, currentDate, onCreatePost }: MonthViewProps) 
               </div>
 
               <div className="space-y-0.5">
-                {dayPosts.map((post) => (
-                  <Link key={post.id} href={`/post/${post.id}`}>
+                {dayPieces.map((piece) => (
+                  <Link key={piece.id} href={`/${accountId}/pecas/${piece.id}`}>
                     <div className="flex items-center gap-1 rounded px-1 py-0.5 transition-colors hover:bg-muted/50 cursor-pointer">
                       <div
-                        className={`size-1.5 shrink-0 rounded-full ${STATUS_DOT[post.status]}`}
+                        className={`size-1.5 shrink-0 rounded-full ${STATUS_DOT[piece.status]}`}
                       />
+                      {piece.pilar && (
+                        <div
+                          className={`size-1.5 shrink-0 rounded-full ${
+                            PILAR_COLORS[piece.pilar]?.split(" ")[0] ?? ""
+                          }`}
+                        />
+                      )}
                       <span className="truncate text-[10px] font-medium">
-                        {post.title}
+                        {piece.title}
                       </span>
                     </div>
                   </Link>

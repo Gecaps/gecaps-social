@@ -3,18 +3,17 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { Account } from "@/modules/accounts/types";
 import type { Piece } from "@/modules/pieces/types";
 import { MonthView } from "./month-view";
 import { WeekView } from "./week-view";
 
 interface CalendarViewProps {
-  posts: Piece[];
-  accounts: Account[];
+  accountId: string;
+  pieces: Piece[];
 }
 
-export function CalendarView({ posts }: CalendarViewProps) {
-  const [view, setView] = useState<"week" | "month">("week");
+export function CalendarView({ accountId, pieces }: CalendarViewProps) {
+  const [view, setView] = useState<"week" | "month">("month");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [createDate, setCreateDate] = useState<string | null>(null);
 
@@ -76,23 +75,23 @@ export function CalendarView({ posts }: CalendarViewProps) {
           <div className="flex rounded-lg border border-border">
             <button
               className={`px-3 py-1.5 text-xs font-medium transition-colors ${
-                view === "week"
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              } rounded-l-lg`}
-              onClick={() => setView("week")}
-            >
-              Semana
-            </button>
-            <button
-              className={`px-3 py-1.5 text-xs font-medium transition-colors ${
                 view === "month"
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground"
-              } rounded-r-lg`}
+              } rounded-l-lg`}
               onClick={() => setView("month")}
             >
               Mes
+            </button>
+            <button
+              className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+                view === "week"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              } rounded-r-lg`}
+              onClick={() => setView("week")}
+            >
+              Semana
             </button>
           </div>
         </div>
@@ -100,13 +99,15 @@ export function CalendarView({ posts }: CalendarViewProps) {
 
       {view === "week" ? (
         <WeekView
-          posts={posts}
+          accountId={accountId}
+          pieces={pieces}
           currentDate={currentDate}
           onCreatePost={(date) => setCreateDate(date)}
         />
       ) : (
         <MonthView
-          posts={posts}
+          accountId={accountId}
+          pieces={pieces}
           currentDate={currentDate}
           onCreatePost={(date) => setCreateDate(date)}
         />

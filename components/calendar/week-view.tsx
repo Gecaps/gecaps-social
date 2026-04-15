@@ -3,10 +3,11 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";
 import type { Piece } from "@/modules/pieces/types";
-import { PILAR_LABELS, PILAR_COLORS } from "@/modules/accounts/types";
+import { PILAR_LABELS, PILAR_COLORS, STATUS_LABELS } from "@/modules/accounts/types";
 
 interface WeekViewProps {
-  posts: Piece[];
+  accountId: string;
+  pieces: Piece[];
   currentDate: Date;
   onCreatePost: (date: string) => void;
 }
@@ -26,7 +27,7 @@ const STATUS_BORDER: Record<string, string> = {
   paused: "border-l-gray-400",
 };
 
-export function WeekView({ posts, currentDate, onCreatePost }: WeekViewProps) {
+export function WeekView({ accountId, pieces, currentDate, onCreatePost }: WeekViewProps) {
   const weekStart = getWeekStart(currentDate);
   const today = new Date().toISOString().split("T")[0];
 
@@ -40,14 +41,19 @@ export function WeekView({ posts, currentDate, onCreatePost }: WeekViewProps) {
     <div className="grid grid-cols-7 gap-2">
       {days.map((day) => {
         const dateStr = fmt(day);
-        const dayPosts = posts.filter((p) => p.scheduled_date === dateStr);
+        const dayPieces = pieces.filter((p) => p.scheduled_date === dateStr);
         const isToday = dateStr === today;
+        const isWeekend = day.getDay() === 0 || day.getDay() === 6;
 
         return (
           <div key={dateStr} className="min-h-[240px]">
             <div
               className={`mb-2 text-center text-xs font-medium ${
-                isToday ? "text-neon-cyan" : "text-muted-foreground"
+                isToday
+                  ? "text-neon-cyan"
+                  : isWeekend
+                    ? "text-muted-foreground/50"
+                    : "text-muted-foreground"
               }`}
             >
               <div className="uppercase">{DAY_NAMES[day.getDay()]}</div>
@@ -63,24 +69,27 @@ export function WeekView({ posts, currentDate, onCreatePost }: WeekViewProps) {
             </div>
 
             <div className="space-y-2">
-              {dayPosts.map((post) => (
-                <Link key={post.id} href={`/post/${post.id}`}>
-                  <Card className={`border-l-2 ${STATUS_BORDER[post.status]} p-2.5 transition-colors hover:bg-muted/50 cursor-pointer`}>
+              {dayPieces.map((piece) => (
+                <Link key={piece.id} href={`/${accountId}/pecas/${piece.id}`}>
+                  <Card className={`border-l-2 ${STATUS_BORDER[piece.status]} p-2.5 transition-colors hover:bg-muted/50 cursor-pointer`}>
                     <p className="line-clamp-2 text-[11px] font-semibold leading-tight mb-1.5">
-                      {post.title}
+                      {piece.title}
                     </p>
-                    <div className="flex items-center gap-1.5">
-                      <Badge variant="outline" className={`text-[8px] px-1 py-0 ${PILAR_COLORS[post.pilar]}`}>
-                        {PILAR_LABELS[post.pilar]}
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <Badge variant="outline" className={`text-[8px] px-1 py-0 ${PILAR_COLORS[piece.pilar]}`}>
+                        {PILAR_LABELS[piece.pilar]}
                       </Badge>
-                      <span className="text-[9px] text-muted-foreground">{post.scheduled_time}</span>
+                      {piece.scheduled_time && (
+                        <span className="text-[9px] text-muted-foreground">
+                          {piece.scheduled_time}
+                        </span>
+                      )}
                     </div>
                   </Card>
                 </Link>
               ))}
 
-              {/* Add button on empty days */}
-              {dayPosts.length === 0 && (
+              {dayPieces.length === 0 && (
                 <button
                   onClick={() => onCreatePost(dateStr)}
                   className="flex w-full items-center justify-center rounded-lg border border-dashed border-border/50 p-6 text-muted-foreground/40 transition-colors hover:border-primary/30 hover:text-primary/60"

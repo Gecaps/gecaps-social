@@ -1,18 +1,13 @@
+import { listPieces } from "@/modules/pieces/queries";
+import { CalendarioPageClient } from "./page-client";
+
 export default async function CalendarioPage({
   params,
 }: {
   params: Promise<{ accountId: string }>;
 }) {
   const { accountId } = await params;
+  const pieces = await listPieces(accountId);
 
-  return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-heading font-extrabold tracking-tight">
-        Calendario
-      </h1>
-      <p className="text-sm text-muted-foreground mt-1">
-        Em construcao
-      </p>
-    </div>
-  );
+  return <CalendarioPageClient accountId={accountId} pieces={pieces} />;
 }
