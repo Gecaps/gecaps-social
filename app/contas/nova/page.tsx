@@ -10,7 +10,7 @@ export default function NovaContaPage() {
     const platform = formData.get("platform") as string;
 
     if (!name || !handle || !platform) {
-      throw new Error("Campos obrigatorios nao preenchidos");
+      throw new Error("Campos obrigatórios não preenchidos");
     }
 
     const account = await createAccount({

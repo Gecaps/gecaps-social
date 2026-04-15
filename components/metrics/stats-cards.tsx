@@ -46,14 +46,14 @@ export function StatsCards({ metrics }: StatsCardsProps) {
 
   const cards: StatCard[] = [
     {
-      label: "Pecas publicadas",
+      label: "Peças publicadas",
       value: String(totalPublished),
       icon: <FileCheck className="size-5" />,
       borderColor: "border-l-indigo-500",
       iconBg: "bg-indigo-500/10 text-indigo-400",
     },
     {
-      label: "Media de engagement",
+      label: "Média de engagement",
       value: avgEngagement + "%",
       icon: <BarChart3 className="size-5" />,
       borderColor: "border-l-emerald-500",
@@ -67,7 +67,7 @@ export function StatsCards({ metrics }: StatsCardsProps) {
       iconBg: "bg-amber-500/10 text-amber-400",
     },
     {
-      label: "Total de interacoes",
+      label: "Total de interações",
       value: formatNumber(totalInteractions),
       icon: <Heart className="size-5" />,
       borderColor: "border-l-pink-500",

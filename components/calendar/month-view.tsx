@@ -9,7 +9,7 @@ interface MonthViewProps {
   onCreatePost: (date: string) => void;
 }
 
-const DAY_NAMES = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
+const DAY_NAMES = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
 const STATUS_DOT: Record<string, string> = {
   reference: "bg-gray-400",

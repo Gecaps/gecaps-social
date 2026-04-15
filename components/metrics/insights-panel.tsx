@@ -225,7 +225,7 @@ export function InsightsPanel({ insights, accountId }: InsightsPanelProps) {
         <div className="rounded-xl border border-dashed border-border p-8 text-center space-y-2">
           <BrainCircuit className="size-6 text-muted-foreground mx-auto" />
           <p className="text-sm text-muted-foreground">
-            Nenhum insight ainda. Registre metricas em pecas publicadas e clique
+            Nenhum insight ainda. Registre métricas em peças publicadas e clique
             em &quot;Gerar Insights&quot;.
           </p>
         </div>

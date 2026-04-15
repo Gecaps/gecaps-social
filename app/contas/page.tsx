@@ -14,7 +14,7 @@ export default async function ContasPage() {
               Contas
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Selecione uma conta para gerenciar seu conteudo
+              Selecione uma conta para gerenciar seu conteúdo
             </p>
           </div>
           <Link

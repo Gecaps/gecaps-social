@@ -7,16 +7,16 @@ export function buildIdeasUserPrompt(
 ): string {
   const existingThemes =
     existingIdeas.length > 0
-      ? `\n## Ideias ja existentes (evite duplicar temas)\n${existingIdeas.map((i) => `- ${i.theme}`).join("\n")}\n`
+      ? `\n## Ideias já existentes (evite duplicar temas)\n${existingIdeas.map((i) => `- ${i.theme}`).join("\n")}\n`
       : "";
 
-  return `Com base na referencia abaixo, gere 5 ideias de conteudo para redes sociais.
+  return `Com base na referência abaixo, gere 5 ideias de conteúdo para redes sociais.
 
-## Referencia
-- Resumo: ${reference.summary ?? reference.raw_content ?? "Sem conteudo"}
+## Referência
+- Resumo: ${reference.summary ?? reference.raw_content ?? "Sem conteúdo"}
 - Tags: ${reference.tags?.join(", ") ?? "Nenhuma"}
-- Pilar sugerido: ${reference.suggested_pilar ?? "Nao definido"}
-- Formato sugerido: ${reference.suggested_format ?? "Nao definido"}
+- Pilar sugerido: ${reference.suggested_pilar ?? "Não definido"}
+- Formato sugerido: ${reference.suggested_format ?? "Não definido"}
 ${existingThemes}
 ## Estrutura esperada (JSON)
 \`\`\`json
@@ -24,8 +24,8 @@ ${existingThemes}
   "ideas": [
     {
       "theme": "Tema principal da ideia",
-      "angle": "Angulo ou abordagem especifica",
-      "objective": "Objetivo do conteudo (educar, engajar, converter, etc)",
+      "angle": "Ângulo ou abordagem específica",
+      "objective": "Objetivo do conteúdo (educar, engajar, converter, etc)",
       "suggested_format": "estatico | carrossel | story | reels",
       "justification": "Por que essa ideia funciona para redes sociais",
       "brand_fit": "Como se conecta com a marca"
@@ -36,8 +36,8 @@ ${existingThemes}
 
 ## Regras
 - Gere exatamente 5 ideias variadas
-- Cada ideia deve ter um angulo unico e diferente
-- Evite repetir temas das ideias ja existentes
-- Foque em conteudo que gere engajamento
+- Cada ideia deve ter um ângulo único e diferente
+- Evite repetir temas das ideias já existentes
+- Foque em conteúdo que gere engajamento
 - Retorne APENAS o JSON, sem texto adicional`;
 }

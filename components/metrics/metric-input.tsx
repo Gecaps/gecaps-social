@@ -48,7 +48,7 @@ export function MetricInput({ publishedPieces, accountId }: MetricInputProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!selectedPieceId) {
-      setError("Selecione uma peca.");
+      setError("Selecione uma peça.");
       return;
     }
 
@@ -78,10 +78,10 @@ export function MetricInput({ publishedPieces, accountId }: MetricInputProps) {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Erro ao salvar metricas");
+        throw new Error(data.error || "Erro ao salvar métricas");
       }
 
-      setSuccess("Metricas registradas com sucesso!");
+      setSuccess("Métricas registradas com sucesso!");
       resetForm();
       setTimeout(() => setSuccess(null), 3000);
       router.refresh();
@@ -96,14 +96,14 @@ export function MetricInput({ publishedPieces, accountId }: MetricInputProps) {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
       <h2 className="text-base font-heading font-bold mb-4 px-1">
-        Registrar Metricas
+        Registrar Métricas
       </h2>
 
       {publishedPieces.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-8 text-center">
           <ClipboardList className="size-6 text-muted-foreground mx-auto mb-2" />
           <p className="text-sm text-muted-foreground">
-            Nenhuma peca publicada sem metricas.
+            Nenhuma peça publicada sem métricas.
           </p>
         </div>
       ) : (
@@ -111,14 +111,14 @@ export function MetricInput({ publishedPieces, accountId }: MetricInputProps) {
           {/* Piece selector */}
           <div>
             <label className="text-xs text-muted-foreground mb-1 block">
-              Peca
+              Peça
             </label>
             <Select
               value={selectedPieceId}
               onValueChange={(v) => setSelectedPieceId(v ?? "")}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Selecionar peca..." />
+                <SelectValue placeholder="Selecionar peça..." />
               </SelectTrigger>
               <SelectContent>
                 {publishedPieces.map((piece) => (
@@ -146,7 +146,7 @@ export function MetricInput({ publishedPieces, accountId }: MetricInputProps) {
             </div>
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">
-                Comentarios
+                Comentários
               </label>
               <Input
                 type="number"
@@ -194,7 +194,7 @@ export function MetricInput({ publishedPieces, accountId }: MetricInputProps) {
             </div>
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">
-                Impressoes
+                Impressões
               </label>
               <Input
                 type="number"
@@ -209,7 +209,7 @@ export function MetricInput({ publishedPieces, accountId }: MetricInputProps) {
           {/* Notes */}
           <div>
             <label className="text-xs text-muted-foreground mb-1 block">
-              Observacoes
+              Observações
             </label>
             <Textarea
               value={notes}
@@ -229,7 +229,7 @@ export function MetricInput({ publishedPieces, accountId }: MetricInputProps) {
             ) : (
               <>
                 <Save className="size-4" />
-                Salvar Metricas
+                Salvar Métricas
               </>
             )}
           </Button>

@@ -20,21 +20,21 @@ export async function POST(req: Request) {
       : null;
     const systemPrompt = buildSystemPrompt(playbook);
 
-    const userPrompt = `Gere uma legenda completa para Instagram com base nas informacoes abaixo.
+    const userPrompt = `Gere uma legenda completa para Instagram com base nas informações abaixo.
 
 ## Dados do post
-- Titulo: ${title}
-- Hook: ${hook ?? "Nao definido"}
-- Pilar: ${pilar ?? "Nao definido"}
-- CTA: ${cta ?? "Nao definido"}
+- Título: ${title}
+- Hook: ${hook ?? "Não definido"}
+- Pilar: ${pilar ?? "Não definido"}
+- CTA: ${cta ?? "Não definido"}
 
 ## Regras
 - Legenda formatada para Instagram com quebras de linha
-- Inclua emojis estrategicos (sem exagero)
+- Inclua emojis estratégicos (sem exagero)
 - Comece com um hook forte
 - Termine com um CTA claro
 - Inclua 5-10 hashtags relevantes no final
-- Retorne APENAS a legenda pronta, sem explicacoes`;
+- Retorne APENAS a legenda pronta, sem explicações`;
 
     const caption = await generateText(systemPrompt, userPrompt);
     return NextResponse.json({ caption });

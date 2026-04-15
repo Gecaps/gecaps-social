@@ -35,7 +35,7 @@ const statusColors: Record<IdeaStatus, string> = {
 };
 
 const formatLabels: Record<string, string> = {
-  estatico: "Estatico",
+  estatico: "Estático",
   carrossel: "Carrossel",
   story: "Story",
   reels: "Reels",
@@ -96,9 +96,9 @@ export function IdeaCard({ idea, accountId }: IdeaCardProps) {
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Erro ao gerar peca");
+        throw new Error(data.error || "Erro ao gerar peça");
       }
-      showSuccess("Peca gerada com sucesso!");
+      showSuccess("Peça gerada com sucesso!");
       router.refresh();
     } catch (err) {
       showError((err as Error).message);
@@ -150,7 +150,7 @@ export function IdeaCard({ idea, accountId }: IdeaCardProps) {
           {idea.reference_id ? (
             <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
               <LinkIcon className="size-3" />
-              Via referencia
+              Via referência
             </span>
           ) : idea.is_manual ? (
             <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
@@ -235,7 +235,7 @@ export function IdeaCard({ idea, accountId }: IdeaCardProps) {
               ) : (
                 <>
                   <Sparkles className="size-3.5" />
-                  Gerar Peca
+                  Gerar Peça
                 </>
               )}
             </Button>

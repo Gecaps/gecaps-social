@@ -17,7 +17,7 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: "Social Content OS",
-  description: "Painel de gestao de redes sociais da GECAPS",
+  description: "Painel de gestão de redes sociais da GECAPS",
 };
 
 export default function RootLayout({

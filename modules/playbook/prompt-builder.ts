@@ -3,9 +3,9 @@ import type { BrandPlaybook } from "./types";
 export function buildSystemPrompt(playbook: BrandPlaybook | null): string {
   if (!playbook) {
     return [
-      "Voce e um assistente de social media.",
-      "Crie conteudo engajante, profissional e adequado para redes sociais.",
-      "Use linguagem clara e acessivel.",
+      "Você é um assistente de social media.",
+      "Crie conteúdo engajante, profissional e adequado para redes sociais.",
+      "Use linguagem clara e acessível.",
     ].join("\n");
   }
 
@@ -23,7 +23,7 @@ export function buildSystemPrompt(playbook: BrandPlaybook | null): string {
 
   if (playbook.mandatory_words.length > 0) {
     sections.push(
-      `## Palavras Obrigatorias\nSempre use: ${playbook.mandatory_words.join(", ")}\n`
+      `## Palavras Obrigatórias\nSempre use: ${playbook.mandatory_words.join(", ")}\n`
     );
   }
 
@@ -34,7 +34,7 @@ export function buildSystemPrompt(playbook: BrandPlaybook | null): string {
   }
 
   if (playbook.default_cta) {
-    sections.push(`## CTA Padrao\n${playbook.default_cta}\n`);
+    sections.push(`## CTA Padrão\n${playbook.default_cta}\n`);
   }
 
   if (playbook.do_examples) {
@@ -42,7 +42,7 @@ export function buildSystemPrompt(playbook: BrandPlaybook | null): string {
   }
 
   if (playbook.dont_examples) {
-    sections.push(`## O que NAO FAZER\n${playbook.dont_examples}\n`);
+    sections.push(`## O que NÃO FAZER\n${playbook.dont_examples}\n`);
   }
 
   if (playbook.post_examples.length > 0) {
@@ -66,7 +66,7 @@ export function buildSystemPrompt(playbook: BrandPlaybook | null): string {
 
   if (playbook.extra_instructions) {
     sections.push(
-      `## Instrucoes Adicionais\n${playbook.extra_instructions}\n`
+      `## Instruções Adicionais\n${playbook.extra_instructions}\n`
     );
   }
 

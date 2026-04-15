@@ -113,7 +113,7 @@ export function ReferenceDetail({
       }
       const updated = await res.json();
       setRef(updated);
-      showSuccess("Referencia processada com sucesso!");
+      showSuccess("Referência processada com sucesso!");
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -145,7 +145,7 @@ export function ReferenceDetail({
   }
 
   async function handleDelete() {
-    if (!confirm("Tem certeza que deseja excluir esta referencia?")) return;
+    if (!confirm("Tem certeza que deseja excluir esta referência?")) return;
     setDeleting(true);
     setError(null);
     try {
@@ -196,7 +196,7 @@ export function ReferenceDetail({
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowLeft className="size-4" />
-        Voltar para referencias
+        Voltar para referências
       </button>
 
       {/* Header */}
@@ -222,7 +222,7 @@ export function ReferenceDetail({
                   ? "Texto manual"
                   : ref.file_url
                   ? ref.file_url.split("/").pop()
-                  : "Referencia"}
+                  : "Referência"}
               </span>
             )}
             <div className="flex items-center gap-2">
@@ -239,7 +239,7 @@ export function ReferenceDetail({
                     ref.relevance_score
                   )}`}
                 >
-                  Relevancia: {ref.relevance_score}/10
+                  Relevância: {ref.relevance_score}/10
                 </span>
               )}
             </div>
@@ -267,7 +267,7 @@ export function ReferenceDetail({
       {ref.raw_content && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Conteudo Original</CardTitle>
+            <CardTitle className="text-base">Conteúdo Original</CardTitle>
           </CardHeader>
           <CardContent>
             <ScrollArea className="max-h-60 rounded-lg border border-border bg-muted/30 p-4">
@@ -292,7 +292,7 @@ export function ReferenceDetail({
           ) : (
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground italic">
-                Nao processado ainda
+                Não processado ainda
               </p>
               <Button onClick={handleProcess} disabled={processing} size="sm">
                 {processing ? (
@@ -334,7 +334,7 @@ export function ReferenceDetail({
       {(ref.suggested_pilar || ref.suggested_format) && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Sugestoes IA</CardTitle>
+            <CardTitle className="text-base">Sugestões IA</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {ref.suggested_pilar && (
@@ -423,7 +423,7 @@ export function ReferenceDetail({
                 {idea.angle && (
                   <div>
                     <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Angulo
+                      Ângulo
                     </span>
                     <p className="text-sm text-muted-foreground mt-0.5">
                       {idea.angle}

@@ -91,7 +91,7 @@ export function PlaybookForm({ accountId, playbook }: PlaybookFormProps) {
               type="text"
               value={toneOfVoice}
               onChange={(e) => setToneOfVoice(e.target.value)}
-              placeholder="Ex: profissional, amigavel, direto"
+              placeholder="Ex: profissional, amigável, direto"
               className={inputClass}
             />
           </div>
@@ -106,7 +106,7 @@ export function PlaybookForm({ accountId, playbook }: PlaybookFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <label className="block text-sm font-medium">CTA padrao</label>
+            <label className="block text-sm font-medium">CTA padrão</label>
             <input
               type="text"
               value={defaultCta}
@@ -121,12 +121,12 @@ export function PlaybookForm({ accountId, playbook }: PlaybookFormProps) {
       {/* Vocabulario */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Vocabulario</CardTitle>
+          <CardTitle className="text-base">Vocabulário</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium">
-              Palavras obrigatorias
+              Palavras obrigatórias
             </label>
             <input
               type="text"
@@ -136,7 +136,7 @@ export function PlaybookForm({ accountId, playbook }: PlaybookFormProps) {
               className={inputClass}
             />
             <p className="text-xs text-muted-foreground">
-              Termos que devem aparecer no conteudo
+              Termos que devem aparecer no conteúdo
             </p>
           </div>
           <div className="space-y-2">
@@ -170,13 +170,13 @@ export function PlaybookForm({ accountId, playbook }: PlaybookFormProps) {
             <textarea
               value={doExamples}
               onChange={(e) => setDoExamples(e.target.value)}
-              placeholder="Exemplos de boas praticas para o conteudo"
+              placeholder="Exemplos de boas práticas para o conteúdo"
               className={textareaClass}
             />
           </div>
           <div className="space-y-2">
             <label className="block text-sm font-medium">
-              O que NAO fazer (dont&apos;s)
+              O que NÃO fazer (dont&apos;s)
             </label>
             <textarea
               value={dontExamples}
@@ -191,13 +191,13 @@ export function PlaybookForm({ accountId, playbook }: PlaybookFormProps) {
       {/* Instrucoes Extras */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Instrucoes Extras</CardTitle>
+          <CardTitle className="text-base">Instruções Extras</CardTitle>
         </CardHeader>
         <CardContent>
           <textarea
             value={extraInstructions}
             onChange={(e) => setExtraInstructions(e.target.value)}
-            placeholder="Qualquer instrucao adicional para a IA ou equipe"
+            placeholder="Qualquer instrução adicional para a IA ou equipe"
             className={textareaClass}
           />
         </CardContent>

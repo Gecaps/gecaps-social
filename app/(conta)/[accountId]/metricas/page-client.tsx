@@ -59,7 +59,7 @@ export function MetricasPageClient({
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-heading font-extrabold tracking-tight">
-          Metricas
+          Métricas
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
           Dashboard de performance
@@ -73,9 +73,9 @@ export function MetricasPageClient({
             <BarChart3 className="size-6 text-muted-foreground" />
           </div>
           <div>
-            <p className="text-sm font-medium">Nenhuma metrica ainda</p>
+            <p className="text-sm font-medium">Nenhuma métrica ainda</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Publique pecas e registre metricas para ver o dashboard.
+              Publique peças e registre métricas para ver o dashboard.
             </p>
           </div>
         </div>

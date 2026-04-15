@@ -112,7 +112,7 @@ export function PipelineBoard({ pieces, accountId }: PipelineBoardProps) {
                 ) : (
                   <div className="rounded-lg border border-dashed border-border/50 p-4 text-center">
                     <p className="text-[10px] text-muted-foreground">
-                      Nenhuma peca
+                      Nenhuma peça
                     </p>
                   </div>
                 )}

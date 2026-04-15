@@ -225,7 +225,7 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
         </button>
         <div className="flex-1 min-w-0">
           <h1 className="font-heading text-lg font-bold truncate">
-            Editor de Peca
+            Editor de Peça
           </h1>
           <p className="text-xs text-muted-foreground truncate">
             {piece.title}
@@ -253,28 +253,28 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
           {/* Title */}
           <div>
             <label className="mb-1 block text-xs font-medium text-muted-foreground">
-              Titulo
+              Título
             </label>
             <textarea
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               rows={2}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-base font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
-              placeholder="Titulo do post..."
+              placeholder="Título do post..."
             />
           </div>
 
           {/* Subtitle */}
           <div>
             <label className="mb-1 block text-xs font-medium text-muted-foreground">
-              Subtitulo
+              Subtítulo
             </label>
             <input
               type="text"
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-              placeholder="Subtitulo opcional..."
+              placeholder="Subtítulo opcional..."
             />
           </div>
 
@@ -371,7 +371,7 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
           {/* Visual direction */}
           <div>
             <label className="mb-1 block text-xs font-medium text-muted-foreground">
-              Direcao visual
+              Direção visual
             </label>
             <textarea
               value={visualDirection}
@@ -482,7 +482,7 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
               className="w-full"
             />
             <p className="px-3 py-2 text-[10px] text-muted-foreground">
-              Preview rapido (Satori). Clique &quot;Baixar HD&quot; pra versao
+              Preview rápido (Satori). Clique &quot;Baixar HD&quot; pra versão
               final.
             </p>
           </div>
@@ -490,7 +490,7 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
           {/* Approval actions */}
           <div className="rounded-xl border border-border bg-card p-4">
             <h3 className="mb-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Aprovacao
+              Aprovação
             </h3>
             <ApprovalActions piece={piece} accountId={accountId} />
           </div>
@@ -498,7 +498,7 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
           {/* Version history */}
           <div className="rounded-xl border border-border bg-card p-4">
             <h3 className="mb-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Historico de versoes
+              Histórico de versões
             </h3>
             <VersionHistory versions={versions} />
           </div>

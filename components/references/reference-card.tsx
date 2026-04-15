@@ -47,13 +47,13 @@ function getRelativeTime(dateStr: string): string {
   const diffDays = Math.floor(diffMs / 86400000);
 
   if (diffMin < 1) return "agora";
-  if (diffMin < 60) return `ha ${diffMin} min`;
-  if (diffHours < 24) return `ha ${diffHours}h`;
-  if (diffDays === 1) return "ha 1 dia";
-  if (diffDays < 30) return `ha ${diffDays} dias`;
+  if (diffMin < 60) return `há ${diffMin} min`;
+  if (diffHours < 24) return `há ${diffHours}h`;
+  if (diffDays === 1) return "há 1 dia";
+  if (diffDays < 30) return `há ${diffDays} dias`;
   const diffMonths = Math.floor(diffDays / 30);
-  if (diffMonths === 1) return "ha 1 mes";
-  return `ha ${diffMonths} meses`;
+  if (diffMonths === 1) return "há 1 mês";
+  return `há ${diffMonths} meses`;
 }
 
 function getRelevanceColor(score: number | null): string {
@@ -76,7 +76,7 @@ function getSourceLabel(ref: Reference): string {
     const parts = ref.file_url.split("/");
     return parts[parts.length - 1] || "Arquivo";
   }
-  return "Referencia";
+  return "Referência";
 }
 
 export function ReferenceCard({ reference, accountId }: ReferenceCardProps) {

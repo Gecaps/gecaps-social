@@ -19,8 +19,8 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Metricas", segment: "metricas", icon: BarChart3 },
-  { label: "Calendario", segment: "calendario", icon: Calendar },
+  { label: "Métricas", segment: "metricas", icon: BarChart3 },
+  { label: "Calendário", segment: "calendario", icon: Calendar },
   { label: "Pipeline", segment: "pipeline", icon: Kanban },
   { label: "Refs", segment: "referencias", icon: Bookmark },
   { label: "Playbook", segment: "playbook", icon: BookOpen },

@@ -28,7 +28,7 @@ interface CreateIdeaModalProps {
 }
 
 const formatOptions = [
-  { value: "estatico", label: "Estatico" },
+  { value: "estatico", label: "Estático" },
   { value: "carrossel", label: "Carrossel" },
   { value: "reels", label: "Reels" },
   { value: "story", label: "Story" },
@@ -60,7 +60,7 @@ export function CreateIdeaModal({
 
   async function handleSubmit() {
     if (!theme.trim()) {
-      setError("O tema e obrigatorio");
+      setError("O tema é obrigatório");
       return;
     }
 
@@ -114,7 +114,7 @@ export function CreateIdeaModal({
         <DialogHeader>
           <DialogTitle>Nova Ideia</DialogTitle>
           <DialogDescription>
-            Crie uma ideia de conteudo manualmente
+            Crie uma ideia de conteúdo manualmente
           </DialogDescription>
         </DialogHeader>
 
@@ -125,7 +125,7 @@ export function CreateIdeaModal({
               Tema da ideia <span className="text-red-400">*</span>
             </label>
             <Input
-              placeholder="Ex: Beneficios do colageno para pele"
+              placeholder="Ex: Benefícios do colágeno para pele"
               value={theme}
               onChange={(e) => setTheme(e.target.value)}
             />
@@ -134,7 +134,7 @@ export function CreateIdeaModal({
           {/* Angle */}
           <div className="space-y-2">
             <label className="block text-sm font-medium">
-              Angulo editorial
+              Ângulo editorial
             </label>
             <Input
               placeholder="Ex: Mitos vs realidade"
@@ -179,7 +179,7 @@ export function CreateIdeaModal({
           <div className="space-y-2">
             <label className="block text-sm font-medium">Justificativa</label>
             <Textarea
-              placeholder="Por que essa ideia e relevante?"
+              placeholder="Por que essa ideia é relevante?"
               value={justification}
               onChange={(e) => setJustification(e.target.value)}
               className="min-h-[80px]"

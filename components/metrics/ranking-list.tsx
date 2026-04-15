@@ -35,12 +35,12 @@ export function RankingList({ rankings, accountId }: RankingListProps) {
     return (
       <div className="rounded-xl border border-border bg-card p-6">
         <h2 className="text-base font-heading font-bold mb-4">
-          Ranking de Pecas
+          Ranking de Peças
         </h2>
         <div className="rounded-xl border border-dashed border-border p-8 text-center">
           <Trophy className="size-6 text-muted-foreground mx-auto mb-2" />
           <p className="text-sm text-muted-foreground">
-            Nenhuma peca com metricas ainda.
+            Nenhuma peça com métricas ainda.
           </p>
         </div>
       </div>

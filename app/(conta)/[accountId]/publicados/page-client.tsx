@@ -8,7 +8,7 @@ import type { Metrics } from "@/modules/metrics/types";
 import { PILAR_LABELS, PILAR_COLORS } from "@/modules/accounts/types";
 
 const FORMAT_LABELS: Record<string, string> = {
-  estatico: "Estatico",
+  estatico: "Estático",
   carrossel: "Carrossel",
   reels: "Reels",
   story: "Story",
@@ -42,7 +42,7 @@ export function PublicadosPageClient({
             Publicados
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Pecas publicadas nesta conta
+            Peças publicadas nesta conta
           </p>
         </div>
         <div className="rounded-xl border border-dashed border-border p-12 text-center space-y-3">
@@ -50,9 +50,9 @@ export function PublicadosPageClient({
             <Megaphone className="size-6 text-muted-foreground" />
           </div>
           <div>
-            <p className="text-sm font-medium">Nenhuma peca publicada</p>
+            <p className="text-sm font-medium">Nenhuma peça publicada</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Quando pecas forem publicadas, elas aparecerao aqui.
+              Quando peças forem publicadas, elas aparecerão aqui.
             </p>
           </div>
         </div>
@@ -68,7 +68,7 @@ export function PublicadosPageClient({
           Publicados
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          {pieces.length} peca{pieces.length !== 1 ? "s" : ""} publicada
+          {pieces.length} peça{pieces.length !== 1 ? "s" : ""} publicada
           {pieces.length !== 1 ? "s" : ""}
         </p>
       </div>

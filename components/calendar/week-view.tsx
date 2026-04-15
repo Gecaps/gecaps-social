@@ -12,7 +12,7 @@ interface WeekViewProps {
   onCreatePost: (date: string) => void;
 }
 
-const DAY_NAMES = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
+const DAY_NAMES = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
 const STATUS_BORDER: Record<string, string> = {
   reference: "border-l-gray-400",

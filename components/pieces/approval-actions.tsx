@@ -87,7 +87,7 @@ export function ApprovalActions({ piece, accountId }: ApprovalActionsProps) {
           <textarea
             value={rejectionReason}
             onChange={(e) => setRejectionReason(e.target.value)}
-            placeholder="Motivo da rejeicao..."
+            placeholder="Motivo da rejeição..."
             className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
             rows={3}
           />
@@ -99,7 +99,7 @@ export function ApprovalActions({ piece, accountId }: ApprovalActionsProps) {
               className="inline-flex items-center gap-1.5 rounded-lg bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 hover:bg-red-500/20 disabled:opacity-50"
             >
               {loading && <Loader2 className="size-3 animate-spin" />}
-              Confirmar rejeicao
+              Confirmar rejeição
             </button>
             <button
               type="button"

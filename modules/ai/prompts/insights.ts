@@ -12,7 +12,7 @@ export function buildInsightsUserPrompt(
       `Saves: ${p.metrics.saves} | Engagement: ${p.metrics.engagement_rate.toFixed(2)}%`
   );
 
-  return `Analise os dados de performance abaixo e gere insights acionaveis.
+  return `Analise os dados de performance abaixo e gere insights acionáveis.
 
 ## Dados de Performance
 ${dataLines.join("\n")}
@@ -22,7 +22,7 @@ ${dataLines.join("\n")}
 {
   "insights": [
     {
-      "content": "Descricao detalhada do insight",
+      "content": "Descrição detalhada do insight",
       "type": "auto"
     }
   ]
@@ -31,8 +31,8 @@ ${dataLines.join("\n")}
 
 ## Regras
 - Gere entre 3 e 7 insights
-- Cubra: o que funciona, o que nao funciona, padroes identificados, sugestoes de melhoria
-- Cada insight deve ser acionavel e especifico
+- Cubra: o que funciona, o que não funciona, padrões identificados, sugestões de melhoria
+- Cada insight deve ser acionável e específico
 - Use os dados concretos para embasar cada insight
 - type deve ser sempre "auto"
 - Retorne APENAS o JSON, sem texto adicional`;

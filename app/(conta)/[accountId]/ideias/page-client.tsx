@@ -121,7 +121,7 @@ export function IdeasPageClient({ accountId, ideas }: IdeasPageClientProps) {
           <div>
             <p className="text-sm font-medium">Nenhuma ideia ainda</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Adicione referencias para a IA gerar ideias, ou crie manualmente.
+              Adicione referências para a IA gerar ideias, ou crie manualmente.
             </p>
           </div>
           <Button onClick={() => setModalOpen(true)} size="sm">

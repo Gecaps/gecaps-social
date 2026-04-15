@@ -6,15 +6,15 @@ const PILAR_LABELS: Record<string, string> = {
   educativo: "Educativo",
   autoridade: "Autoridade",
   produto: "Produto",
-  conexao: "Conexao",
+  conexao: "Conexão",
   "social-proof": "Social Proof",
-  objecao: "Objecao",
+  objecao: "Objeção",
 };
 
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
-    const title = url.searchParams.get("title") || "Titulo do post";
+    const title = url.searchParams.get("title") || "Título do post";
     const subtitle = url.searchParams.get("subtitle") || "";
     const hook = url.searchParams.get("hook") || "";
     const pilar = url.searchParams.get("pilar") || "educativo";

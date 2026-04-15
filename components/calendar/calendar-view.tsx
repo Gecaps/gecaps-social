@@ -32,7 +32,7 @@ export function CalendarView({ accountId, pieces }: CalendarViewProps) {
   const navigate = view === "week" ? navigateWeek : navigateMonth;
 
   const monthNames = [
-    "Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho",
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
     "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
   ];
 
@@ -81,7 +81,7 @@ export function CalendarView({ accountId, pieces }: CalendarViewProps) {
               } rounded-l-lg`}
               onClick={() => setView("month")}
             >
-              Mes
+              Mês
             </button>
             <button
               className={`px-3 py-1.5 text-xs font-medium transition-colors ${

@@ -36,9 +36,9 @@ export const PILAR_LABELS: Record<PiecePilar, string> = {
   educativo: "Educativo",
   autoridade: "Autoridade",
   produto: "Produto",
-  conexao: "Conexao",
+  conexao: "Conexão",
   "social-proof": "Social Proof",
-  objecao: "Objecao",
+  objecao: "Objeção",
 };
 
 export const PILAR_COLORS: Record<PiecePilar, string> = {
@@ -51,10 +51,10 @@ export const PILAR_COLORS: Record<PiecePilar, string> = {
 };
 
 export const STATUS_LABELS: Record<PieceStatus, string> = {
-  reference: "Referencia",
+  reference: "Referência",
   idea: "Ideia",
   idea_approved: "Ideia Aprovada",
-  in_production: "Em Producao",
+  in_production: "Em Produção",
   final_approved: "Aprovado",
   scheduled: "Agendado",
   published: "Publicado",
@@ -87,5 +87,5 @@ export const LAYOUT_DESCRIPTIONS: Record<PieceLayout, string> = {
   branco: "Fundo claro, acentos verdes. Clean e profissional.",
   verde: "Gradiente verde escuro. Bold e impactante.",
   quote: "Fundo escuro luxo, moldura dourada. Para frases.",
-  foto: "Foto premium com overlay verde. Conteudo na parte inferior.",
+  foto: "Foto premium com overlay verde. Conteúdo na parte inferior.",
 };

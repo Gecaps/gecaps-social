@@ -14,7 +14,7 @@ import { getValidNextStatuses } from "@/modules/pieces/status-machine";
 import { useState } from "react";
 
 const FORMAT_LABELS: Record<string, string> = {
-  estatico: "Estatico",
+  estatico: "Estático",
   carrossel: "Carrossel",
   reels: "Reels",
   story: "Story",

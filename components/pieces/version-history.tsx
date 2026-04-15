@@ -32,7 +32,7 @@ export function VersionHistory({ versions }: VersionHistoryProps) {
   if (versions.length === 0) {
     return (
       <p className="text-xs text-muted-foreground py-2">
-        Nenhuma versao anterior.
+        Nenhuma versão anterior.
       </p>
     );
   }

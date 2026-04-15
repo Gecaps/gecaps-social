@@ -16,7 +16,7 @@ export default async function PlaybookPage({
           Playbook
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Defina o tom, estilo e regras de conteudo desta conta
+          Defina o tom, estilo e regras de conteúdo desta conta
         </p>
       </div>
       <PlaybookForm accountId={accountId} playbook={playbook} />

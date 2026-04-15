@@ -55,11 +55,11 @@ export function CalendarioPageClient({
           <div className="flex items-center gap-2">
             <Calendar className="size-5 text-muted-foreground" />
             <h1 className="text-2xl font-heading font-extrabold tracking-tight">
-              Calendario
+              Calendário
             </h1>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            Calendario editorial &middot; {scheduledCount} peca
+            Calendário editorial &middot; {scheduledCount} peça
             {scheduledCount !== 1 ? "s" : ""} agendada
             {scheduledCount !== 1 ? "s" : ""}
           </p>

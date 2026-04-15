@@ -26,14 +26,14 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Metricas", segment: "metricas", icon: BarChart3 },
-  { label: "Calendario", segment: "calendario", icon: Calendar },
+  { label: "Métricas", segment: "metricas", icon: BarChart3 },
+  { label: "Calendário", segment: "calendario", icon: Calendar },
   { label: "Pipeline", segment: "pipeline", icon: Kanban },
-  { label: "Referencias", segment: "referencias", icon: Bookmark, separator: true },
+  { label: "Referências", segment: "referencias", icon: Bookmark, separator: true },
   { label: "Ideias", segment: "ideias", icon: Lightbulb },
   { label: "Publicados", segment: "publicados", icon: CheckCircle, separator: true },
   { label: "Playbook", segment: "playbook", icon: BookOpen, separator: true },
-  { label: "Configuracoes", segment: "configuracoes", icon: Settings },
+  { label: "Configurações", segment: "configuracoes", icon: Settings },
 ];
 
 interface SidebarProps {

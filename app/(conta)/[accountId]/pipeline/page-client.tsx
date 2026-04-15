@@ -31,7 +31,7 @@ export function PipelinePageClient({
 
   const stats = [
     { label: "Total", value: total, icon: Layers },
-    { label: "Em Producao", value: inProduction, icon: Paintbrush },
+    { label: "Em Produção", value: inProduction, icon: Paintbrush },
     { label: "Aprovados", value: finalApproved, icon: CheckCircle2 },
     { label: "Agendados", value: scheduled, icon: CalendarCheck },
     { label: "Publicados", value: published, icon: Globe },
@@ -45,7 +45,7 @@ export function PipelinePageClient({
           Pipeline
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Kanban de producao de conteudo
+          Kanban de produção de conteúdo
         </p>
       </div>
 
@@ -80,9 +80,9 @@ export function PipelinePageClient({
             <Layers className="size-6 text-muted-foreground" />
           </div>
           <div>
-            <p className="text-sm font-medium">Nenhuma peca no pipeline</p>
+            <p className="text-sm font-medium">Nenhuma peça no pipeline</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Crie ideias e aprove-as para ver pecas aqui.
+              Crie ideias e aprove-as para ver peças aqui.
             </p>
           </div>
         </div>

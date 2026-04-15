@@ -46,7 +46,7 @@ export function ReferencesPageClient({
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-heading font-extrabold tracking-tight">
-            Referencias
+            Referências
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             Links, textos e PDFs para a IA processar
@@ -109,7 +109,7 @@ export function ReferencesPageClient({
       ) : totalCount > 0 ? (
         <div className="rounded-xl border border-dashed border-border p-12 text-center">
           <p className="text-sm text-muted-foreground">
-            Nenhuma referencia com este filtro
+            Nenhuma referência com este filtro
           </p>
         </div>
       ) : (
@@ -118,14 +118,14 @@ export function ReferencesPageClient({
             <Library className="size-6 text-muted-foreground" />
           </div>
           <div>
-            <p className="text-sm font-medium">Nenhuma referencia ainda</p>
+            <p className="text-sm font-medium">Nenhuma referência ainda</p>
             <p className="text-sm text-muted-foreground mt-1">
               Adicione links, textos ou PDFs para a IA processar.
             </p>
           </div>
           <Button onClick={() => setModalOpen(true)} size="sm">
             <Plus className="size-4" />
-            Adicionar referencia
+            Adicionar referência
           </Button>
         </div>
       )}

@@ -71,7 +71,7 @@ export function AddReferenceModal({
           status: "novo",
         };
       } else if (tab === "text") {
-        if (!rawText.trim()) throw new Error("Cole algum conteudo");
+        if (!rawText.trim()) throw new Error("Cole algum conteúdo");
         body = {
           account_id: accountId,
           type: "text",
@@ -130,7 +130,7 @@ export function AddReferenceModal({
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Erro ao adicionar referencia");
+        throw new Error(data.error || "Erro ao adicionar referência");
       }
 
       reset();
@@ -153,7 +153,7 @@ export function AddReferenceModal({
     >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Adicionar Referencia</DialogTitle>
+          <DialogTitle>Adicionar Referência</DialogTitle>
           <DialogDescription>
             Adicione um link, texto ou arquivo para a IA processar
           </DialogDescription>
@@ -185,16 +185,16 @@ export function AddReferenceModal({
                 onChange={(e) => setUrl(e.target.value)}
               />
               <p className="text-xs text-muted-foreground">
-                Cole o link de um artigo, post ou pagina
+                Cole o link de um artigo, post ou página
               </p>
             </div>
           </TabsContent>
 
           <TabsContent value="text" className="mt-4 space-y-3">
             <div className="space-y-2">
-              <label className="block text-sm font-medium">Conteudo</label>
+              <label className="block text-sm font-medium">Conteúdo</label>
               <Textarea
-                placeholder="Cole aqui o texto de referencia..."
+                placeholder="Cole aqui o texto de referência..."
                 value={rawText}
                 onChange={(e) => setRawText(e.target.value)}
                 className="min-h-[120px]"
@@ -239,7 +239,7 @@ export function AddReferenceModal({
                 Adicionando...
               </>
             ) : (
-              "Adicionar Referencia"
+              "Adicionar Referência"
             )}
           </Button>
         </div>
