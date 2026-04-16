@@ -16,16 +16,17 @@ import {
   Sparkles,
   Loader2,
   Save,
+  Palette,
   Type,
   Image as ImageIcon,
   Wand2,
-  Palette,
   MessageSquare,
   Layers,
   CheckCircle2,
   Clock,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 
 interface PieceEditorProps {
@@ -43,18 +44,46 @@ const RENDER_TEMPLATE: Record<PieceLayout, string> = {
   editorial: "editorial",
 };
 
-type EditorTab = "estilo" | "texto" | "imagem" | "ia" | "legenda" | "carrossel";
-
 const LAYOUTS: PieceLayout[] = ["branco", "verde", "quote", "foto", "magazine", "editorial"];
 
-const LAYOUT_EMOJIS: Record<PieceLayout, string> = {
-  branco: "B",
-  verde: "V",
-  quote: "Q",
-  foto: "F",
-  magazine: "M",
-  editorial: "E",
-};
+/* ---- Collapsible section card ---- */
+function Section({
+  icon,
+  title,
+  color,
+  defaultOpen = false,
+  children,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  color: string;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className={`rounded-2xl border transition-all duration-200 ${
+      open ? "border-primary/20 bg-card shadow-md" : "border-border bg-card/60 hover:bg-card hover:border-border"
+    }`}>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-3 p-4 text-left"
+      >
+        <div className={`flex items-center justify-center size-9 rounded-xl bg-gradient-to-br ${color} text-white shadow-sm`}>
+          {icon}
+        </div>
+        <span className="text-sm font-semibold flex-1">{title}</span>
+        <ChevronDown className={`size-4 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div className="px-4 pb-4 pt-0 animate-in fade-in slide-in-from-top-1 duration-200">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
   const router = useRouter();
@@ -101,8 +130,7 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
   });
   const [previewSlideIndex, setPreviewSlideIndex] = useState(0);
 
-  // --- UI state ---
-  const [activeTab, setActiveTab] = useState<EditorTab>(isCarousel ? "carrossel" : "estilo");
+  // --- UI ---
   const [saving, setSaving] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [generatingCaption, setGeneratingCaption] = useState(false);
@@ -112,7 +140,7 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
   const badge = PILAR_LABELS[piece.pilar] ?? piece.pilar;
   const hasImage = layout === "foto" || layout === "magazine" || layout === "editorial";
 
-  // --- Active slide for carousel ---
+  // --- Active slide ---
   const activeSlideData = isCarousel && slides.length > 0
     ? slides[Math.min(previewSlideIndex, slides.length - 1)]
     : null;
@@ -120,48 +148,42 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
   // --- Preview URL ---
   const previewUrl = useMemo(() => {
     const s = activeSlideData;
-    const params = new URLSearchParams();
-    params.set("title", s?.title || title);
-    params.set("pilar", piece.pilar);
-    params.set("layout", s?.layout || layout);
-    params.set("handle", handle);
-    params.set("w", "540");
-    const _sub = s?.subtitle || subtitle;
-    const _tags = s?.tags || tags;
-    const _cta = s?.cta || cta;
-    const _hl = s?.highlight || highlight;
-    const _bn = s?.bigNum || bigNum;
-    const _img = s?.imageUrl || imageUrl;
-    if (_sub) params.set("subtitle", _sub);
-    if (_tags) params.set("tags", _tags);
-    if (_cta) params.set("cta", _cta);
-    if (_hl) params.set("highlight", _hl);
-    if (_bn) params.set("bigNum", _bn);
-    if (_img) params.set("image", _img);
-    return `/api/preview?${params.toString()}`;
+    const p = new URLSearchParams();
+    p.set("title", s?.title || title);
+    p.set("pilar", piece.pilar);
+    p.set("layout", s?.layout || layout);
+    p.set("handle", handle);
+    p.set("w", "540");
+    const v = {
+      subtitle: s?.subtitle || subtitle,
+      tags: s?.tags || tags,
+      cta: s?.cta || cta,
+      highlight: s?.highlight || highlight,
+      bigNum: s?.bigNum || bigNum,
+      image: s?.imageUrl || imageUrl,
+    };
+    Object.entries(v).forEach(([k, val]) => { if (val) p.set(k, val); });
+    return `/api/preview?${p.toString()}`;
   }, [activeSlideData, title, piece.pilar, layout, handle, subtitle, tags, cta, highlight, bigNum, imageUrl]);
 
   // --- Render URL ---
   const renderUrl = useMemo(() => {
     const s = activeSlideData;
-    const params = new URLSearchParams();
-    params.set("template", RENDER_TEMPLATE[s?.layout || layout]);
-    params.set("title", s?.title || title);
-    params.set("badge", badge);
-    params.set("handle", handle);
-    const _sub = s?.subtitle || subtitle;
-    const _tags = s?.tags || tags;
-    const _cta = s?.cta || cta;
-    const _hl = s?.highlight || highlight;
-    const _bn = s?.bigNum || bigNum;
-    const _img = s?.imageUrl || imageUrl;
-    if (_sub) params.set("subtitle", _sub);
-    if (_tags) params.set("tags", _tags);
-    if (_cta) params.set("cta", _cta);
-    if (_hl) params.set("highlight", _hl);
-    if (_bn) params.set("bigNum", _bn);
-    if (_img) params.set("image", _img);
-    return `/api/render?${params.toString()}`;
+    const p = new URLSearchParams();
+    p.set("template", RENDER_TEMPLATE[s?.layout || layout]);
+    p.set("title", s?.title || title);
+    p.set("badge", badge);
+    p.set("handle", handle);
+    const v = {
+      subtitle: s?.subtitle || subtitle,
+      tags: s?.tags || tags,
+      cta: s?.cta || cta,
+      highlight: s?.highlight || highlight,
+      bigNum: s?.bigNum || bigNum,
+      image: s?.imageUrl || imageUrl,
+    };
+    Object.entries(v).forEach(([k, val]) => { if (val) p.set(k, val); });
+    return `/api/render?${p.toString()}`;
   }, [activeSlideData, title, layout, badge, handle, subtitle, tags, cta, highlight, bigNum, imageUrl]);
 
   const showFeedback = useCallback((type: "success" | "error", message: string) => {
@@ -199,9 +221,7 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
       const a = document.createElement("a");
       a.href = url;
       a.download = `${title.slice(0, 40).replace(/\s+/g, "-").toLowerCase()}-hd.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
       URL.revokeObjectURL(url);
       showFeedback("success", "Download HD iniciado!");
     } catch (err) { showFeedback("error", (err as Error).message); }
@@ -231,20 +251,10 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
     finally { setGeneratingCaption(false); }
   }
 
-  // --- Tool cards for the toolbar ---
-  const toolCards: { id: EditorTab; icon: React.ReactNode; label: string; color: string; show: boolean }[] = [
-    ...(isCarousel ? [{ id: "carrossel" as EditorTab, icon: <Layers className="size-5" />, label: "Slides", color: "from-violet-500 to-purple-600", show: true }] : []),
-    { id: "estilo", icon: <Palette className="size-5" />, label: "Estilo", color: "from-amber-500 to-orange-500", show: true },
-    { id: "texto", icon: <Type className="size-5" />, label: "Texto", color: "from-blue-500 to-cyan-500", show: !isCarousel },
-    { id: "imagem", icon: <ImageIcon className="size-5" />, label: "Foto", color: "from-emerald-500 to-green-500", show: hasImage && !isCarousel },
-    { id: "ia", icon: <Wand2 className="size-5" />, label: "IA", color: "from-primary to-[var(--accent-violet,oklch(0.65_0.2_300))]", show: hasImage && !isCarousel },
-    { id: "legenda", icon: <MessageSquare className="size-5" />, label: "Legenda", color: "from-pink-500 to-rose-500", show: true },
-  ];
-
   return (
     <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
       {/* ===== TOP BAR ===== */}
-      <div className="mb-4 flex items-center gap-3">
+      <div className="mb-5 flex items-center gap-3">
         <button
           type="button"
           onClick={() => router.push(`/${accountId}/pipeline`)}
@@ -271,7 +281,6 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
           </div>
         )}
 
-        {/* Action buttons */}
         <button
           type="button"
           onClick={handleSave}
@@ -292,295 +301,228 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
         </button>
       </div>
 
-      {/* ===== MAIN LAYOUT: Toolbar | Content | Preview ===== */}
-      <div className="grid gap-4 lg:grid-cols-[72px_1fr_400px]">
+      {/* ===== MAIN: Editor | Preview ===== */}
+      <div className="grid gap-5 lg:grid-cols-[1fr_400px]">
 
-        {/* ===== LEFT: Tool cards (vertical) ===== */}
-        <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
-          {toolCards.filter(t => t.show).map((tool) => (
-            <button
-              key={tool.id}
-              type="button"
-              onClick={() => setActiveTab(tool.id)}
-              className={`group relative flex-shrink-0 flex flex-col items-center gap-1 rounded-2xl p-3 transition-all ${
-                activeTab === tool.id
-                  ? "bg-card shadow-lg ring-2 ring-primary/30"
-                  : "hover:bg-card/60"
-              }`}
+        {/* ===== LEFT: Stacked section cards ===== */}
+        <div className="space-y-3">
+
+          {/* 1. CARROSSEL (if applicable) */}
+          {isCarousel && (
+            <Section
+              icon={<Layers className="size-5" />}
+              title={`Montador de Carrossel — ${slides.length} slide${slides.length !== 1 ? "s" : ""}`}
+              color="from-violet-500 to-purple-600"
+              defaultOpen
             >
-              <div className={`rounded-xl p-2 transition-all ${
-                activeTab === tool.id
-                  ? `bg-gradient-to-br ${tool.color} text-white shadow-md`
-                  : "bg-muted/50 text-muted-foreground group-hover:text-foreground"
-              }`}>
-                {tool.icon}
-              </div>
-              <span className={`text-[10px] font-semibold ${
-                activeTab === tool.id ? "text-foreground" : "text-muted-foreground"
-              }`}>
-                {tool.label}
-              </span>
-            </button>
-          ))}
-        </div>
-
-        {/* ===== CENTER: Active panel ===== */}
-        <div className="min-h-[500px]">
-
-          {/* TAB: Estilo */}
-          {activeTab === "estilo" && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                Escolha o estilo
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {LAYOUTS.map((l) => (
-                  <button
-                    key={l}
-                    type="button"
-                    onClick={() => setLayout(l)}
-                    className={`group relative rounded-2xl border-2 p-4 text-left transition-all duration-200 ${
-                      layout === l
-                        ? "border-primary bg-primary/8 shadow-[0_0_20px_var(--glow-primary)] scale-[1.02]"
-                        : "border-border bg-card hover:border-primary/30 hover:shadow-[0_0_10px_var(--glow-primary)] hover:scale-[1.01]"
-                    }`}
-                  >
-                    {/* Mini preview thumbnail */}
-                    <div className={`mb-3 aspect-[3/4] rounded-xl overflow-hidden border border-border/50 ${
-                      layout === l ? "ring-2 ring-primary/20" : ""
-                    }`}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={`/api/preview?title=${encodeURIComponent(title || "Exemplo")}&pilar=${piece.pilar}&layout=${l}&handle=${handle}&w=280`}
-                        alt={LAYOUT_LABELS[l]}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`flex items-center justify-center size-7 rounded-lg text-xs font-bold ${
-                        layout === l
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground"
-                      }`}>
-                        {LAYOUT_EMOJIS[l]}
-                      </span>
-                      <div>
-                        <p className="text-sm font-semibold">{LAYOUT_LABELS[l]}</p>
-                        <p className="text-[10px] text-muted-foreground leading-tight">{LAYOUT_DESCRIPTIONS[l]}</p>
-                      </div>
-                    </div>
-                    {layout === l && (
-                      <div className="absolute top-2 right-2">
-                        <CheckCircle2 className="size-5 text-primary" />
-                      </div>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB: Texto */}
-          {activeTab === "texto" && !isCarousel && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                Texto do criativo
-              </h2>
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                {/* Card: Subtitulo */}
-                <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
-                  <label className="text-xs font-semibold text-muted-foreground">Subtitulo</label>
-                  <input
-                    type="text"
-                    value={subtitle}
-                    onChange={(e) => setSubtitle(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    placeholder="Subtitulo opcional..."
-                  />
-                </div>
-
-                {/* Card: CTA */}
-                <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
-                  <label className="text-xs font-semibold text-muted-foreground">CTA (chamada)</label>
-                  <input
-                    type="text"
-                    value={cta}
-                    onChange={(e) => setCta(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    placeholder="Saiba mais"
-                  />
-                </div>
-
-                {/* Card: Tags */}
-                <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
-                  <label className="text-xs font-semibold text-muted-foreground">Tags</label>
-                  <input
-                    type="text"
-                    value={tags}
-                    onChange={(e) => setTags(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    placeholder="SAUDE · BEM-ESTAR"
-                  />
-                </div>
-
-                {/* Card: Highlight */}
-                <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
-                  <label className="text-xs font-semibold text-muted-foreground">Destaque</label>
-                  <input
-                    type="text"
-                    value={highlight}
-                    onChange={(e) => setHighlight(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    placeholder="palavras em destaque"
-                  />
-                </div>
-              </div>
-
-              {/* Card: Big Number */}
-              <div className="rounded-2xl border border-border bg-card p-4 space-y-2 max-w-xs">
-                <label className="text-xs font-semibold text-muted-foreground">Big Number</label>
-                <input
-                  type="text"
-                  value={bigNum}
-                  onChange={(e) => setBigNum(e.target.value.slice(0, 2))}
-                  maxLength={2}
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-2xl font-black text-center placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  placeholder="5x"
-                />
-              </div>
-
-              {/* Briefing cards */}
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
-                  <label className="text-xs font-semibold text-muted-foreground">Briefing criativo</label>
-                  <textarea
-                    value={creativeBrief}
-                    onChange={(e) => setCreativeBrief(e.target.value)}
-                    rows={3}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
-                    placeholder="Contexto para o designer ou IA..."
-                  />
-                </div>
-                <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
-                  <label className="text-xs font-semibold text-muted-foreground">Direção visual</label>
-                  <textarea
-                    value={visualDirection}
-                    onChange={(e) => setVisualDirection(e.target.value)}
-                    rows={3}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
-                    placeholder="Cores, mood, estilo..."
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB: Imagem (Pexels) */}
-          {activeTab === "imagem" && hasImage && !isCarousel && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                Buscar foto
-              </h2>
-              <div className="rounded-2xl border border-border bg-card p-5">
-                <PhotoSearch
-                  onSelect={setImageUrl}
-                  currentUrl={imageUrl || undefined}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* TAB: IA (Gemini / Nano Banana) */}
-          {activeTab === "ia" && hasImage && !isCarousel && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                Nano Banana IA
-              </h2>
-              <div className="rounded-2xl border border-border bg-card p-5">
-                <GeminiImage
-                  onImageGenerated={setImageUrl}
-                  currentImageUrl={imageUrl || undefined}
-                  creativeBrief={creativeBrief}
-                  accountId={accountId}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* TAB: Legenda */}
-          {activeTab === "legenda" && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                Legenda & Hashtags
-              </h2>
-
-              {/* Generate caption card */}
-              <button
-                type="button"
-                onClick={handleGenerateCaption}
-                disabled={generatingCaption || !title}
-                className="w-full rounded-2xl border-2 border-dashed border-primary/30 bg-primary/5 p-5 text-center hover:border-primary/50 hover:bg-primary/8 transition-all disabled:opacity-50 group"
-              >
-                <div className="inline-flex items-center justify-center size-12 rounded-2xl bg-gradient-to-br from-primary to-[var(--accent-violet,oklch(0.65_0.2_300))] text-white mb-3 group-hover:scale-110 transition-transform">
-                  {generatingCaption ? <Loader2 className="size-6 animate-spin" /> : <Sparkles className="size-6" />}
-                </div>
-                <p className="text-sm font-semibold">
-                  {generatingCaption ? "Gerando legenda..." : "Gerar legenda com IA"}
-                </p>
-                <p className="text-[11px] text-muted-foreground mt-1">
-                  Cria legenda + hashtags com base no titulo e pilar
-                </p>
-              </button>
-
-              {/* Caption card */}
-              <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
-                <label className="text-xs font-semibold text-muted-foreground">Legenda</label>
-                <textarea
-                  value={caption}
-                  onChange={(e) => setCaption(e.target.value)}
-                  rows={6}
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
-                  placeholder="Legenda do post..."
-                />
-              </div>
-
-              {/* Hashtags card */}
-              <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
-                <label className="text-xs font-semibold text-muted-foreground">Hashtags</label>
-                <input
-                  type="text"
-                  value={hashtags}
-                  onChange={(e) => setHashtags(e.target.value)}
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  placeholder="#gecaps #saude #suplementos"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* TAB: Carrossel */}
-          {activeTab === "carrossel" && isCarousel && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                Montador de Carrossel
-              </h2>
               <CarouselBuilder
                 slides={slides}
                 onChange={setSlides}
                 onPreviewSlide={(_slide, index) => setPreviewSlideIndex(index)}
                 defaultLayout={layout}
               />
-            </div>
+            </Section>
           )}
+
+          {/* 2. ESTILO (layout) */}
+          {!isCarousel && (
+            <Section
+              icon={<Palette className="size-5" />}
+              title={`Estilo — ${LAYOUT_LABELS[layout]}`}
+              color="from-amber-500 to-orange-500"
+              defaultOpen
+            >
+              <div className="grid grid-cols-3 gap-2">
+                {LAYOUTS.map((l) => (
+                  <button
+                    key={l}
+                    type="button"
+                    onClick={() => setLayout(l)}
+                    className={`relative rounded-xl border-2 p-3 text-left transition-all duration-200 ${
+                      layout === l
+                        ? "border-primary bg-primary/8 shadow-[0_0_15px_var(--glow-primary)] scale-[1.02]"
+                        : "border-border bg-background hover:border-primary/30 hover:scale-[1.01]"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className={`flex items-center justify-center size-8 rounded-lg text-xs font-bold ${
+                        layout === l
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-muted-foreground"
+                      }`}>
+                        {l[0].toUpperCase()}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold truncate">{LAYOUT_LABELS[l]}</p>
+                        <p className="text-[10px] text-muted-foreground leading-tight line-clamp-2">{LAYOUT_DESCRIPTIONS[l]}</p>
+                      </div>
+                    </div>
+                    {layout === l && (
+                      <CheckCircle2 className="absolute top-2 right-2 size-4 text-primary" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </Section>
+          )}
+
+          {/* 3. TEXTO (single post only) */}
+          {!isCarousel && (
+            <Section
+              icon={<Type className="size-5" />}
+              title="Texto do Criativo"
+              color="from-blue-500 to-cyan-500"
+              defaultOpen={false}
+            >
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground">Subtitulo</label>
+                    <input
+                      type="text" value={subtitle} onChange={(e) => setSubtitle(e.target.value)}
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      placeholder="Subtitulo opcional..."
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground">CTA</label>
+                    <input
+                      type="text" value={cta} onChange={(e) => setCta(e.target.value)}
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      placeholder="Saiba mais"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground">Tags</label>
+                    <input
+                      type="text" value={tags} onChange={(e) => setTags(e.target.value)}
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      placeholder="SAUDE · BEM-ESTAR"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground">Destaque</label>
+                    <input
+                      type="text" value={highlight} onChange={(e) => setHighlight(e.target.value)}
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      placeholder="palavras em destaque"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground">Big Number</label>
+                    <input
+                      type="text" value={bigNum} onChange={(e) => setBigNum(e.target.value.slice(0, 2))} maxLength={2}
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-lg font-black text-center placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      placeholder="5x"
+                    />
+                  </div>
+                  <div />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground">Briefing criativo</label>
+                    <textarea
+                      value={creativeBrief} onChange={(e) => setCreativeBrief(e.target.value)} rows={2}
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                      placeholder="Contexto para IA..."
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground">Direção visual</label>
+                    <textarea
+                      value={visualDirection} onChange={(e) => setVisualDirection(e.target.value)} rows={2}
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                      placeholder="Cores, mood, estilo..."
+                    />
+                  </div>
+                </div>
+              </div>
+            </Section>
+          )}
+
+          {/* 4. FOTO (Pexels) — only for image layouts, single post */}
+          {!isCarousel && hasImage && (
+            <Section
+              icon={<ImageIcon className="size-5" />}
+              title="Buscar Foto"
+              color="from-emerald-500 to-green-500"
+              defaultOpen={false}
+            >
+              <PhotoSearch
+                onSelect={setImageUrl}
+                currentUrl={imageUrl || undefined}
+              />
+            </Section>
+          )}
+
+          {/* 5. IA (Nano Banana) — only for image layouts, single post */}
+          {!isCarousel && hasImage && (
+            <Section
+              icon={<Wand2 className="size-5" />}
+              title="Nano Banana IA"
+              color="from-primary to-[var(--accent-violet,oklch(0.65_0.2_300))]"
+              defaultOpen={false}
+            >
+              <GeminiImage
+                onImageGenerated={setImageUrl}
+                currentImageUrl={imageUrl || undefined}
+                creativeBrief={creativeBrief}
+                accountId={accountId}
+              />
+            </Section>
+          )}
+
+          {/* 6. LEGENDA */}
+          <Section
+            icon={<MessageSquare className="size-5" />}
+            title="Legenda & Hashtags"
+            color="from-pink-500 to-rose-500"
+            defaultOpen={false}
+          >
+            <div className="space-y-3">
+              {/* Generate button */}
+              <button
+                type="button"
+                onClick={handleGenerateCaption}
+                disabled={generatingCaption || !title}
+                className="w-full rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-4 text-center hover:border-primary/50 hover:bg-primary/8 transition-all disabled:opacity-50 group"
+              >
+                <div className="inline-flex items-center justify-center size-10 rounded-xl bg-gradient-to-br from-primary to-[var(--accent-violet,oklch(0.65_0.2_300))] text-white mb-2 group-hover:scale-110 transition-transform">
+                  {generatingCaption ? <Loader2 className="size-5 animate-spin" /> : <Sparkles className="size-5" />}
+                </div>
+                <p className="text-sm font-semibold">
+                  {generatingCaption ? "Gerando..." : "Gerar legenda com IA"}
+                </p>
+              </button>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-muted-foreground">Legenda</label>
+                <textarea
+                  value={caption} onChange={(e) => setCaption(e.target.value)} rows={5}
+                  className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                  placeholder="Legenda do post..."
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-muted-foreground">Hashtags</label>
+                <input
+                  type="text" value={hashtags} onChange={(e) => setHashtags(e.target.value)}
+                  className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  placeholder="#gecaps #saude #suplementos"
+                />
+              </div>
+            </div>
+          </Section>
         </div>
 
         {/* ===== RIGHT: Preview + Status ===== */}
         <div className="space-y-4">
           {/* Preview */}
-          <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-lg">
-            {/* Preview header with slide nav */}
+          <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-lg sticky top-4">
             <div className="flex items-center gap-2 border-b border-border px-4 py-2.5">
               <div className="size-2 rounded-full bg-emerald-400 animate-pulse" />
               <span className="text-xs font-semibold text-muted-foreground">Preview ao vivo</span>
@@ -621,9 +563,7 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
           <div className="rounded-2xl border border-border bg-card p-4">
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle2 className="size-4 text-muted-foreground" />
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Aprovação
-              </h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Aprovação</h3>
             </div>
             <ApprovalActions piece={piece} accountId={accountId} />
           </div>
@@ -632,9 +572,7 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
           <div className="rounded-2xl border border-border bg-card p-4">
             <div className="flex items-center gap-2 mb-3">
               <Clock className="size-4 text-muted-foreground" />
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Versões
-              </h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Versões</h3>
             </div>
             <VersionHistory versions={versions} />
           </div>
