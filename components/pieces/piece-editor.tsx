@@ -8,6 +8,9 @@ import { PILAR_LABELS } from "@/modules/accounts/types";
 import { LayoutSelector } from "./layout-selector";
 import { ApprovalActions } from "./approval-actions";
 import { VersionHistory } from "./version-history";
+import { PhotoSearch } from "./photo-search";
+import { GeminiImage } from "./gemini-image";
+import { CarouselBuilder, type CarouselSlide } from "./carousel-builder";
 import {
   ArrowLeft,
   Download,
@@ -15,7 +18,7 @@ import {
   Loader2,
   Save,
   Eye,
-  Image as ImageIcon,
+  Layers,
 } from "lucide-react";
 
 interface PieceEditorProps {
@@ -57,6 +60,40 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
   const [highlight, setHighlight] = useState("");
   const [bigNum, setBigNum] = useState("");
 
+  // --- Carousel state ---
+  const isCarousel = piece.format === "carrossel";
+  const [slides, setSlides] = useState<CarouselSlide[]>(() => {
+    if (piece.slide_structure && Array.isArray(piece.slide_structure) && piece.slide_structure.length > 0) {
+      return piece.slide_structure.map((s) => ({
+        id: (s.id as string) || crypto.randomUUID(),
+        title: (s.title as string) || "",
+        subtitle: (s.subtitle as string) || "",
+        tags: (s.tags as string) || "",
+        cta: (s.cta as string) || "",
+        highlight: (s.highlight as string) || "",
+        bigNum: (s.bigNum as string) || "",
+        imageUrl: (s.imageUrl as string) || "",
+        layout: (s.layout as PieceLayout) || layout,
+      }));
+    }
+    return isCarousel
+      ? [
+          {
+            id: crypto.randomUUID(),
+            title: piece.title,
+            subtitle: "",
+            tags: "",
+            cta: piece.cta ?? "",
+            highlight: "",
+            bigNum: "",
+            imageUrl: piece.image_url ?? "",
+            layout,
+          },
+        ]
+      : [];
+  });
+  const [previewSlideIndex, setPreviewSlideIndex] = useState(0);
+
   // --- UI state ---
   const [saving, setSaving] = useState(false);
   const [downloading, setDownloading] = useState(false);
@@ -69,37 +106,57 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
   const handle = piece.hook ?? "@gecapsbrasil";
   const badge = PILAR_LABELS[piece.pilar] ?? piece.pilar;
 
+  // --- Active slide for carousel preview ---
+  const activeSlideData = isCarousel && slides.length > 0
+    ? slides[Math.min(previewSlideIndex, slides.length - 1)]
+    : null;
+
   // --- Preview URL (Satori, updates live) ---
   const previewUrl = useMemo(() => {
+    const s = activeSlideData;
     const params = new URLSearchParams();
-    params.set("title", title);
+    params.set("title", s?.title || title);
     params.set("pilar", piece.pilar);
-    params.set("layout", layout);
+    params.set("layout", s?.layout || layout);
     params.set("handle", handle);
     params.set("w", "540");
-    if (subtitle) params.set("subtitle", subtitle);
-    if (tags) params.set("tags", tags);
-    if (cta) params.set("cta", cta);
-    if (highlight) params.set("highlight", highlight);
-    if (bigNum) params.set("bigNum", bigNum);
+    const _subtitle = s?.subtitle || subtitle;
+    const _tags = s?.tags || tags;
+    const _cta = s?.cta || cta;
+    const _highlight = s?.highlight || highlight;
+    const _bigNum = s?.bigNum || bigNum;
+    const _image = s?.imageUrl || imageUrl;
+    if (_subtitle) params.set("subtitle", _subtitle);
+    if (_tags) params.set("tags", _tags);
+    if (_cta) params.set("cta", _cta);
+    if (_highlight) params.set("highlight", _highlight);
+    if (_bigNum) params.set("bigNum", _bigNum);
+    if (_image) params.set("image", _image);
     return `/api/preview?${params.toString()}`;
-  }, [title, piece.pilar, layout, handle, subtitle, tags, cta, highlight, bigNum]);
+  }, [activeSlideData, title, piece.pilar, layout, handle, subtitle, tags, cta, highlight, bigNum, imageUrl]);
 
   // --- Render URL (Cloudflare HD) ---
   const renderUrl = useMemo(() => {
+    const s = activeSlideData;
     const params = new URLSearchParams();
-    params.set("template", RENDER_TEMPLATE[layout]);
-    params.set("title", title);
+    params.set("template", RENDER_TEMPLATE[s?.layout || layout]);
+    params.set("title", s?.title || title);
     params.set("badge", badge);
     params.set("handle", handle);
-    if (subtitle) params.set("subtitle", subtitle);
-    if (tags) params.set("tags", tags);
-    if (cta) params.set("cta", cta);
-    if (highlight) params.set("highlight", highlight);
-    if (bigNum) params.set("bigNum", bigNum);
-    if (imageUrl) params.set("image", imageUrl);
+    const _subtitle = s?.subtitle || subtitle;
+    const _tags = s?.tags || tags;
+    const _cta = s?.cta || cta;
+    const _highlight = s?.highlight || highlight;
+    const _bigNum = s?.bigNum || bigNum;
+    const _image = s?.imageUrl || imageUrl;
+    if (_subtitle) params.set("subtitle", _subtitle);
+    if (_tags) params.set("tags", _tags);
+    if (_cta) params.set("cta", _cta);
+    if (_highlight) params.set("highlight", _highlight);
+    if (_bigNum) params.set("bigNum", _bigNum);
+    if (_image) params.set("image", _image);
     return `/api/render?${params.toString()}`;
-  }, [title, layout, badge, handle, subtitle, tags, cta, highlight, bigNum, imageUrl]);
+  }, [activeSlideData, title, layout, badge, handle, subtitle, tags, cta, highlight, bigNum, imageUrl]);
 
   // --- Show feedback briefly ---
   const showFeedback = useCallback(
@@ -123,6 +180,7 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
         layout,
         creative_brief: creativeBrief || null,
         visual_direction: visualDirection || null,
+        slide_structure: isCarousel && slides.length > 0 ? slides : null,
       };
 
       const res = await fetch(`/api/pieces/${piece.id}`, {
@@ -255,7 +313,7 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
           {/* Title */}
           <div>
             <label className="mb-1 block text-xs font-medium text-muted-foreground">
-              Título
+              Título {isCarousel && "(capa do carrossel)"}
             </label>
             <textarea
               value={title}
@@ -266,94 +324,129 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
             />
           </div>
 
-          {/* Subtitle */}
-          <div>
-            <label className="mb-1 block text-xs font-medium text-muted-foreground">
-              Subtítulo
-            </label>
-            <input
-              type="text"
-              value={subtitle}
-              onChange={(e) => setSubtitle(e.target.value)}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-              placeholder="Subtítulo opcional..."
-            />
-          </div>
+          {/* Carousel builder */}
+          {isCarousel && (
+            <div className="rounded-xl border border-primary/20 bg-card p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Layers className="size-4 text-primary" />
+                <h3 className="text-sm font-semibold">Montador de Carrossel</h3>
+                <span className="text-[11px] text-muted-foreground">
+                  {slides.length} slide{slides.length !== 1 && "s"}
+                </span>
+              </div>
+              <CarouselBuilder
+                slides={slides}
+                onChange={setSlides}
+                onPreviewSlide={(_slide, index) => setPreviewSlideIndex(index)}
+                defaultLayout={layout}
+              />
+            </div>
+          )}
 
-          {/* Tags + CTA row */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="mb-1 block text-xs font-medium text-muted-foreground">
-                Tags (separadas por ·)
-              </label>
-              <input
-                type="text"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                placeholder="SAUDE · BEM-ESTAR"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-muted-foreground">
-                CTA
-              </label>
-              <input
-                type="text"
-                value={cta}
-                onChange={(e) => setCta(e.target.value)}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                placeholder="Saiba mais"
-              />
-            </div>
-          </div>
+          {/* Single-post visual fields (hidden in carousel mode — each slide has its own) */}
+          {!isCarousel && (
+            <>
+              {/* Subtitle */}
+              <div>
+                <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                  Subtítulo
+                </label>
+                <input
+                  type="text"
+                  value={subtitle}
+                  onChange={(e) => setSubtitle(e.target.value)}
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  placeholder="Subtítulo opcional..."
+                />
+              </div>
 
-          {/* Highlight + Big number row */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="mb-1 block text-xs font-medium text-muted-foreground">
-                Highlight words (virgula)
-              </label>
-              <input
-                type="text"
-                value={highlight}
-                onChange={(e) => setHighlight(e.target.value)}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                placeholder="saude, natural"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-muted-foreground">
-                Big number (max 2)
-              </label>
-              <input
-                type="text"
-                value={bigNum}
-                onChange={(e) =>
-                  setBigNum(e.target.value.slice(0, 2))
-                }
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                placeholder="5x"
-                maxLength={2}
-              />
-            </div>
-          </div>
+              {/* Tags + CTA row */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                    Tags (separadas por ·)
+                  </label>
+                  <input
+                    type="text"
+                    value={tags}
+                    onChange={(e) => setTags(e.target.value)}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    placeholder="SAUDE · BEM-ESTAR"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                    CTA
+                  </label>
+                  <input
+                    type="text"
+                    value={cta}
+                    onChange={(e) => setCta(e.target.value)}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    placeholder="Saiba mais"
+                  />
+                </div>
+              </div>
 
-          {/* Image URL (only for foto layout) */}
-          {layout === "foto" && (
-            <div>
-              <label className="mb-1 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                <ImageIcon className="size-3.5" />
-                URL da imagem
-              </label>
-              <input
-                type="url"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                placeholder="https://..."
-              />
-            </div>
+              {/* Highlight + Big number row */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                    Highlight words (virgula)
+                  </label>
+                  <input
+                    type="text"
+                    value={highlight}
+                    onChange={(e) => setHighlight(e.target.value)}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    placeholder="saude, natural"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                    Big number (max 2)
+                  </label>
+                  <input
+                    type="text"
+                    value={bigNum}
+                    onChange={(e) =>
+                      setBigNum(e.target.value.slice(0, 2))
+                    }
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    placeholder="5x"
+                    maxLength={2}
+                  />
+                </div>
+              </div>
+
+              {/* Photo search (for layouts that use images) */}
+              {(layout === "foto" || layout === "magazine" || layout === "editorial") && (
+                <div className="rounded-xl border border-border bg-card p-3">
+                  <h3 className="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Imagem
+                  </h3>
+                  <PhotoSearch
+                    onSelect={setImageUrl}
+                    currentUrl={imageUrl || undefined}
+                  />
+                </div>
+              )}
+
+              {/* Gemini AI Image Generation */}
+              {(layout === "foto" || layout === "magazine" || layout === "editorial") && (
+                <div className="rounded-xl border border-border bg-card p-3">
+                  <h3 className="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Nano Banana IA
+                  </h3>
+                  <GeminiImage
+                    onImageGenerated={setImageUrl}
+                    currentImageUrl={imageUrl || undefined}
+                    creativeBrief={creativeBrief}
+                    accountId={accountId}
+                  />
+                </div>
+              )}
+            </>
           )}
 
           {/* Creative brief */}
@@ -475,6 +568,29 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
               <span className="text-xs font-medium text-muted-foreground">
                 Preview
               </span>
+              {isCarousel && slides.length > 1 && (
+                <div className="ml-auto flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewSlideIndex(Math.max(0, previewSlideIndex - 1))}
+                    disabled={previewSlideIndex === 0}
+                    className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground hover:text-foreground disabled:opacity-30"
+                  >
+                    &larr;
+                  </button>
+                  <span className="text-[10px] font-medium text-muted-foreground">
+                    {previewSlideIndex + 1}/{slides.length}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewSlideIndex(Math.min(slides.length - 1, previewSlideIndex + 1))}
+                    disabled={previewSlideIndex >= slides.length - 1}
+                    className="rounded px-1.5 py-0.5 text-[10px] text-muted-foreground hover:text-foreground disabled:opacity-30"
+                  >
+                    &rarr;
+                  </button>
+                </div>
+              )}
             </div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
