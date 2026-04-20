@@ -214,13 +214,41 @@ export function PieceEditor({ piece, versions, accountId }: PieceEditorProps) {
   async function handleDownloadHD() {
     setDownloading(true);
     try {
+      const slug = title.slice(0, 40).replace(/\s+/g, "-").toLowerCase();
+
+      if (isCarousel && slides.length > 1) {
+        const res = await fetch("/api/render/carousel", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            slides,
+            badge,
+            handle,
+            fileName: slug,
+          }),
+        });
+        if (!res.ok) {
+          const d = await res.json().catch(() => ({}));
+          throw new Error(d.error || "Erro ao renderizar carrossel");
+        }
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${slug}-hd.zip`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showFeedback("success", `${slides.length} slides baixados!`);
+        return;
+      }
+
       const res = await fetch(renderUrl);
       if (!res.ok) throw new Error("Erro ao renderizar");
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${title.slice(0, 40).replace(/\s+/g, "-").toLowerCase()}-hd.png`;
+      a.download = `${slug}-hd.png`;
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
       URL.revokeObjectURL(url);
       showFeedback("success", "Download HD iniciado!");

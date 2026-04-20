@@ -23,7 +23,7 @@ export async function generateImage(
   const ai = getClient();
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-3.1-flash-image-preview",
     contents: prompt,
     config: {
       responseModalities: ["TEXT", "IMAGE"],
@@ -67,7 +67,7 @@ export async function editImage(
   const ai = getClient();
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-3.1-flash-image-preview",
     contents: [
       {
         role: "user",
