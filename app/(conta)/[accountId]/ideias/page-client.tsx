@@ -13,6 +13,7 @@ interface IdeasPageClientProps {
   accountId: string;
   ideas: Idea[];
   researchSessions: ResearchSession[];
+  pieceByIdeaId: Record<string, { id: string; status: string }>;
 }
 
 type FilterTab = "todas" | "pending" | "approved" | "rejected";
@@ -30,6 +31,7 @@ export function IdeasPageClient({
   accountId,
   ideas,
   researchSessions,
+  pieceByIdeaId,
 }: IdeasPageClientProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterTab>("todas");
@@ -153,7 +155,12 @@ export function IdeasPageClient({
       {filtered.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((idea) => (
-            <IdeaCard key={idea.id} idea={idea} accountId={accountId} />
+            <IdeaCard
+              key={idea.id}
+              idea={idea}
+              accountId={accountId}
+              relatedPiece={pieceByIdeaId[idea.id]}
+            />
           ))}
         </div>
       ) : totalCount > 0 ? (

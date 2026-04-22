@@ -127,7 +127,10 @@ export function CarouselBuilder({
           <button
             key={slide.id}
             type="button"
-            onClick={() => setActiveSlideId(slide.id)}
+            onClick={() => {
+              setActiveSlideId(slide.id);
+              onPreviewSlide(slide, i);
+            }}
             className={`relative flex-shrink-0 rounded-lg border-2 p-2 w-20 h-20 flex flex-col items-center justify-center gap-1 transition-all ${
               slide.id === activeSlideId
                 ? "border-primary bg-primary/8 shadow-[0_0_10px_var(--glow-primary)]"

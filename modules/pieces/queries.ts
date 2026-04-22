@@ -24,6 +24,24 @@ export async function listPieces(
   return data as Piece[];
 }
 
+export async function listPiecesByIdeaIds(
+  ideaIds: string[]
+): Promise<Map<string, Piece>> {
+  if (ideaIds.length === 0) return new Map();
+  const { data, error } = await supabase()
+    .from("social_pieces")
+    .select("*")
+    .in("idea_id", ideaIds)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  const map = new Map<string, Piece>();
+  for (const p of (data ?? []) as Piece[]) {
+    if (p.idea_id && !map.has(p.idea_id)) map.set(p.idea_id, p);
+  }
+  return map;
+}
+
 export async function getPieceById(id: string): Promise<Piece | null> {
   const { data, error } = await supabase()
     .from("social_pieces")

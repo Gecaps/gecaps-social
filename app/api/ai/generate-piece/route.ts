@@ -4,7 +4,7 @@ import { getIdeaById } from "@/modules/ideas/queries";
 import { listPieces } from "@/modules/pieces/queries";
 import type { Piece } from "@/modules/pieces/types";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export async function POST(req: Request) {
   try {

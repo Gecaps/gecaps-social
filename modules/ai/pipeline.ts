@@ -15,7 +15,9 @@ import {
   updateReferenceStatus,
 } from "@/modules/references/queries";
 import { getIdeaById, createIdea, listIdeas } from "@/modules/ideas/queries";
-import { createPiece } from "@/modules/pieces/queries";
+import { createPiece, updatePiece } from "@/modules/pieces/queries";
+import { generateImage } from "@/lib/gemini";
+import { supabase } from "@/lib/supabase";
 import {
   getResearchById,
   updateResearchResults,
@@ -127,7 +129,7 @@ export async function generatePieceFromIdea(
     slide_structure: Record<string, unknown>[] | null;
   }>(systemPrompt, userPrompt, 4000);
 
-  return createPiece({
+  const piece = await createPiece({
     account_id: idea.account_id,
     idea_id: idea.id,
     title: result.title,
@@ -148,6 +150,91 @@ export async function generatePieceFromIdea(
     slide_structure: result.slide_structure,
     rejection_reason: null,
   });
+
+  if (
+    result.format === "carrossel" &&
+    Array.isArray(result.slide_structure) &&
+    result.slide_structure.length > 0
+  ) {
+    const enriched = await enrichSlidesWithImages(
+      result.slide_structure as SlideInput[],
+      piece.account_id
+    );
+    if (enriched.some((s, i) => s.imageUrl !== (result.slide_structure as SlideInput[])[i].imageUrl)) {
+      return updatePiece(piece.id, {
+        slide_structure: enriched as unknown as Record<string, unknown>[],
+      });
+    }
+  }
+
+  return piece;
+}
+
+interface SlideInput {
+  title?: string;
+  subtitle?: string;
+  tags?: string;
+  cta?: string;
+  highlight?: string;
+  bigNum?: string;
+  imageUrl?: string;
+  layout?: string;
+  visual_prompt?: string;
+  id?: string;
+}
+
+const VISUAL_LAYOUTS = new Set(["foto", "magazine", "editorial"]);
+
+async function enrichSlidesWithImages(
+  slides: SlideInput[],
+  accountId: string
+): Promise<SlideInput[]> {
+  const tasks = slides.map(async (slide, idx) => {
+    const base: SlideInput = {
+      id: slide.id ?? `s${idx + 1}`,
+      title: slide.title ?? "",
+      subtitle: slide.subtitle ?? "",
+      tags: slide.tags ?? "",
+      cta: slide.cta ?? "",
+      highlight: slide.highlight ?? "",
+      bigNum: slide.bigNum ?? "",
+      imageUrl: slide.imageUrl ?? "",
+      layout: slide.layout ?? "branco",
+      visual_prompt: slide.visual_prompt ?? "",
+    };
+
+    if (
+      !VISUAL_LAYOUTS.has(base.layout!) ||
+      !base.visual_prompt ||
+      base.imageUrl
+    ) {
+      return base;
+    }
+
+    if (idx > 0) await new Promise((r) => setTimeout(r, idx * 1500));
+
+    try {
+      const img = await generateImage(base.visual_prompt, "3:4");
+      const ext = img.mimeType.includes("png") ? "png" : "jpg";
+      const path = `${accountId}/slide_${Date.now()}_${idx}.${ext}`;
+      const buf = Buffer.from(img.imageBase64, "base64");
+      const { error } = await supabase()
+        .storage.from("references")
+        .upload(path, buf, {
+          contentType: img.mimeType,
+          upsert: false,
+        });
+      if (error) throw error;
+      const { data } = supabase().storage.from("references").getPublicUrl(path);
+      base.imageUrl = data.publicUrl;
+    } catch (err) {
+      console.error(`Slide ${idx} image generation failed:`, err);
+    }
+
+    return base;
+  });
+
+  return Promise.all(tasks);
 }
 
 // ── Execute Research (Perplexity) ────────────────────────────────

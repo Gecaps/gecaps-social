@@ -12,6 +12,8 @@ import {
   Link as LinkIcon,
   PenLine,
   Search,
+  Eye,
+  RotateCw,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +23,7 @@ import type { Idea, IdeaStatus } from "@/modules/ideas/types";
 interface IdeaCardProps {
   idea: Idea;
   accountId: string;
+  relatedPiece?: { id: string; status: string };
 }
 
 const statusLabels: Record<IdeaStatus, string> = {
@@ -49,12 +52,15 @@ const formatColors: Record<string, string> = {
   reels: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
 };
 
-export function IdeaCard({ idea, accountId }: IdeaCardProps) {
+export function IdeaCard({ idea, accountId, relatedPiece }: IdeaCardProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [confirmRegen, setConfirmRegen] = useState(false);
+
+  const hasPiece = !!relatedPiece;
 
   function showSuccess(msg: string) {
     setSuccess(msg);
@@ -118,9 +124,13 @@ export function IdeaCard({ idea, accountId }: IdeaCardProps) {
           </h3>
           <Badge
             variant="outline"
-            className={`shrink-0 text-[10px] ${statusColors[idea.status]}`}
+            className={`shrink-0 text-[10px] ${
+              hasPiece
+                ? "bg-violet-500/10 text-violet-400 border-violet-500/20"
+                : statusColors[idea.status]
+            }`}
           >
-            {statusLabels[idea.status]}
+            {hasPiece ? "Peça gerada" : statusLabels[idea.status]}
           </Badge>
         </div>
 
@@ -226,26 +236,83 @@ export function IdeaCard({ idea, accountId }: IdeaCardProps) {
           </div>
         )}
 
-        {/* Action button: approved -> generate piece */}
+        {/* Action button: approved -> generate piece (or view/regen if exists) */}
         {idea.status === "approved" && (
-          <div className="pt-1">
-            <Button
-              size="sm"
-              onClick={handleGeneratePiece}
-              disabled={loading !== null}
-            >
-              {loading === "generate" ? (
-                <>
-                  <Loader2 className="size-3.5 animate-spin" />
-                  Gerando...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="size-3.5" />
-                  Gerar Peça
-                </>
-              )}
-            </Button>
+          <div className="flex flex-wrap gap-2 pt-1">
+            {hasPiece ? (
+              <>
+                <Button
+                  size="sm"
+                  onClick={() =>
+                    router.push(`/${accountId}/pecas/${relatedPiece!.id}`)
+                  }
+                  className="text-primary-foreground shadow-md"
+                  style={{ background: "var(--gradient-primary)" }}
+                >
+                  <Eye className="size-3.5" />
+                  Abrir peça
+                </Button>
+                {confirmRegen ? (
+                  <>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleGeneratePiece}
+                      disabled={loading !== null}
+                      className="border-amber-500/40 text-amber-400 hover:bg-amber-500/10"
+                    >
+                      {loading === "generate" ? (
+                        <>
+                          <Loader2 className="size-3.5 animate-spin" />
+                          Gerando...
+                        </>
+                      ) : (
+                        <>
+                          <RotateCw className="size-3.5" />
+                          Confirmar (gasta créditos)
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setConfirmRegen(false)}
+                      disabled={loading !== null}
+                    >
+                      Cancelar
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setConfirmRegen(true)}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <RotateCw className="size-3.5" />
+                    Regerar
+                  </Button>
+                )}
+              </>
+            ) : (
+              <Button
+                size="sm"
+                onClick={handleGeneratePiece}
+                disabled={loading !== null}
+              >
+                {loading === "generate" ? (
+                  <>
+                    <Loader2 className="size-3.5 animate-spin" />
+                    Gerando...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="size-3.5" />
+                    Gerar Peça
+                  </>
+                )}
+              </Button>
+            )}
           </div>
         )}
 
